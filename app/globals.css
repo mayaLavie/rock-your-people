@@ -1,26 +1,140 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --magenta: #c43e6d;
+  --magenta-left: #ff236c;
+  --magenta-deep: #c43e6d;
+  --cream: #f4e8d4;
+  --cream-muted: #e8dcc8;
+  --black: #0a0a0a;
+  --yellow: #ffe500;
+  --magenta-right: #c43e6d;
+  --orange: #ff6b2c;
+  --purple-light: #c9b8ff;
+  --green-pastel: #b8e8c8;
+  --blue-pastel: #a8d8f5;
+  --background: #c43e6d;
+  --foreground: var(--cream);
+  --site-header-height: 3.75rem;
+}
+
+.site-header {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 200;
+  isolation: isolate;
+  background: rgb(196 62 109 / 0.92);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition:
+    transform 0.35s ease,
+    opacity 0.35s ease,
+    visibility 0.35s ease;
+}
+
+.site-header--visible {
+  transform: translate3d(0, 0, 0);
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.site-header--hidden {
+  transform: translate3d(0, -100%, 0);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+@media (max-width: 767px) {
+  .site-header--hidden {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header {
+    transition: none;
+  }
+}
+
+.top-section-video {
+  object-fit: cover;
+  object-position: top center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .top-section-video {
+    display: none;
+  }
+}
+
+@utility bg-magenta {
+  background: var(--background);
+}
+
+@utility bg-background {
+  background: var(--background);
 }
 
 @theme inline {
-  --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-magenta: var(--magenta);
+  --color-magenta-left: var(--magenta-left);
+  --color-magenta-deep: var(--magenta-deep);
+  --color-magenta-right: var(--magenta-right);
+  --color-cream: var(--cream);
+  --color-cream-muted: var(--cream-muted);
+  --color-brand-yellow: var(--yellow);
+  --color-brand-orange: var(--orange);
+  --color-brand-purple: var(--purple-light);
+  --color-brand-green: var(--green-pastel);
+  --color-brand-blue: var(--blue-pastel);
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-display: var(--font-bowlby), system-ui, sans-serif;
+  --font-stage-title: var(--font-bebas), system-ui, sans-serif;
+  --font-hebrew: var(--font-rubik), system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--site-header-height);
+}
+
+/* About us — scroll higher to keep product cards in view */
+#experience {
+  scroll-margin-top: -10rem;
+}
+
+@media (min-width: 640px) {
+  #experience {
+    scroll-margin-top: -14rem;
   }
+}
+
+@media (min-width: 1024px) {
+  #experience {
+    scroll-margin-top: -20rem;
+  }
+}
+
+html,
+body {
+  min-height: 100%;
 }
 
 body {
   background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--cream);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+::selection {
+  background: var(--cream);
+  color: var(--magenta);
 }
