@@ -25,7 +25,7 @@ export function TopSectionShell({ children }: TopSectionShellProps) {
         >
           <source src={TOP_SECTION_VIDEO_SRC} type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-[#c43e6d]/70" />
+        <div className="absolute inset-0 bg-magenta/70" />
         <div className="absolute inset-0 bg-[#1e1c1c]/30" />
       </div>
 

@@ -15,6 +15,9 @@ export const TITLE_IMAGE = {
 export const HERO_TAGLINE_HE =
   "מופעים חיים ואינטראקטיביים, חוויות טריו חי ב-360°, וסדנאות מנהיגות מוסיקליות לחברות, צוותים ואירועים פרטיים.";
 
+export const EXPERIENCES_SECTION_TAGLINE_HE =
+  "בחרו את החוויה המתאימה לאירוע שלכם";
+
 export const STORY_SECTION_PARAGRAPHS = [
   "Rock Your People נולד מתוך רגעים פשוטים של מוזיקה, חברים וקהילה.",
   "התחלנו כחברים שנפגשים לנגן יחד בקיבוץ — מפגשים קטנים, לא רשמיים, שהפכו לאט לאט להופעות קהילתיות ולאירועים הכי מדוברים בשבילים. אל הבמה הצטרפו אנשים עם רקע מוסיקלי, וגם כאלה שלא עמדו על במה מעולם.",
@@ -29,6 +32,12 @@ export const ABOUT_NAV_LINK = {
   href: "#experience",
 } as const;
 
+/** Our experiences screen — starts where the hero video ends */
+export const EXPERIENCES_NAV_LINK = {
+  label: "Experiences",
+  href: "#products",
+} as const;
+
 export const PRODUCT_NAV_LINKS = [
   { label: "Trio 360", href: "#trio-360" },
   { label: "Your People On Stage", href: "#your-people-on-stage" },
@@ -36,7 +45,6 @@ export const PRODUCT_NAV_LINKS = [
 ] as const;
 
 export const NAV_LINKS = [
-  { label: "Videos", href: "#videos" },
   { label: "Contact", href: "#contact" },
 ] as const;
 
@@ -50,15 +58,20 @@ export const MOBILE_MENU_LINKS = [
 
 export const SOCIAL_LINKS = {
   whatsapp: WHATSAPP_CHAT_URL,
-  youtube: "https://youtube.com/@rockyourpeople",
   instagram: CONTACT_INSTAGRAM_URL,
   instagramDm: INSTAGRAM_DM_URL,
 } as const;
 
-export const YOUTUBE_EMBED_URL =
-  "https://www.youtube.com/embed/vp0S4VDX6rY?rel=0&modestbranding=1";
-
 export const PRODUCTS = [
+  {
+    id: "your-people-on-stage",
+    title: "Your People On Stage",
+    description:
+      "A high-energy electric live show where the audience participates, influences, and becomes part of the performance.",
+    bestFor:
+      "Company events, conferences, festivals, large celebrations, team events.",
+    variant: "stage" as const,
+  },
   {
     id: "trio-360",
     title: "Trio 360",
@@ -70,15 +83,6 @@ export const PRODUCTS = [
     variant: "trio" as const,
   },
   {
-    id: "your-people-on-stage",
-    title: "Your People On Stage",
-    description:
-      "A high-energy electric live show where the audience participates, influences, and becomes part of the performance.",
-    bestFor:
-      "Company events, conferences, festivals, large celebrations, team events.",
-    variant: "stage" as const,
-  },
-  {
     id: "musical-leadership-workshop",
     title: "Team Harmony",
     description:
@@ -88,6 +92,15 @@ export const PRODUCTS = [
     variant: "workshop" as const,
   },
 ] as const;
+
+export const EXPERIENCES_CARD_HEADLINE_HE: Record<
+  (typeof PRODUCTS)[number]["id"],
+  string
+> = {
+  "trio-360": "מופע טריו במעגל",
+  "your-people-on-stage": "האנשים שלכם הופכים לכוכבים",
+  "musical-leadership-workshop": "סדנה מוסיקלית לאירגונים",
+};
 
 /** Replace with real paths under /public/images/ when assets are ready */
 export const GALLERY_IMAGES = [

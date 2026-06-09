@@ -87,7 +87,7 @@ export function MobileMenu() {
         />
         <nav
           id="mobile-menu-panel"
-          className="fixed inset-x-0 top-[var(--site-header-height)] z-[301] max-h-[calc(100dvh-var(--site-header-height))] overflow-y-auto border-b-2 border-cream bg-[#c43e6d] px-4 py-4 shadow-lg"
+          className="fixed inset-x-0 top-[var(--site-header-height)] z-[301] max-h-[calc(100dvh-var(--site-header-height))] overflow-y-auto border-b-2 border-cream bg-magenta px-4 py-4 shadow-lg"
           aria-label="ניווט מובייל"
         >
           <ul className="flex flex-col gap-1">

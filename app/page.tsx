@@ -4,7 +4,6 @@ import { TopSectionShell } from "@/components/TopSectionShell";
 import { ProductCards } from "@/components/ProductCards";
 import { SocialProof } from "@/components/SocialProof";
 import { ProductDetails } from "@/components/ProductDetails";
-import { VideoSection } from "@/components/VideoSection";
 import { Gallery } from "@/components/Gallery";
 import { ContactSection } from "@/components/ContactSection";
 import { Footer } from "@/components/Footer";
@@ -17,16 +16,15 @@ export default function Home() {
         <div className="flex min-h-dvh flex-col">
           <Hero />
         </div>
-        <main>
-          <ProductCards />
-          <SocialProof />
-        </main>
       </TopSectionShell>
+      <ProductCards />
+      <main className="bg-magenta">
+        <SocialProof />
+      </main>
       <ProductDetails />
       <div className="bg-magenta">
         <Gallery />
       </div>
-      <VideoSection />
       <ContactSection />
       <div className="bg-magenta">
         <Footer />

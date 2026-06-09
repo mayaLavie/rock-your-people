@@ -1,5 +1,6 @@
 import {
   ABOUT_NAV_LINK,
+  EXPERIENCES_NAV_LINK,
   NAV_LINKS,
   PRODUCT_NAV_LINKS,
 } from "@/lib/constants";
@@ -21,15 +22,15 @@ export function DesktopNav() {
       </a>
 
       <div className="group relative">
-        <a href="#products" className={NAV_LINK_CLASS}>
-          Products
+        <a href={EXPERIENCES_NAV_LINK.href} className={NAV_LINK_CLASS}>
+          {EXPERIENCES_NAV_LINK.label}
         </a>
         <div
           className="pointer-events-none absolute left-1/2 top-full z-[250] min-w-[240px] -translate-x-1/2 pt-2 opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100"
           role="menu"
-          aria-label="Products"
+          aria-label="Experiences"
         >
-          <ul className="border-2 border-cream bg-[#c43e6d] py-1 shadow-lg">
+          <ul className="border-2 border-cream bg-magenta py-1 shadow-lg">
             {PRODUCT_NAV_LINKS.map((link) => (
               <li key={link.href} role="none">
                 <a href={link.href} className={DROPDOWN_LINK_CLASS} role="menuitem">

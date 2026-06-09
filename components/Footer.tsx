@@ -35,16 +35,6 @@ export function Footer() {
           <ul className="flex flex-wrap gap-4">
             <li>
               <a
-                href={SOCIAL_LINKS.youtube}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs font-semibold uppercase tracking-wider text-cream/75 hover:text-cream"
-              >
-                YouTube
-              </a>
-            </li>
-            <li>
-              <a
                 href={SOCIAL_LINKS.instagram}
                 target="_blank"
                 rel="noopener noreferrer"

@@ -15,8 +15,12 @@ const DETAIL_HEADLINE =
 const DETAIL_CTA =
   "inline-flex w-fit border px-6 py-2 text-sm font-medium tracking-wide transition";
 const DETAIL_SECTION_PAD = "px-4 py-16 sm:px-6 sm:py-20 lg:px-10";
+const STAGE_SECTION_PAD =
+  "px-4 pb-16 pt-[40px] sm:px-6 sm:pb-20 sm:pt-[40px] lg:px-10";
+const WORKSHOP_SECTION_PAD =
+  "px-4 pb-16 pt-[20px] sm:px-6 sm:pb-20 sm:pt-[20px] lg:px-10";
 const TRIO_SECTION_PAD =
-  "px-4 py-20 sm:px-6 sm:py-28 lg:px-10 lg:py-32 min-h-[36rem] sm:min-h-[40rem]";
+  "px-4 pb-20 pt-[40px] sm:px-6 sm:pb-28 sm:pt-[40px] lg:px-10 lg:pb-32 lg:pt-[40px] min-h-[36rem] sm:min-h-[40rem]";
 
 type ProductDetailSectionProps = {
   detail: ProductDetail;
@@ -296,15 +300,15 @@ function YourPeopleOnStageDetail({ detail }: ProductDetailSectionProps) {
   const hebrew = HebrewDetailCopy({
     detail,
     subheadlineClass: `${HEBREW_SUBHEADLINE} text-[#FBEEE3]`,
-    bodyClass: `${HEBREW_BODY} text-[#FBEEE3]/90`,
-    bulletClass: "mt-6 space-y-1.5 text-[#FBEEE3]",
+    bodyClass: "mt-[10px] max-w-xl text-base leading-relaxed sm:text-lg text-[#FBEEE3]/90",
+    bulletClass: "mt-[10px] space-y-1.5 text-[#FBEEE3]",
     ctaClass: `${DETAIL_CTA} mt-6 border-[#FFE34D] bg-[#FFE34D] text-[#1e1c1c] hover:bg-transparent hover:text-[#FFE34D]`,
   });
 
   return (
     <section
       id={detail.id}
-      className={`relative overflow-hidden bg-[#1e1c1c] ${DETAIL_SECTION_PAD}`}
+      className={`relative min-h-dvh overflow-hidden bg-[#1e1c1c] md:min-h-0 ${STAGE_SECTION_PAD}`}
       aria-labelledby={`${detail.id}-heading`}
     >
       <Image
@@ -355,7 +359,7 @@ function LeadershipWorkshopDetail({ detail }: ProductDetailSectionProps) {
   return (
     <section
       id={detail.id}
-      className={`relative overflow-hidden bg-[#6DB380] ${DETAIL_SECTION_PAD}`}
+      className={`relative z-10 -mt-1 min-h-[calc(100dvh-var(--site-header-height))] overflow-hidden bg-[#6DB380] md:min-h-0 ${WORKSHOP_SECTION_PAD}`}
       aria-labelledby={`${detail.id}-heading`}
     >
       <div className="relative mx-auto max-w-3xl lg:max-w-4xl">
