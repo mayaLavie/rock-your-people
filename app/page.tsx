@@ -18,10 +18,10 @@ export default function Home() {
         </div>
       </TopSectionShell>
       <ProductCards />
+      <ProductDetails />
       <main className="bg-magenta">
         <SocialProof />
       </main>
-      <ProductDetails />
       <div className="bg-magenta">
         <Gallery />
       </div>
