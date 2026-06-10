@@ -44,15 +44,20 @@ const DETAIL_HREF: Record<(typeof PRODUCTS)[number]["id"], string> = {
   "musical-leadership-workshop": "#leadership-workshop",
 };
 
-const HEADLINE_FADE_MS = 600;
+const HEADLINE_FADE_MS = 400;
+const DEFAULT_HEADLINE =
+  EXPERIENCES_CARD_HEADLINE_HE[CAROUSEL_PRODUCTS[DEFAULT_CARD_INDEX]!.id];
 
 function CardHeadline({ headline }: { headline: string }) {
-  const [renderedHeadline, setRenderedHeadline] = useState(headline);
+  const [renderedHeadline, setRenderedHeadline] = useState(DEFAULT_HEADLINE);
   const [visible, setVisible] = useState(true);
   const fadeTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (headline === renderedHeadline) return;
+    if (headline === renderedHeadline) {
+      setVisible(true);
+      return;
+    }
 
     const reducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
@@ -84,7 +89,7 @@ function CardHeadline({ headline }: { headline: string }) {
       lang="he"
       dir="rtl"
       aria-live="polite"
-      className={`min-h-[1.4em] pb-[5px] text-center font-hebrew text-[15px] font-semibold text-cream transition-opacity duration-700 ease-in-out motion-reduce:transition-none ${
+      className={`min-h-[1.4em] pb-[5px] text-center font-hebrew text-[15px] font-semibold text-cream transition-opacity duration-500 ease-in-out motion-reduce:transition-none ${
         visible ? "opacity-100" : "opacity-0"
       }`}
     >
@@ -129,10 +134,12 @@ export function ProductCards() {
     }
 
     scrollToDefault();
+    const rafId = requestAnimationFrame(scrollToDefault);
     list.addEventListener("scroll", syncActiveIndex, { passive: true });
     window.addEventListener("resize", scrollToDefault);
 
     return () => {
+      cancelAnimationFrame(rafId);
       list.removeEventListener("scroll", syncActiveIndex);
       window.removeEventListener("resize", scrollToDefault);
     };
@@ -149,13 +156,16 @@ export function ProductCards() {
     >
       <div className="mx-auto flex min-h-0 w-full max-w-[1400px] flex-1 flex-col md:flex-none">
         <div className="flex min-h-0 flex-1 flex-col justify-between md:flex-none md:justify-start">
-          <div>
-            <h2
-              id="products-heading"
-              className="font-display text-[38px] uppercase leading-none text-cream"
-            >
-              Our experiences
-            </h2>
+          <div className="w-full text-center">
+            <div className="mx-auto w-fit">
+              <h2
+                id="products-heading"
+                className="font-display text-[38px] uppercase leading-none text-cream"
+              >
+                <span className="block text-left">Our</span>
+                <span className="block">experiences</span>
+              </h2>
+            </div>
             <h3
               lang="he"
               dir="rtl"
