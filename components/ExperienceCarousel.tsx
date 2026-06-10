@@ -39,7 +39,7 @@ const EXPERIENCE_CARDS: ExperienceCard[] = [
     id: "trio-360",
     title: "Trio 360",
     headline: EXPERIENCES_CARD_HEADLINE_HE["trio-360"],
-    topText: "הופעות חיות",
+    topText: "הופעות חיות במעגל",
     caption: "טריו חי, קרוב ומשחרר שמתאים גם לחללים קטנים ואינטימיים.",
     image: TRIO_IMAGE_SRC,
     href: "#trio-360",
@@ -59,7 +59,7 @@ const EXPERIENCE_CARDS: ExperienceCard[] = [
     id: "musical-leadership-workshop",
     title: "Team Harmony",
     headline: EXPERIENCES_CARD_HEADLINE_HE["musical-leadership-workshop"],
-    topText: "סדנאות",
+    topText: "סדנאות מוסיקליות לצוותים ומנהלים",
     caption: "סדנה מוזיקלית שמחברת צוותים דרך קצב, הקשבה ושיתוף פעולה.",
     image: WORKSHOP_IMAGE_SRC,
     href: "#leadership-workshop",
@@ -69,6 +69,27 @@ const EXPERIENCE_CARDS: ExperienceCard[] = [
 
 function scrollToExperienceSection(href: string) {
   document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
+}
+
+function wrapIndex(index: number, length: number) {
+  return ((index % length) + length) % length;
+}
+
+function getCircularOffset(
+  index: number,
+  activeIndex: number,
+  length: number,
+) {
+  let offset = index - activeIndex;
+  const half = length / 2;
+
+  if (offset > half) {
+    offset -= length;
+  } else if (offset < -half) {
+    offset += length;
+  }
+
+  return offset;
 }
 
 function getCardTransform(offset: number) {
@@ -113,19 +134,22 @@ export function ExperienceCarousel() {
 
   const displayedCard = EXPERIENCE_CARDS[displayedIndex]!;
 
-  const goTo = useCallback((index: number) => {
-    setActiveIndex(
-      Math.min(Math.max(index, 0), EXPERIENCE_CARDS.length - 1),
-    );
-  }, []);
+  const cardCount = EXPERIENCE_CARDS.length;
+
+  const goTo = useCallback(
+    (index: number) => {
+      setActiveIndex(wrapIndex(index, cardCount));
+    },
+    [cardCount],
+  );
 
   const prev = useCallback(() => {
-    goTo(activeIndex - 1);
-  }, [activeIndex, goTo]);
+    setActiveIndex((current) => wrapIndex(current - 1, cardCount));
+  }, [cardCount]);
 
   const next = useCallback(() => {
-    goTo(activeIndex + 1);
-  }, [activeIndex, goTo]);
+    setActiveIndex((current) => wrapIndex(current + 1, cardCount));
+  }, [cardCount]);
 
   const handleCardActivate = useCallback(
     (index: number) => {
@@ -231,7 +255,7 @@ export function ExperienceCarousel() {
         }}
       >
         {EXPERIENCE_CARDS.map((card, index) => {
-          const offset = index - activeIndex;
+          const offset = getCircularOffset(index, activeIndex, cardCount);
           const style = getCardTransform(offset);
           const isActive = index === activeIndex;
 

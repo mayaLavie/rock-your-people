@@ -29,7 +29,7 @@ export function ProductCards() {
             >
               {EXPERIENCES_SECTION_OFFERINGS_HE}
             </p>
-            <div className="mx-auto w-fit pt-[60px]">
+            <div className="mx-auto w-fit pt-[30px]">
               <h2
                 id="products-heading"
                 className="font-display text-[32px] uppercase leading-none text-cream sm:text-[34px]"
@@ -51,8 +51,9 @@ export function ProductCards() {
           </div>
         </div>
       </div>
+      <div className="h-2.5 w-full shrink-0 md:hidden" aria-hidden />
       <div
-        className="h-2.5 w-full shrink-0 bg-[#FBEEE3] md:hidden"
+        className="absolute inset-x-0 bottom-[10px] h-2.5 bg-[#FBEEE3] md:hidden"
         aria-hidden
       />
     </section>

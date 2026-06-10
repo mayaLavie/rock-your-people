@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { TRIO_360_SECTION_BG } from "@/lib/constants";
 
 const STAGE_SECTION_BG_SRC = "/images/page%201%20F.png";
 
@@ -19,8 +20,6 @@ const STAGE_SECTION_PAD =
   "px-4 pb-16 pt-[40px] sm:px-6 sm:pb-20 sm:pt-[40px] lg:px-10";
 const WORKSHOP_SECTION_PAD =
   "px-4 pb-16 pt-[20px] sm:px-6 sm:pb-20 sm:pt-[20px] lg:px-10";
-const TRIO_SECTION_PAD =
-  "px-4 pb-20 pt-[40px] sm:px-6 sm:pb-28 sm:pt-[40px] lg:px-10 lg:pb-32 lg:pt-[40px] min-h-[36rem] sm:min-h-[40rem]";
 
 type ProductDetailSectionProps = {
   detail: ProductDetail;
@@ -256,35 +255,43 @@ function Trio360Detail({ detail }: ProductDetailSectionProps) {
       "mt-6 text-[22px] font-medium leading-snug text-[#ff4e1a]",
     bodyClass: "mt-6 max-w-xl text-[20px] leading-relaxed text-[#3D2E2A]",
     bulletClass: `${HEBREW_BULLETS} text-[20px] text-[#3D2E2A]`,
-    ctaClass: `${DETAIL_CTA} mt-10 border-[#D72866] bg-[#D72866] text-[#FAF0E4] hover:bg-transparent hover:text-[#D72866]`,
+    ctaClass: `${DETAIL_CTA} mt-10 border-[#D72866] bg-[#D72866] text-cream hover:bg-transparent hover:text-[#D72866]`,
   });
 
   return (
     <section
       id={detail.id}
-      className={`relative overflow-hidden bg-[#FAF0E4] ${TRIO_SECTION_PAD}`}
+      className="overflow-hidden bg-cream-muted"
       aria-labelledby={`${detail.id}-heading`}
     >
-      <div
-        className="pointer-events-none absolute -right-24 top-20 h-64 w-64 rounded-full border-[3px] border-[#a591cf]/50 opacity-60"
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute right-1/4 top-1/3 h-40 w-40 rounded-full bg-[#a591cf]/25"
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute -left-16 bottom-24 h-48 w-48 rounded-full border-2 border-[#ff4e1a]/40"
-        aria-hidden
-      />
+      <div className="relative w-full">
+        <div className="relative aspect-[3/2] w-full sm:aspect-[16/9]">
+          <Image
+            src={encodeURI(TRIO_360_SECTION_BG.src)}
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover object-top"
+            priority
+          />
+          <div
+            className="pointer-events-none absolute inset-0 bg-cream-muted/25"
+            aria-hidden
+          />
+          <div
+            className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-cream-muted/95 via-cream-muted/50 to-transparent sm:h-32"
+            aria-hidden
+          />
+          <h2
+            id={`${detail.id}-heading`}
+            className="absolute inset-x-0 top-4 z-10 text-center font-display text-5xl uppercase leading-none sm:top-6 sm:text-6xl lg:text-7xl"
+          >
+            <span className="text-[#ff4e1a]">Trio 360</span>
+          </h2>
+        </div>
+      </div>
 
-      <div className="relative mx-auto flex min-h-[28rem] max-w-3xl flex-col justify-center sm:min-h-[32rem] lg:max-w-4xl">
-        <h2
-          id={`${detail.id}-heading`}
-          className="font-display text-5xl uppercase leading-none sm:text-6xl lg:text-7xl"
-        >
-          <span className="text-[#ff4e1a]">Trio 360</span>
-        </h2>
+      <div className="mx-auto max-w-3xl px-4 pb-20 pt-6 sm:px-6 sm:pb-28 sm:pt-8 lg:max-w-4xl lg:px-10 lg:pb-32">
         <HebrewCopyBlock>
           {hebrew.subheadlineSlot}
           {hebrew.bodySlot}
@@ -378,6 +385,11 @@ function LeadershipWorkshopDetail({ detail }: ProductDetailSectionProps) {
           {hebrew.ctaSlot}
         </HebrewCopyBlock>
       </div>
+      <div className="h-2.5 w-full shrink-0 md:hidden" aria-hidden />
+      <div
+        className="absolute inset-x-0 bottom-[10px] h-2.5 bg-[#FBEEE3] md:hidden"
+        aria-hidden
+      />
     </section>
   );
 }

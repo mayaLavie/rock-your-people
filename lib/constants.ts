@@ -116,3 +116,6 @@ export const GALLERY_IMAGES = [
   { src: "/images/GALLERY_IMAGES/evyatar2.jpeg", alt: "Gallery photo 5" },
   { src: "/images/GALLERY_IMAGES/mayaOnKit.jpeg", alt: "Gallery photo 6" },
 ] as const;
+
+/** 4th gallery image — used as Trio 360 product section background */
+export const TRIO_360_SECTION_BG = GALLERY_IMAGES[3];
