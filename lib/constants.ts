@@ -16,7 +16,7 @@ export const HERO_TAGLINE_HE =
   "מופעים חיים ואינטראקטיביים, חוויות טריו חי ב-360°, וסדנאות מנהיגות מוסיקליות לחברות, צוותים ואירועים פרטיים.";
 
 export const EXPERIENCES_SECTION_TAGLINE_HE =
-  "בחרו את החוויה המתאימה לאירוע שלכם";
+  "לחצו על החוויה שמעניינת אתכם כדי לקבל עוד פרטים";
 
 export const EXPERIENCES_SECTION_SUBTITLE_HE =
   "אנחנו מחברים אנשים דרך מוסיקה";

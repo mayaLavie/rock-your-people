@@ -6,7 +6,7 @@ import { TITLE_IMAGE } from "@/lib/constants";
 export function Hero() {
   return (
     <section
-      className="flex min-h-0 flex-1 flex-col overflow-x-hidden px-4 pb-4 sm:px-6 sm:pb-6 lg:px-10 lg:pb-8"
+      className="flex min-h-0 flex-1 flex-col overflow-x-hidden px-4 pb-4 sm:px-6 sm:pb-6 lg:px-4 lg:pb-6"
       aria-labelledby="hero-heading"
     >
       <div className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col">
@@ -15,7 +15,7 @@ export function Hero() {
         </h1>
 
         <div className="flex flex-1 items-end">
-          <div className="w-full max-w-[180px] shrink-0 sm:max-w-[220px] md:max-w-[240px] lg:max-w-[280px]">
+          <div className="w-full max-w-[180px] shrink-0 sm:max-w-[220px] md:max-w-[240px] lg:max-w-[200px]">
             <Image
               src={TITLE_IMAGE.src}
               alt={TITLE_IMAGE.alt}

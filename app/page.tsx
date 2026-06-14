@@ -1,3 +1,4 @@
+import { DesktopEditorialShell } from "@/components/DesktopEditorialShell";
 import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
 import { TopSectionShell } from "@/components/TopSectionShell";
@@ -10,7 +11,7 @@ import { Footer } from "@/components/Footer";
 
 export default function Home() {
   return (
-    <>
+    <DesktopEditorialShell>
       <Header />
       <TopSectionShell>
         <div className="flex min-h-dvh flex-col">
@@ -29,6 +30,6 @@ export default function Home() {
       <div className="bg-magenta">
         <Footer />
       </div>
-    </>
+    </DesktopEditorialShell>
   );
 }

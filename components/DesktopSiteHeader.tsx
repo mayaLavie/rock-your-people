@@ -1,20 +1,15 @@
-"use client";
-
 import Image from "next/image";
+import Link from "next/link";
 import { DesktopNav } from "@/components/DesktopNav";
-import { MobileMenu } from "@/components/MobileMenu";
 import { SOCIAL_LINKS, TITLE_IMAGE } from "@/lib/constants";
 
-export function Header() {
-  const headerClass =
-    "site-header site-header--visible px-4 py-1.5 sm:px-6 sm:py-2 lg:hidden";
-
+export function DesktopSiteHeader() {
   return (
-    <header className={headerClass}>
-      <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-2 md:grid md:grid-cols-[1fr_auto_1fr] md:items-center">
+    <header className="desktop-site-header sticky top-0 z-[200] hidden w-full border-b border-cream/20 bg-magenta lg:block">
+      <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-6 px-8 py-3 xl:px-10 xl:py-3.5">
         <a
           href="#"
-          className="relative z-10 block w-fit max-w-[min(50%,180px)] shrink-0 sm:max-w-[200px] md:max-w-[220px]"
+          className="relative block w-fit shrink-0"
           aria-label="Rock Your People — Home"
         >
           <Image
@@ -23,24 +18,29 @@ export function Header() {
             width={TITLE_IMAGE.width}
             height={TITLE_IMAGE.height}
             priority
-            className="h-11 w-auto sm:h-12 md:h-14"
+            className="h-12 w-auto xl:h-14"
           />
         </a>
 
-        <DesktopNav />
+        <DesktopNav className="flex items-center justify-center gap-6 xl:gap-8" />
 
-        <div className="relative z-20 flex shrink-0 items-center justify-end gap-3 md:col-start-3">
+        <div className="flex shrink-0 items-center justify-end gap-4">
           <a
             href={SOCIAL_LINKS.whatsapp}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="שליחת הודעה בוואטסאפ"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-cream transition hover:bg-cream/15"
+            className="flex h-10 w-10 items-center justify-center rounded-full text-cream transition hover:bg-cream/15"
           >
             <WhatsAppIcon />
           </a>
-
-          <MobileMenu />
+          <Link
+            href="#contact"
+            lang="he"
+            className="inline-flex border border-cream/90 px-5 py-2 font-hebrew text-sm font-medium text-cream transition hover:bg-cream hover:text-magenta"
+          >
+            דברו איתנו
+          </Link>
         </div>
       </div>
     </header>

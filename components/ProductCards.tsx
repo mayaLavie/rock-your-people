@@ -9,11 +9,11 @@ export function ProductCards() {
   return (
     <section
       id="products"
-      className="relative flex h-[calc(100dvh-50px)] flex-col overflow-hidden bg-magenta px-4 pt-[35px] pb-0 md:h-auto md:min-h-0 md:overflow-visible md:px-6 md:py-8 lg:px-10 lg:py-10"
+      className="relative flex h-[calc(100dvh-50px)] flex-col overflow-hidden bg-magenta px-4 pt-[35px] pb-0 md:h-auto md:min-h-0 md:overflow-visible md:px-6 md:py-8 lg:h-auto lg:min-h-0 lg:overflow-visible lg:px-4 lg:py-6 lg:pt-7"
       aria-labelledby="products-heading"
     >
       <div className="mx-auto flex min-h-0 w-full max-w-[1400px] flex-1 flex-col">
-        <div className="flex min-h-0 flex-1 flex-col justify-between">
+        <div className="flex min-h-0 flex-1 flex-col justify-between lg:flex-none lg:gap-3">
           <div className="shrink-0 w-full text-center">
             <p
               lang="he"
@@ -46,7 +46,7 @@ export function ProductCards() {
             </div>
           </div>
 
-          <div className="mt-auto mb-8 w-full shrink-0 overflow-hidden pb-1 md:mb-0 md:overflow-visible md:pb-0">
+          <div className="products-carousel-slot mt-auto mb-8 w-full shrink-0 overflow-hidden pb-1 md:mb-0 md:overflow-visible md:pb-0 lg:mt-0 lg:mb-0 lg:overflow-visible lg:pb-0">
             <ExperienceCarousel />
           </div>
         </div>

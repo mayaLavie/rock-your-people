@@ -11,12 +11,15 @@ const NAV_LINK_CLASS =
 const DROPDOWN_LINK_CLASS =
   "block whitespace-nowrap px-4 py-2.5 text-sm font-medium uppercase tracking-[0.1em] text-cream transition hover:bg-cream/10";
 
-export function DesktopNav() {
+type DesktopNavProps = {
+  className?: string;
+};
+
+export function DesktopNav({
+  className = "hidden items-center justify-center gap-5 md:flex md:gap-6 lg:hidden",
+}: DesktopNavProps) {
   return (
-    <nav
-      className="hidden items-center justify-center gap-5 md:flex md:gap-6 lg:gap-8"
-      aria-label="Main navigation"
-    >
+    <nav className={className} aria-label="Main navigation">
       <a href={ABOUT_NAV_LINK.href} className={NAV_LINK_CLASS}>
         {ABOUT_NAV_LINK.label}
       </a>

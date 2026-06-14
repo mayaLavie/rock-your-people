@@ -17,6 +17,7 @@
   --background: #ff2d73;
   --foreground: var(--cream);
   --site-header-height: 3.75rem;
+  --desktop-site-header-height: 4.5rem;
 }
 
 .site-header {
@@ -133,4 +134,60 @@ body {
 ::selection {
   background: var(--cream);
   color: var(--magenta);
+}
+
+/* Desktop editorial frame — lg+ only; mobile/tablet unchanged */
+@media (min-width: 1024px) {
+  html {
+    scroll-padding-top: var(--desktop-site-header-height);
+  }
+
+  .desktop-editorial-frame section[id],
+  .desktop-editorial-frame main[id] {
+    scroll-margin-top: var(--desktop-site-header-height);
+  }
+
+  .desktop-site-header {
+    min-height: var(--desktop-site-header-height);
+  }
+
+  .desktop-editorial-frame #products {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    padding-top: 1.75rem;
+    padding-bottom: 0.75rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .desktop-editorial-frame .products-carousel-slot {
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+
+  .desktop-editorial-frame #experience {
+    min-height: 100dvh;
+  }
+
+  .desktop-editorial-frame #your-people-on-stage {
+    min-height: 100dvh;
+  }
+
+  .desktop-editorial-frame #leadership-workshop {
+    min-height: calc(100dvh - var(--site-header-height));
+  }
+
+  .desktop-editorial-frame #contact > div {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .desktop-editorial-frame .experience-carousel-viewport {
+    height: calc(13.75rem * 4 / 3);
+    min-height: 0;
+    max-width: 100%;
+    overflow-x: hidden;
+    overflow-y: visible;
+    padding: 0;
+  }
 }

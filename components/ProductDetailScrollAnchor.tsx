@@ -10,8 +10,12 @@ const PRODUCT_DETAIL_HASHES = new Set([
 
 function getSiteHeaderHeight() {
   const root = document.documentElement;
-  const raw = getComputedStyle(root).getPropertyValue("--site-header-height").trim();
-  if (!raw) return 60;
+  const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
+  const varName = isDesktop
+    ? "--desktop-site-header-height"
+    : "--site-header-height";
+  const raw = getComputedStyle(root).getPropertyValue(varName).trim();
+  if (!raw) return isDesktop ? 72 : 60;
   if (raw.endsWith("rem")) {
     return parseFloat(raw) * parseFloat(getComputedStyle(root).fontSize);
   }
