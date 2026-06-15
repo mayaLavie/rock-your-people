@@ -7,6 +7,8 @@ type StackLayout = {
   sizes: string;
 };
 
+const GALLERY_DRUMMER_IMAGE_SRC = "/images/GALLERY_IMAGES/mayaOnKit.jpeg";
+
 const GALLERY_STACK_LAYOUTS: StackLayout[] = [
   {
     wrapperClass: "w-full",
@@ -58,14 +60,28 @@ export function Gallery() {
       <ul className="mt-2 flex flex-col gap-3 sm:gap-4">
         {stackImages.map((image, index) => {
           const layout = GALLERY_STACK_LAYOUTS[index] ?? GALLERY_STACK_LAYOUTS[0]!;
+          const isDrummerImage = image.src === GALLERY_DRUMMER_IMAGE_SRC;
+          const portraitLayout = GALLERY_STACK_LAYOUTS[4]!;
 
           return (
-            <li key={image.src} className={layout.wrapperClass}>
+            <li
+              key={image.src}
+              className={
+                isDrummerImage ? portraitLayout.wrapperClass : layout.wrapperClass
+              }
+            >
               <GalleryStackImage
                 src={image.src}
                 alt={image.alt}
-                aspectClass={layout.aspectClass}
-                sizes={layout.sizes}
+                aspectClass={
+                  isDrummerImage ? portraitLayout.aspectClass : layout.aspectClass
+                }
+                sizes={isDrummerImage ? portraitLayout.sizes : layout.sizes}
+                imageClassName={
+                  isDrummerImage
+                    ? "object-cover object-[50%_12%]"
+                    : "object-cover object-center"
+                }
               />
             </li>
           );
@@ -80,6 +96,7 @@ type GalleryStackImageProps = {
   alt: string;
   aspectClass: string;
   sizes: string;
+  imageClassName?: string;
 };
 
 function GalleryStackImage({
@@ -87,6 +104,7 @@ function GalleryStackImage({
   alt,
   aspectClass,
   sizes,
+  imageClassName = "object-cover object-center",
 }: GalleryStackImageProps) {
   return (
     <figure
@@ -97,7 +115,7 @@ function GalleryStackImage({
         alt={alt}
         fill
         sizes={sizes}
-        className="object-cover object-center"
+        className={imageClassName}
       />
       <figcaption className="sr-only">{alt}</figcaption>
     </figure>

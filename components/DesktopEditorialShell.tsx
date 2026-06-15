@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { DesktopSiteHeader } from "@/components/DesktopSiteHeader";
+import { EXPERIENCES_INTRO_PARAGRAPHS } from "@/lib/constants";
 
 type DesktopEditorialShellProps = {
   children: ReactNode;
@@ -30,13 +31,17 @@ export function DesktopEditorialShell({ children }: DesktopEditorialShellProps) 
           <h2 className="font-display text-4xl uppercase leading-none tracking-tight 2xl:text-[2.75rem]">
             Rock Your People
           </h2>
-          <p
+          <div
             lang="he"
             dir="rtl"
-            className="mt-5 font-hebrew text-base leading-relaxed text-cream/90 2xl:text-lg"
+            className="mt-5 space-y-3 font-hebrew text-pretty text-base font-bold leading-relaxed text-cream/90 2xl:text-lg"
           >
-            שלוש חוויות מוזיקליות לחברות, צוותים, קהילות ואירועים פרטיים.
-          </p>
+            {EXPERIENCES_INTRO_PARAGRAPHS.map((paragraph) => (
+              <p key={paragraph} className="m-0">
+                {paragraph}
+              </p>
+            ))}
+          </div>
           <Link
             href="#contact"
             lang="he"
