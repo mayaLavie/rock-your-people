@@ -27,8 +27,10 @@ const rubik = Rubik({
 
 export const metadata: Metadata = {
   title: "Rock Your People",
-  description:
-    "Live musical experiences, interactive shows, Trio 360, and musical leadership workshops.",
+  description: "חוויות מוזיקליות אינטראקטיביות לחברות, צוותים ואירועים",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
