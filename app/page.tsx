@@ -4,6 +4,7 @@ import { Hero } from "@/components/Hero";
 import { TopSectionShell } from "@/components/TopSectionShell";
 import { ProductCards } from "@/components/ProductCards";
 import { SocialProof } from "@/components/SocialProof";
+import { FAQSection } from "@/components/FAQSection";
 import { ProductDetails } from "@/components/ProductDetails";
 import { Gallery } from "@/components/Gallery";
 import { ContactSection } from "@/components/ContactSection";
@@ -22,6 +23,7 @@ export default function Home() {
       <ProductDetails />
       <main className="bg-magenta">
         <SocialProof />
+        <FAQSection />
       </main>
       <div className="bg-magenta">
         <Gallery />
