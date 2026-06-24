@@ -74,7 +74,7 @@ export const FAQ_ITEMS = [
 ] as const;
 
 export const ABOUT_NAV_LINK = {
-  label: "About us",
+  label: "About Us",
   href: "#experience",
 } as const;
 
@@ -84,22 +84,42 @@ export const EXPERIENCES_NAV_LINK = {
   href: "#products",
 } as const;
 
+export const FAQ_NAV_LINK = {
+  label: "FAQ",
+  href: "#faq",
+} as const;
+
+export const GALLERY_NAV_LINK = {
+  label: "Gallery",
+  href: "#gallery",
+} as const;
+
+export const CONTACT_NAV_LINK = {
+  label: "Contact",
+  href: "#contact",
+} as const;
+
 export const PRODUCT_NAV_LINKS = [
   { label: "Trio 360", href: "#trio-360" },
   { label: "Your People On Stage", href: "#your-people-on-stage" },
   { label: "Team Harmony", href: "#leadership-workshop" },
 ] as const;
 
-export const NAV_LINKS = [
-  { label: "Contact", href: "#contact" },
+export const NAV_LINKS = [CONTACT_NAV_LINK] as const;
+
+export const DESKTOP_NAV_LINKS = [
+  FAQ_NAV_LINK,
+  GALLERY_NAV_LINK,
+  CONTACT_NAV_LINK,
 ] as const;
 
 /** Mobile hamburger menu */
 export const MOBILE_MENU_LINKS = [
-  ABOUT_NAV_LINK,
   ...PRODUCT_NAV_LINKS,
-  { label: "גלריה", href: "#gallery" },
-  { label: "יצירת קשר", href: "#contact" },
+  { label: "מי אנחנו", href: ABOUT_NAV_LINK.href },
+  { label: "שאלות נפוצות", href: FAQ_NAV_LINK.href },
+  { label: "גלריה", href: GALLERY_NAV_LINK.href },
+  { label: "צרו קשר", href: CONTACT_NAV_LINK.href },
 ] as const;
 
 export const SOCIAL_LINKS = {

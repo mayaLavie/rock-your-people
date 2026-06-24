@@ -84,7 +84,7 @@ export function FAQSection() {
       id="faq"
       dir="rtl"
       lang="he"
-      className="border-b-[3px] border-cream bg-magenta px-4 py-12 sm:px-6 sm:py-16 lg:px-10 lg:py-20"
+      className="scroll-mt-24 border-b-[3px] border-cream bg-magenta px-4 py-12 sm:px-6 sm:py-16 lg:px-10 lg:py-20"
       aria-label="FAQ — שאלות נפוצות"
     >
       <SectionHeading

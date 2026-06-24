@@ -1,7 +1,7 @@
 import {
   ABOUT_NAV_LINK,
+  DESKTOP_NAV_LINKS,
   EXPERIENCES_NAV_LINK,
-  NAV_LINKS,
   PRODUCT_NAV_LINKS,
 } from "@/lib/constants";
 
@@ -20,10 +20,6 @@ export function DesktopNav({
 }: DesktopNavProps) {
   return (
     <nav className={className} aria-label="Main navigation">
-      <a href={ABOUT_NAV_LINK.href} className={NAV_LINK_CLASS}>
-        {ABOUT_NAV_LINK.label}
-      </a>
-
       <div className="group relative">
         <a href={EXPERIENCES_NAV_LINK.href} className={NAV_LINK_CLASS}>
           {EXPERIENCES_NAV_LINK.label}
@@ -45,7 +41,11 @@ export function DesktopNav({
         </div>
       </div>
 
-      {NAV_LINKS.map((link) => (
+      <a href={ABOUT_NAV_LINK.href} className={NAV_LINK_CLASS}>
+        {ABOUT_NAV_LINK.label}
+      </a>
+
+      {DESKTOP_NAV_LINKS.map((link) => (
         <a key={link.href} href={link.href} className={NAV_LINK_CLASS}>
           {link.label}
         </a>
