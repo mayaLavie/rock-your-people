@@ -66,9 +66,16 @@ function FaqItem({ id, question, answer, open, onToggle }: FaqItemProps) {
         }`}
       >
         <div className="overflow-hidden">
-          <p className="px-5 pb-4 text-right font-hebrew text-pretty text-[14px] leading-relaxed text-[#FBEEE3]/85 sm:px-6 sm:pb-5 sm:text-[15px]">
-            {answer}
-          </p>
+          <div className="space-y-2.5 px-5 pb-4 text-right sm:space-y-3 sm:px-6 sm:pb-5">
+            {answer.split("\n\n").map((paragraph) => (
+              <p
+                key={paragraph}
+                className="m-0 font-hebrew text-pretty text-[14px] leading-relaxed text-[#FBEEE3]/85 sm:text-[15px]"
+              >
+                {paragraph}
+              </p>
+            ))}
+          </div>
         </div>
       </div>
     </article>
