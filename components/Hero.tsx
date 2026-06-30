@@ -1,7 +1,9 @@
 import Image from "next/image";
-import { TITLE_IMAGE } from "@/lib/constants";
-
-/* Restore Hebrew tagline in hero — import HERO_TAGLINE_HE from @/lib/constants and uncomment <p> below */
+import {
+  EXPERIENCES_SECTION_OFFERINGS_HE,
+  EXPERIENCES_SECTION_SUBTITLE_HE,
+  TITLE_IMAGE,
+} from "@/lib/constants";
 
 export function Hero() {
   return (
@@ -14,8 +16,8 @@ export function Hero() {
           Rock Your People
         </h1>
 
-        <div className="flex flex-1 items-end">
-          <div className="w-full max-w-[180px] shrink-0 sm:max-w-[220px] md:max-w-[240px] lg:max-w-[200px]">
+        <div className="flex flex-1 items-end lg:hidden">
+          <div className="w-full max-w-[180px] shrink-0 sm:max-w-[220px] md:max-w-[240px]">
             <Image
               src={TITLE_IMAGE.src}
               alt={TITLE_IMAGE.alt}
@@ -25,20 +27,46 @@ export function Hero() {
               className="h-auto w-full"
             />
           </div>
+        </div>
 
-          {/*
+        <div className="mt-3 hidden shrink-0 lg:mt-auto lg:block">
+          <div className="pb-3 text-center">
+            <p
+              lang="he"
+              dir="rtl"
+              className="mx-auto max-w-3xl font-hebrew text-pretty text-[20px] font-medium leading-snug text-cream"
+            >
+              {EXPERIENCES_SECTION_SUBTITLE_HE}
+            </p>
+            <p
+              lang="he"
+              dir="rtl"
+              className="mx-auto max-w-3xl pt-1 font-hebrew text-pretty text-[14px] font-medium leading-snug text-cream/90"
+            >
+              {EXPERIENCES_SECTION_OFFERINGS_HE}
+            </p>
+          </div>
+          <div className="h-2.5 w-full bg-[#FBEEE3]" aria-hidden />
+        </div>
+
+        <div className="mt-3 h-2.5 w-full shrink-0 bg-[#FBEEE3] lg:hidden" aria-hidden />
+
+        <div className="shrink-0 pt-3 text-center lg:hidden">
           <p
             lang="he"
             dir="rtl"
-            className="min-w-0 max-w-[520px] shrink-0 self-end font-hebrew text-pretty text-right text-[21px] font-medium leading-snug break-words text-[#FBEEE3]"
+            className="mx-auto max-w-3xl font-hebrew text-pretty text-[20px] font-medium leading-snug text-cream"
           >
-            {HERO_TAGLINE_HE}
+            {EXPERIENCES_SECTION_SUBTITLE_HE}
           </p>
-          — text now lives in SocialProof (#experience)
-          */}
+          <p
+            lang="he"
+            dir="rtl"
+            className="mx-auto max-w-3xl pt-1 font-hebrew text-pretty text-[14px] font-medium leading-snug text-cream/90"
+          >
+            {EXPERIENCES_SECTION_OFFERINGS_HE}
+          </p>
         </div>
-
-        <div className="mt-3 h-2.5 w-full shrink-0 bg-[#FBEEE3]" aria-hidden />
       </div>
     </section>
   );

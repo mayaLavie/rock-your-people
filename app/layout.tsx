@@ -21,7 +21,7 @@ const bebasNeue = Bebas_Neue({
 
 const rubik = Rubik({
   subsets: ["hebrew", "latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-rubik",
 });
 

@@ -18,6 +18,25 @@ export const HERO_TAGLINE_HE =
 export const EXPERIENCES_SECTION_TAGLINE_HE =
   "לחצו על החוויה שמעניינת אתכם כדי לקבל עוד פרטים";
 
+export const EXPERIENCES_SECTION_TITLE_HE =
+  "פתרון מוסיקלי מדוייק לכל אירוע.";
+
+export const EXPERIENCES_SECTION_DESCRIPTION_HE =
+  "נוצר במיוחד עבור חברות, ארגונים וקהילות שמחפשים פעילות מקורית, שוברת דיסטנס ומגבשת באמת.";
+
+export const EXPERIENCES_SECTION_SCHEDULE_INTRO_HE =
+  'החוויות והסדנאות שלנו תפורות ומותאמות אישית לכל לו"ז או צורך לאורך השנה:';
+
+export const EXPERIENCES_SECTION_USE_CASES = [
+  "ימי חברה וערבי חברה",
+  "ימי גיבוש צוותיים",
+  "Happy Hour במשרד",
+  "חגים והרמות כוסית",
+  "מסיבות סוף שנה",
+  "אירועי הנהלה וסדנאות מנהלים",
+  "אירועים פרטיים וקהילתיים",
+] as const;
+
 export const EXPERIENCES_SECTION_SUBTITLE_HE =
   "אנחנו מחברים אנשים דרך מוסיקה";
 

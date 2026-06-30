@@ -1,7 +1,10 @@
-import Link from "next/link";
+import Image from "next/image";
 import type { ReactNode } from "react";
 import { DesktopSiteHeader } from "@/components/DesktopSiteHeader";
-import { EXPERIENCES_INTRO_PARAGRAPHS } from "@/lib/constants";
+import {
+  EXPERIENCES_INTRO_PARAGRAPHS,
+  TITLE_IMAGE,
+} from "@/lib/constants";
 
 type DesktopEditorialShellProps = {
   children: ReactNode;
@@ -27,14 +30,21 @@ export function DesktopEditorialShell({ children }: DesktopEditorialShellProps) 
       <DesktopSiteHeader />
 
       <div className="lg:flex lg:items-start lg:justify-center lg:gap-10 lg:px-6 lg:pb-12 lg:pt-8 xl:gap-14 xl:px-10 2xl:gap-20">
-        <aside className="hidden xl:sticky xl:top-[calc(var(--desktop-site-header-height)+2rem)] xl:flex xl:max-h-[calc(100dvh-var(--desktop-site-header-height)-2rem)] xl:w-[17rem] xl:shrink-0 xl:flex-col xl:justify-center xl:self-start xl:text-cream 2xl:w-72">
-          <h2 className="font-display text-4xl uppercase leading-none tracking-tight 2xl:text-[2.75rem]">
-            Rock Your People
-          </h2>
+        <aside className="hidden xl:sticky xl:top-[calc(var(--desktop-site-header-height)+2rem)] xl:flex xl:h-[calc(100dvh-var(--desktop-site-header-height)-2rem)] xl:w-[22rem] xl:shrink-0 xl:flex-col xl:items-center xl:justify-center xl:self-start xl:text-cream 2xl:w-[26rem]">
+          <div className="w-full max-w-[21rem] 2xl:max-w-[25rem]">
+            <Image
+              src={TITLE_IMAGE.src}
+              alt={TITLE_IMAGE.alt}
+              width={TITLE_IMAGE.width}
+              height={TITLE_IMAGE.height}
+              priority
+              className="h-auto w-full"
+            />
+          </div>
           <div
             lang="he"
             dir="rtl"
-            className="mt-5 space-y-3 font-hebrew text-pretty text-base font-bold leading-relaxed text-cream/90 2xl:text-lg"
+            className="mt-6 w-full space-y-3 text-center font-hebrew text-pretty text-[20px] font-bold leading-relaxed text-cream/90"
           >
             {EXPERIENCES_INTRO_PARAGRAPHS.map((paragraph) => (
               <p key={paragraph} className="m-0">
@@ -42,13 +52,6 @@ export function DesktopEditorialShell({ children }: DesktopEditorialShellProps) 
               </p>
             ))}
           </div>
-          <Link
-            href="#contact"
-            lang="he"
-            className="mt-8 inline-flex w-fit border border-cream/90 px-6 py-2.5 font-hebrew text-sm font-medium text-cream transition hover:bg-cream hover:text-magenta"
-          >
-            דברו איתנו
-          </Link>
         </aside>
 
         <div className="desktop-editorial-frame w-full lg:max-w-[480px] lg:shrink-0 lg:overflow-x-hidden lg:rounded-[2px] lg:bg-background lg:shadow-[0_28px_90px_rgba(0,0,0,0.42)] lg:ring-1 lg:ring-cream/25">
