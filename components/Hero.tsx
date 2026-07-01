@@ -30,7 +30,7 @@ export function Hero() {
           <p
             lang="he"
             dir="rtl"
-            className="mt-[7px] w-full text-center font-hebrew text-pretty text-[16px] font-medium leading-snug text-cream/90"
+            className="mt-[7px] w-full text-center font-hebrew text-pretty text-[18px] font-medium leading-snug text-cream/90"
           >
             {EXPERIENCES_SECTION_OFFERINGS_HE}
           </p>

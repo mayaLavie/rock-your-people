@@ -24,7 +24,7 @@ export function ProductCards() {
             <p
               lang="he"
               dir="rtl"
-              className="mx-auto max-w-3xl font-hebrew text-pretty text-[20px] font-medium leading-snug text-cream"
+              className="mx-auto max-w-3xl font-hebrew text-pretty text-[24px] font-medium leading-snug text-cream"
             >
               {EXPERIENCES_SECTION_SUBTITLE_HE}
             </p>
