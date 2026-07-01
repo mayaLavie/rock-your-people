@@ -47,6 +47,13 @@ export const EXPERIENCES_INTRO_PARAGRAPHS = [
   "המומחיות שלנו היא להפוך את הקהל שלכם ממשתתפים פסיביים לחלק בלתי נפרד מהמופע.",
 ] as const;
 
+export const EXPERIENCES_INTRO_STAGE_IMAGE = {
+  src: "/images/evyatar stage.jpeg",
+  width: 1079,
+  height: 812,
+  alt: "אביתר על הבמה",
+} as const;
+
 export const STORY_SECTION_PARAGRAPHS = [
   "Rock Your People נולד מתוך חיבור בין מוזיקה, קהילה וניסיון מקצועי של שנים על במות, באולפנים ובהפקות חיות.",
   "זה התחיל בקיבוץ, במפגשים מוזיקליים שהפכו עם הזמן להופעות קהילתיות גדולות — כאלה שבהן אנשים עם או בלי רקע מוזיקלי עלו לבמה והפכו לחלק מהרכב חי.",
