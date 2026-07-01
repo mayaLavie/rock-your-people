@@ -16,17 +16,33 @@ export function Hero() {
           Rock Your People
         </h1>
 
-        <div className="flex flex-1 items-end lg:hidden">
-          <div className="w-full max-w-[180px] shrink-0 sm:max-w-[220px] md:max-w-[240px]">
-            <Image
-              src={TITLE_IMAGE.src}
-              alt={TITLE_IMAGE.alt}
-              width={TITLE_IMAGE.width}
-              height={TITLE_IMAGE.height}
-              priority
-              className="h-auto w-full"
-            />
+        <div className="flex flex-1 flex-col justify-end lg:hidden">
+          <div className="flex items-end gap-2.5 sm:gap-3">
+            <div className="w-full max-w-[180px] shrink-0 sm:max-w-[220px] md:max-w-[240px]">
+              <Image
+                src={TITLE_IMAGE.src}
+                alt={TITLE_IMAGE.alt}
+                width={TITLE_IMAGE.width}
+                height={TITLE_IMAGE.height}
+                priority
+                className="h-auto w-full"
+              />
+            </div>
+            <p
+              lang="he"
+              dir="rtl"
+              className="min-w-0 flex-1 pb-0.5 text-right font-hebrew text-pretty text-[15px] font-medium leading-snug text-cream"
+            >
+              {EXPERIENCES_SECTION_SUBTITLE_HE}
+            </p>
           </div>
+          <p
+            lang="he"
+            dir="rtl"
+            className="mt-[7px] w-full text-center font-hebrew text-pretty text-[16px] font-medium leading-snug text-cream/90"
+          >
+            {EXPERIENCES_SECTION_OFFERINGS_HE}
+          </p>
         </div>
 
         <div className="mt-3 hidden shrink-0 lg:mt-auto lg:block">
@@ -47,25 +63,6 @@ export function Hero() {
             </p>
           </div>
           <div className="h-2.5 w-full bg-[#FBEEE3]" aria-hidden />
-        </div>
-
-        <div className="mt-3 h-2.5 w-full shrink-0 bg-[#FBEEE3] lg:hidden" aria-hidden />
-
-        <div className="shrink-0 pt-3 text-center lg:hidden">
-          <p
-            lang="he"
-            dir="rtl"
-            className="mx-auto max-w-3xl font-hebrew text-pretty text-[20px] font-medium leading-snug text-cream"
-          >
-            {EXPERIENCES_SECTION_SUBTITLE_HE}
-          </p>
-          <p
-            lang="he"
-            dir="rtl"
-            className="mx-auto max-w-3xl pt-1 font-hebrew text-pretty text-[14px] font-medium leading-snug text-cream/90"
-          >
-            {EXPERIENCES_SECTION_OFFERINGS_HE}
-          </p>
         </div>
       </div>
     </section>

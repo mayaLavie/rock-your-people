@@ -36,9 +36,12 @@ export function ProductCards() {
           >
             <h2
               id="products-heading"
-              className="m-0 text-[30px] font-bold leading-snug text-magenta"
+              className="m-0 text-[22px] font-bold leading-snug text-magenta lg:text-[30px]"
             >
-              {EXPERIENCES_SECTION_TITLE_HE}
+              <span className="lg:hidden">
+                {EXPERIENCES_SECTION_TITLE_HE.replace(/\.$/, "")}
+              </span>
+              <span className="hidden lg:inline">{EXPERIENCES_SECTION_TITLE_HE}</span>
             </h2>
             <p className="m-0 mt-[10px] text-[17px] font-bold">
               {EXPERIENCES_SECTION_DESCRIPTION_HE}
