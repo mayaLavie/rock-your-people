@@ -3,8 +3,6 @@ import {
   EXPERIENCES_INTRO_PARAGRAPHS,
   EXPERIENCES_INTRO_STAGE_IMAGE,
   EXPERIENCES_SECTION_DESCRIPTION_HE,
-  EXPERIENCES_SECTION_SCHEDULE_INTRO_HE,
-  EXPERIENCES_SECTION_SUBTITLE_HE,
   EXPERIENCES_SECTION_TAGLINE_HE,
   EXPERIENCES_SECTION_TITLE_HE,
   EXPERIENCES_SECTION_USE_CASES,
@@ -20,6 +18,7 @@ export function ProductCards() {
         aria-labelledby="products-heading"
       >
         <div className="mx-auto w-full max-w-[1400px]">
+          {/* Temporarily hidden for layout test
           <div className="-mx-4 mt-[10px] bg-magenta px-4 py-3 text-center md:-mx-6 md:px-6 lg:hidden">
             <p
               lang="he"
@@ -29,19 +28,9 @@ export function ProductCards() {
               {EXPERIENCES_SECTION_SUBTITLE_HE}
             </p>
           </div>
-          <div className="mt-5 lg:hidden">
-            <div
-              lang="he"
-              dir="rtl"
-              className="mx-auto max-w-3xl space-y-3 text-center font-hebrew text-pretty text-[17px] font-bold leading-relaxed text-magenta/90"
-            >
-              {EXPERIENCES_INTRO_PARAGRAPHS.map((paragraph) => (
-                <p key={paragraph} className="m-0">
-                  {paragraph}
-                </p>
-              ))}
-            </div>
-            <div className="-mx-4 mt-4 overflow-hidden md:-mx-6">
+          */}
+          <div className="mt-2.5 lg:hidden">
+            <div className="relative -mx-4 overflow-hidden md:-mx-6">
               <Image
                 src={EXPERIENCES_INTRO_STAGE_IMAGE.src}
                 alt={EXPERIENCES_INTRO_STAGE_IMAGE.alt}
@@ -50,6 +39,17 @@ export function ProductCards() {
                 className="h-auto w-full"
                 sizes="100vw"
               />
+              <div
+                lang="he"
+                dir="rtl"
+                className="absolute inset-x-0 top-0 z-10 px-4 pt-4 text-center font-hebrew text-pretty text-[26px] font-bold leading-relaxed text-[#FBEEE3] md:px-6"
+              >
+                {EXPERIENCES_INTRO_PARAGRAPHS.map((paragraph) => (
+                  <p key={paragraph} className="m-0 mx-auto max-w-3xl">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -68,7 +68,7 @@ export function ProductCards() {
                 </span>
                 <span className="hidden lg:inline">{EXPERIENCES_SECTION_TITLE_HE}</span>
               </h2>
-              <p className="m-0 mt-[10px] text-[17px] font-bold">
+              <p className="m-0 mt-[10px] whitespace-pre-line text-[17px] font-bold">
                 {EXPERIENCES_SECTION_DESCRIPTION_HE}
               </p>
             </div>
@@ -82,25 +82,32 @@ export function ProductCards() {
                 sizes="480px"
               />
             </div>
-            <div
-              lang="he"
-              dir="rtl"
-              className="mt-[10px] text-right font-hebrew text-pretty leading-relaxed text-magenta/90"
-            >
-              <p className="m-0 text-[15px] font-normal lg:text-[17px] lg:font-bold">
-                {EXPERIENCES_SECTION_SCHEDULE_INTRO_HE}
-              </p>
-              <ul className="m-0 mt-[10px] list-none space-y-2 p-0 text-[15px] font-normal lg:text-[17px] lg:font-bold">
-              {EXPERIENCES_SECTION_USE_CASES.map((item) => (
-                <li
-                  key={item}
-                  className="m-0 flex flex-row-reverse items-start justify-end gap-2"
-                >
-                  <span>{item}</span>
-                  <span aria-hidden="true">★</span>
-                </li>
-              ))}
-              </ul>
+            <div className="mt-[10px] font-hebrew text-pretty leading-relaxed text-magenta/90">
+              <div
+                className="use-cases-marquee -mx-4 overflow-hidden md:-mx-6 lg:-mx-4"
+                aria-label={EXPERIENCES_SECTION_USE_CASES.join(" · ")}
+              >
+                <div className="use-cases-marquee-track flex w-max">
+                  {[0, 1].map((copy) => (
+                    <ul
+                      key={copy}
+                      lang="he"
+                      className="m-0 flex list-none items-center gap-6 p-0 pr-6 text-[15px] font-normal whitespace-nowrap lg:gap-8 lg:pr-8 lg:text-[17px] lg:font-bold"
+                      aria-hidden={copy === 1}
+                    >
+                      {EXPERIENCES_SECTION_USE_CASES.map((item) => (
+                        <li
+                          key={`${copy}-${item}`}
+                          className="m-0 flex items-center gap-2"
+                        >
+                          <span aria-hidden="true">★</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>

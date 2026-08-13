@@ -19,10 +19,10 @@ export const EXPERIENCES_SECTION_TAGLINE_HE =
   "לחצו על החוויה שמעניינת אתכם כדי לקבל עוד פרטים";
 
 export const EXPERIENCES_SECTION_TITLE_HE =
-  "פתרון מוסיקלי מדוייק לכל אירוע.";
+  "המומחיות שלנו היא להפוך את הקהל שלכם לרוקסטארז לערב אחד";
 
 export const EXPERIENCES_SECTION_DESCRIPTION_HE =
-  "נוצר במיוחד עבור חברות, ארגונים וקהילות שמחפשים פעילות מקורית, שוברת דיסטנס ומגבשת באמת.";
+  "נוצר במיוחד עבור חברות, ארגונים וקהילות שמחפשים פעילות מקורית,\nבלתי נשכחת, שוברת מחסומים ומגבשת.";
 
 export const EXPERIENCES_SECTION_SCHEDULE_INTRO_HE =
   'החוויות והסדנאות שלנו תפורות ומותאמות אישית לכל לו"ז או צורך לאורך השנה:';
@@ -44,7 +44,7 @@ export const EXPERIENCES_SECTION_OFFERINGS_HE =
   "הופעות חיות  |  הופעות אינטרקטיביות | סדנאות";
 
 export const EXPERIENCES_INTRO_PARAGRAPHS = [
-  "המומחיות שלנו היא להפוך את הקהל שלכם ממשתתפים פסיביים לחלק בלתי נפרד מהמופע.",
+  "מחברים אנשים דרך מוסיקה",
 ] as const;
 
 export const EXPERIENCES_INTRO_STAGE_IMAGE = {

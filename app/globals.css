@@ -77,6 +77,25 @@
   display: none;
 }
 
+@keyframes use-cases-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.use-cases-marquee-track {
+  animation: use-cases-marquee 25s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .use-cases-marquee-track {
+    animation: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .top-section-video {
     display: none;
