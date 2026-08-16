@@ -210,3 +210,76 @@ export const GALLERY_IMAGES = [
 
 /** 4th gallery image — used as Trio 360 product section background */
 export const TRIO_360_SECTION_BG = GALLERY_IMAGES[3];
+
+export type GalleryStoryItem = {
+  type: "image" | "video";
+  src: string;
+  alt: string;
+  /** Frame shown while a video loads */
+  poster?: string;
+  /**
+   * "contain" shows landscape media whole instead of cropping it to the
+   * portrait frame. The empty space fills with a blurred copy of the image.
+   */
+  fit?: "cover" | "contain";
+};
+
+/**
+ * Story-style gallery, played in this order.
+ * Add photos and videos here — files live under /public/images/.
+ */
+export const GALLERY_STORY_ITEMS: readonly GalleryStoryItem[] = [
+  {
+    type: "image",
+    src: "/images/GALLERY_IMAGES/forGallery1.jpg",
+    alt: "Gallery photo 1",
+    fit: "contain",
+  },
+  {
+    type: "image",
+    src: "/images/GALLERY_IMAGES/galleryIshaiAndDor.jpeg",
+    alt: "Gallery photo 2",
+  },
+  {
+    type: "video",
+    src: "/images/GALLERY_IMAGES/ishai solo.mp4",
+    alt: "ישי סולו",
+  },
+  {
+    type: "image",
+    src: "/images/GALLERY_IMAGES/appluse.jpeg",
+    alt: "Gallery photo 3",
+    fit: "contain",
+  },
+  {
+    type: "video",
+    src: "/images/GALLERY_IMAGES/Tal.mp4",
+    alt: "טל על הבמה",
+  },
+  {
+    type: "image",
+    src: "/images/GALLERY_IMAGES/evyatar2.jpeg",
+    alt: "Gallery photo 5",
+    fit: "contain",
+  },
+  {
+    type: "video",
+    src: "/images/GALLERY_IMAGES/miri at shapes.mp4",
+    alt: "מירי ב-Shapes",
+  },
+  {
+    type: "image",
+    src: "/images/GALLERY_IMAGES/mayaOnKit.jpeg",
+    alt: "Gallery photo 6",
+  },
+  {
+    type: "video",
+    src: "/images/beatles.mp4",
+    alt: "מחרוזת ביטלס",
+  },
+  {
+    type: "image",
+    src: "/images/rock-your-people-in-office.jpeg",
+    alt: "Rock Your People in the office",
+  },
+];
