@@ -93,12 +93,22 @@ function HebrewBullets({
 }) {
   return (
     <ul lang="he" dir="rtl" className={`font-hebrew ${className}`}>
-      {items.map((item) => (
-        <li key={item} className="flex gap-3 text-base leading-relaxed sm:text-lg">
-          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-current opacity-80" />
-          {item}
-        </li>
-      ))}
+      {items.map((item) => {
+        const separatorIndex = item.indexOf(": ");
+        const hasLabel = separatorIndex > 0 && separatorIndex < 40;
+        const label = hasLabel ? item.slice(0, separatorIndex + 1) : null;
+        const rest = hasLabel ? item.slice(separatorIndex + 1).trimStart() : item;
+
+        return (
+          <li key={item} className="flex gap-3 text-base leading-relaxed sm:text-lg">
+            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-current opacity-80" />
+            <span>
+              {label ? <strong className="font-bold">{label}</strong> : null}
+              {label ? ` ${rest}` : rest}
+            </span>
+          </li>
+        );
+      })}
     </ul>
   );
 }
@@ -220,6 +230,10 @@ function HebrewDetailCopy({
       : null;
   const bulletsHeading =
     "bulletsHeading" in detail ? detail.bulletsHeading : "";
+  const secondaryBulletsHeading =
+    "secondaryBulletsHeading" in detail ? detail.secondaryBulletsHeading : "";
+  const secondaryBullets =
+    "secondaryBullets" in detail ? detail.secondaryBullets : [];
   const closingBody = "closingBody" in detail ? detail.closingBody : "";
 
   return {
@@ -240,6 +254,16 @@ function HebrewDetailCopy({
     bulletsSlot:
       detail.bullets.length > 0 ? (
         <HebrewBullets className={bulletClass} items={detail.bullets} />
+      ) : null,
+    secondaryBulletsHeadingSlot:
+      secondaryBulletsHeading && bulletsHeadingClass ? (
+        <HebrewBulletsHeading className={bulletsHeadingClass}>
+          {secondaryBulletsHeading}
+        </HebrewBulletsHeading>
+      ) : null,
+    secondaryBulletsSlot:
+      secondaryBullets.length > 0 ? (
+        <HebrewBullets className={bulletClass} items={secondaryBullets} />
       ) : null,
     closingBodySlot: closingBody ? (
       <HebrewBody className={bodyClass}>{closingBody}</HebrewBody>
@@ -381,6 +405,8 @@ function LeadershipWorkshopDetail({ detail }: ProductDetailSectionProps) {
           {hebrew.bodySlot}
           {hebrew.bulletsHeadingSlot}
           {hebrew.bulletsSlot}
+          {hebrew.secondaryBulletsHeadingSlot}
+          {hebrew.secondaryBulletsSlot}
           {hebrew.closingBodySlot}
           {hebrew.ctaSlot}
         </HebrewCopyBlock>

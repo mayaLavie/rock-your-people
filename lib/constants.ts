@@ -191,7 +191,7 @@ export const EXPERIENCES_CARD_HEADLINE_HE: Record<
 > = {
   "trio-360": "מופע טריו במעגל",
   "your-people-on-stage": "",
-  "musical-leadership-workshop": "סדנה מוסיקלית לאירגונים",
+  "musical-leadership-workshop": "סדנה מוזיקלית לצוותים ומנהלים",
 };
 
 /** Replace with real paths under /public/images/ when assets are ready */
