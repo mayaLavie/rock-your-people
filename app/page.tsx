@@ -9,6 +9,7 @@ import { ProductDetails } from "@/components/ProductDetails";
 import { Gallery } from "@/components/Gallery";
 import { ContactSection } from "@/components/ContactSection";
 import { Footer } from "@/components/Footer";
+import { SongSignupPopup } from "@/components/SongSignupPopup";
 
 export default function Home() {
   return (
@@ -32,6 +33,7 @@ export default function Home() {
       <div className="bg-magenta">
         <Footer />
       </div>
+      <SongSignupPopup />
     </DesktopEditorialShell>
   );
 }

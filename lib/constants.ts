@@ -4,6 +4,10 @@ import {
   WHATSAPP_CHAT_URL,
 } from "@/lib/contact";
 
+/** Apps Script web app that appends song sign-ups to a Google Sheet */
+export const SONG_SIGNUP_SHEET_URL =
+  "https://script.google.com/macros/s/AKfycbxJExnExbawXbVHbHc7F7CaYdvQfod8uRZU1m1eixruR39XiDKfMguP52EQubFWQ2Yfpw/exec";
+
 /** Hero title graphic — also used as navbar home logo */
 export const TITLE_IMAGE = {
   src: "/images/final ryp pic.png",
