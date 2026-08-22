@@ -496,7 +496,6 @@ export function SongSignupPopup({
                                 type="text"
                                 value={p?.note || ""}
                                 onChange={(e) => setField(i, "note", e.target.value)}
-                                placeholder="שרתי את זה פעם בקריוקי…"
                               />
                             </Field>
                           )}
