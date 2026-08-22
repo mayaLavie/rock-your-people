@@ -409,26 +409,6 @@ export function SongSignupPopup({
                         </span>
                         <span style={{ fontSize: 15, opacity: 0.7 }}>{s.artist}</span>
                       </span>
-
-                      <span
-                        style={{
-                          flex: "none",
-                          whiteSpace: "nowrap",
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "flex-start",
-                          gap: 4,
-                        }}
-                      >
-                        <span
-                          style={{
-                            fontSize: 13,
-                            color: full ? "rgba(255,255,255,.45)" : "rgba(255,255,255,.7)",
-                          }}
-                        >
-                          {full ? "מלא" : `${left} מקומות`}
-                        </span>
-                      </span>
                     </button>
 
                     {isOpen && (
