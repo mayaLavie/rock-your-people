@@ -9,7 +9,6 @@
 */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { CONTACT_WHATSAPP_PHONE } from "@/lib/contact";
 import { SONG_SIGNUP_SHEET_URL } from "@/lib/constants";
 
 const YELLOW = "#ffe34d";
@@ -149,19 +148,6 @@ export function SongSignupPopup({
 
   function submit() {
     if (!valid.length) return setTried(true);
-    const lines = valid.map((i) => {
-      const p = picks[i];
-      const bits = [`• ${LINEUP[i].title} — ${LINEUP[i].artist}`, `  ${p.name.trim()}`];
-      if (p.phone.trim()) bits.push(`  ${p.phone.trim()}`);
-      if (p.note.trim()) bits.push(`  "${p.note.trim()}"`);
-      return bits.join("\n");
-    });
-    const text = `היי רוק יור פיפל! אני רוצה לעלות לבמה:\n\n${lines.join("\n\n")}`;
-    window.open(
-      `https://wa.me/${CONTACT_WHATSAPP_PHONE}?text=${encodeURIComponent(text)}`,
-      "_blank",
-      "noopener",
-    );
 
     // one row per chosen song; fire-and-forget, no-cors (Apps Script gives an opaque response)
     for (const i of valid) {
@@ -627,7 +613,7 @@ export function SongSignupPopup({
               ))}
             </div>
             <p style={{ margin: 0, fontSize: 15, lineHeight: 1.6, opacity: 0.7 }}>
-              ההודעה נפתחה בוואטסאפ — שלחו אותה ונחזור אליכם עם פרטי החזרה.
+              נרשמתם בהצלחה — נפגש על הבמה!
             </p>
             <button
               type="button"
