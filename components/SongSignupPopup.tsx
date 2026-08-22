@@ -428,19 +428,6 @@ export function SongSignupPopup({
                         >
                           {full ? "מלא" : `${left} מקומות`}
                         </span>
-                        <span aria-hidden style={{ display: "flex", gap: 3 }}>
-                          {Array.from({ length: slotLimit }, (_, k) => (
-                            <span
-                              key={k}
-                              style={{
-                                width: 7,
-                                height: 7,
-                                borderRadius: "50%",
-                                background: k < taken ? "rgba(255,255,255,.3)" : YELLOW,
-                              }}
-                            />
-                          ))}
-                        </span>
                       </span>
                     </button>
 
