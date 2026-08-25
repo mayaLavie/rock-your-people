@@ -3,9 +3,9 @@
 /*
   Rock Your People — "בחרו שיר, עלו לבמה" popup.
 
-  Scrolling past ~35% of the page reveals a small closed teaser pill
-  ("מופע בפאב רעים 26.8"), once per browser session. Tapping the pill
-  opens the full song sign-up dialog designed for this flow.
+  Shortly after the page loads, a small floating teaser pill appears
+  top-right ("מופע בפאב רעים 26.8"), just below the site header. Tapping
+  the pill opens the full song sign-up dialog designed for this flow.
 */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -13,7 +13,7 @@ import { SONG_SIGNUP_SHEET_URL } from "@/lib/constants";
 
 const YELLOW = "#ffe34d";
 const BLACK = "#1e1c1c";
-const TEASER_TITLE = "מופע בפאב רעים 26.8";
+const TEASER_TITLE = "הרשמה למופע - בר יין רעים 26.8";
 
 type LineupItem = { title: string; artist: string; taken: number };
 
@@ -40,11 +40,29 @@ const CSS = `
 .ryp-cta:hover:not(:disabled){background:#ffd400}
 .ryp-cta:disabled{opacity:.45;cursor:not-allowed}
 .ryp-x:hover{color:${YELLOW}}
-.ryp-teaser:hover{transform:translateY(-2px)}
+.ryp-teaser:hover{filter:brightness(1.08)}
 :where(.ryp-scope) *:focus-visible{outline:2px solid ${YELLOW};outline-offset:2px}
 @keyframes ryp-rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 @keyframes ryp-fade{from{opacity:0}to{opacity:1}}
 @keyframes ryp-open{from{opacity:0;max-height:0}to{opacity:1;max-height:340px}}
+@keyframes ryp-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+/* teaser pill: pinned top-right, just below the fixed site header, gently floating */
+.ryp-teaser-wrap{
+  position:fixed;
+  right:16px;
+  top:calc(var(--site-header-height, 60px) + 12px + env(safe-area-inset-top));
+  z-index:9998;
+  animation:
+    ryp-rise .4s cubic-bezier(.2,.8,.25,1) both,
+    ryp-float 3.2s ease-in-out .4s infinite;
+}
+@media (min-width:1024px){
+  .ryp-teaser-wrap{top:calc(var(--desktop-site-header-height, 72px) + 12px + env(safe-area-inset-top))}
+}
+@media (prefers-reduced-motion: reduce){
+  .ryp-teaser-wrap{animation:ryp-rise .4s cubic-bezier(.2,.8,.25,1) both}
+}
 `;
 
 type Pick = { name: string; phone: string; note: string };
@@ -55,7 +73,7 @@ type Phase = "hidden" | "teaser" | "open";
 type SongSignupPopupProps = {
   slotLimit?: number;
   askNote?: boolean;
-  autoOpenAtScroll?: number; // viewport heights scrolled before the teaser appears; 0 disables it
+  autoOpenDelayMs?: number; // ms after the page mounts before the teaser appears; 0 disables it
   open?: boolean;
   onClose?: () => void;
 };
@@ -63,7 +81,7 @@ type SongSignupPopupProps = {
 export function SongSignupPopup({
   slotLimit = 3,
   askNote = true,
-  autoOpenAtScroll = 1,
+  autoOpenDelayMs = 600,
   open: controlledOpen,
   onClose,
 }: SongSignupPopupProps) {
@@ -81,18 +99,12 @@ export function SongSignupPopup({
   const [submitted, setSubmitted] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  // reveal the teaser pill after scroll past autoOpenAtScroll, every page load
+  // reveal the teaser pill shortly after the page loads, so it's visible on the first screen
   useEffect(() => {
-    if (isControlled || !autoOpenAtScroll) return;
-    const onScroll = () => {
-      if (window.scrollY >= autoOpenAtScroll * window.innerHeight) {
-        setSelfPhase("teaser");
-        window.removeEventListener("scroll", onScroll);
-      }
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [isControlled, autoOpenAtScroll]);
+    if (isControlled || !autoOpenDelayMs) return;
+    const timer = window.setTimeout(() => setSelfPhase("teaser"), autoOpenDelayMs);
+    return () => window.clearTimeout(timer);
+  }, [isControlled, autoOpenDelayMs]);
 
   const close = useCallback(() => {
     setExpanded(null);
@@ -176,16 +188,12 @@ export function SongSignupPopup({
       <div className="ryp-scope" dir="rtl">
         <style>{CSS}</style>
         <div
+          className="ryp-teaser-wrap"
           style={{
-            position: "fixed",
-            insetInlineEnd: 16,
-            bottom: "calc(16px + env(safe-area-inset-bottom))",
-            zIndex: 9998,
             display: "flex",
             alignItems: "center",
             gap: 2,
             fontFamily: '"Frank Ruhl Libre", Georgia, serif',
-            animation: "ryp-rise .4s cubic-bezier(.2,.8,.25,1) both",
           }}
         >
           <button
@@ -203,7 +211,7 @@ export function SongSignupPopup({
               padding: "12px 16px",
               minHeight: 48,
               cursor: "pointer",
-              borderRadius: "2px 0 0 2px",
+              borderRadius: "5px",
               boxShadow: "0 8px 24px rgba(0,0,0,.35)",
               transition: "transform .15s ease",
             }}
@@ -226,7 +234,7 @@ export function SongSignupPopup({
               lineHeight: 1,
               cursor: "pointer",
               padding: "0 10px",
-              borderRadius: "0 2px 2px 0",
+              borderRadius: "5px",
               boxShadow: "0 8px 24px rgba(0,0,0,.35)",
             }}
           >
@@ -239,7 +247,7 @@ export function SongSignupPopup({
 
   const n = valid.length;
   const countLabel =
-    n === 0 ? "עוד לא נבחר שיר" : n === 1 ? "שיר אחד נבחר" : `${n} שירים נבחרו`;
+    n === 0 ? "טרם נבחר שיר" : n === 1 ? "שיר אחד נבחר" : `${n} שירים נבחרו`;
 
   return (
     <div
@@ -534,7 +542,7 @@ export function SongSignupPopup({
                   padding: 15,
                   minHeight: 52,
                   cursor: "pointer",
-                  borderRadius: 2,
+                  borderRadius: 5,
                 }}
               >
                 שריינו לי מקום על הבמה
@@ -593,7 +601,7 @@ export function SongSignupPopup({
                 background: "transparent",
                 color: "#fff",
                 border: "1px solid rgba(255,255,255,.45)",
-                borderRadius: 2,
+                borderRadius: 5,
                 cursor: "pointer",
               }}
             >
