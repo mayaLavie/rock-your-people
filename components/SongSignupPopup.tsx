@@ -4,7 +4,7 @@
   Rock Your People — "בחרו שיר, עלו לבמה" popup.
 
   Shortly after the page loads, a small floating teaser pill appears
-  top-right ("מופע בפאב רעים 26.8"), just below the site header. Tapping
+  top-right ("מופע בקיבוץ ניצנים 10.9"), just below the site header. Tapping
   the pill opens the full song sign-up dialog designed for this flow.
 */
 
@@ -13,7 +13,7 @@ import { SONG_SIGNUP_SHEET_URL } from "@/lib/constants";
 
 const YELLOW = "#ffe34d";
 const BLACK = "#1e1c1c";
-const TEASER_TITLE = "הרשמה למופע - בר יין רעים 26.8";
+const TEASER_TITLE = "לחצו, ובחרו שיר שתרצו לשיר איתנו על הבמה, במופע בקיבוץ ניצנים, 10.9";
 
 type LineupItem = { title: string; artist: string; taken: number };
 
@@ -55,7 +55,7 @@ const CSS = `
   z-index:9998;
   animation:
     ryp-rise .4s cubic-bezier(.2,.8,.25,1) both,
-    ryp-float 3.2s ease-in-out .4s infinite;
+    ryp-float 1.4s ease-in-out .4s infinite;
 }
 @media (min-width:1024px){
   .ryp-teaser-wrap{top:calc(var(--desktop-site-header-height, 72px) + 12px + env(safe-area-inset-top))}
@@ -342,7 +342,7 @@ export function SongSignupPopup({
             עלו איתנו לבמה.
           </h2>
           <p style={{ margin: "2px 0 0", fontSize: 16, lineHeight: 1.55, textWrap: "pretty" }}>
-            במופע הקרוב ברעים נבצע גם את השירים האלה, מוזמנים להצטרף אלינו! בחרו את השיר שאתם רוצים
+            במופע הקרוב בקיבוץ ניצנים נבצע גם את השירים האלה, מוזמנים להצטרף אלינו! בחרו את השיר שאתם רוצים
             לשיר איתנו — אפשר יותר מאחד — והשאירו פרטים.
           </p>
         </div>

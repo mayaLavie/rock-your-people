@@ -272,6 +272,11 @@ export const GALLERY_STORY_ITEMS: readonly GalleryStoryItem[] = [
     alt: "מירי ב-Shapes",
   },
   {
+    type: "video",
+    src: "/images/GALLERY_IMAGES/jessice reim.mp4",
+    alt: "ג'סיקה ברעים",
+  },
+  {
     type: "image",
     src: "/images/GALLERY_IMAGES/mayaOnKit.jpeg",
     alt: "Gallery photo 6",
