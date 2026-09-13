@@ -4,7 +4,7 @@
   Rock Your People — "בחרו שיר, עלו לבמה" popup.
 
   Shortly after the page loads, a small floating teaser pill appears
-  top-right ("מופע בקיבוץ גברעם 26.9"), just below the site header. Tapping
+  (centered on mobile, top-right on desktop), just below the site header. Tapping
   the pill opens the full song sign-up dialog designed for this flow.
 */
 
@@ -60,10 +60,14 @@ const CSS = `
 @keyframes ryp-open{from{opacity:0;max-height:0}to{opacity:1;max-height:340px}}
 @keyframes ryp-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 
-/* teaser pill: pinned top-right, just below the fixed site header, gently floating */
+/* teaser pill: centered on mobile, top-right on desktop, gently floating */
 .ryp-teaser-wrap{
   position:fixed;
+  left:16px;
   right:16px;
+  width:fit-content;
+  max-width:calc(100vw - 32px);
+  margin-inline:auto;
   top:calc(var(--site-header-height, 60px) + 12px + env(safe-area-inset-top));
   z-index:9998;
   animation:
@@ -71,7 +75,13 @@ const CSS = `
     ryp-float 1.4s ease-in-out .4s infinite;
 }
 @media (min-width:1024px){
-  .ryp-teaser-wrap{top:calc(var(--desktop-site-header-height, 72px) + 12px + env(safe-area-inset-top))}
+  .ryp-teaser-wrap{
+    left:auto;
+    right:16px;
+    margin-inline:0;
+    max-width:none;
+    top:calc(var(--desktop-site-header-height, 72px) + 12px + env(safe-area-inset-top));
+  }
 }
 @media (prefers-reduced-motion: reduce){
   .ryp-teaser-wrap{animation:ryp-rise .4s cubic-bezier(.2,.8,.25,1) both}
@@ -166,7 +176,10 @@ export function SongSignupPopup({
   const valid = useMemo(
     () =>
       Object.keys(picks)
-        .filter((k) => picks[Number(k)].name.trim())
+        .filter((k) => {
+          const p = picks[Number(k)];
+          return p.name.trim() && p.phone.trim();
+        })
         .map(Number),
     [picks],
   );
@@ -238,17 +251,15 @@ export function SongSignupPopup({
             aria-label="סגירה"
             style={{
               alignSelf: "stretch",
-              border: `1.5px solid ${YELLOW}`,
-              borderInlineStart: 0,
-              background: BLACK,
+              border: 0,
+              background: "transparent",
               color: "#fff",
               font: "inherit",
-              fontSize: 18,
+              fontSize: 22,
               lineHeight: 1,
               cursor: "pointer",
-              padding: "0 10px",
-              borderRadius: "5px",
-              boxShadow: "0 8px 24px rgba(0,0,0,.35)",
+              padding: "0 8px",
+              boxShadow: "none",
             }}
           >
             ×
@@ -368,7 +379,7 @@ export function SongSignupPopup({
                 const left = Math.max(slotLimit - taken, 0);
                 const full = left === 0;
                 const p = picks[i];
-                const selected = !!p && !!p.name.trim();
+                const selected = !!p && !!p.name.trim() && !!p.phone.trim();
                 const isOpen = expanded === i;
                 return (
                   <div
@@ -464,17 +475,32 @@ export function SongSignupPopup({
                               </span>
                             )}
                           </Field>
-                          <Field id={`ryp-p${i}`} label={<>טלפון <Opt /></>}>
+                          <Field
+                            id={`ryp-p${i}`}
+                            label={
+                              <>
+                                טלפון <span style={{ color: YELLOW }}>*</span>{" "}
+                                <span style={{ color: "#fff", opacity: 0.55 }}>
+                                  (שנהיה בקשר לפני שעולים לבמה)
+                                </span>
+                              </>
+                            }
+                          >
                             <input
                               id={`ryp-p${i}`}
                               className="ryp-in"
                               type="tel"
+                              required
                               dir="ltr"
                               style={{ textAlign: "right" }}
                               value={p?.phone || ""}
                               onChange={(e) => setField(i, "phone", e.target.value)}
-                              placeholder="050-0000000"
                             />
+                            {tried && !p?.phone.trim() && (
+                              <span style={{ fontSize: 13, color: YELLOW }}>
+                                צריך מספר טלפון כדי לשריין מקום
+                              </span>
+                            )}
                           </Field>
                           {askNote && (
                             <Field id={`ryp-m${i}`} label={<>הודעה ללהקה <Opt /></>}>

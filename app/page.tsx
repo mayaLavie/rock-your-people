@@ -16,7 +16,7 @@ export default function Home() {
     <DesktopEditorialShell>
       <Header />
       <TopSectionShell>
-        <div className="flex min-h-dvh flex-col">
+        <div className="relative flex min-h-dvh flex-col">
           <Hero />
         </div>
       </TopSectionShell>
