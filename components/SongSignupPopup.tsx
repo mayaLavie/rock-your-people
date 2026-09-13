@@ -4,7 +4,7 @@
   Rock Your People — "בחרו שיר, עלו לבמה" popup.
 
   Shortly after the page loads, a small floating teaser pill appears
-  top-right ("מופע בקיבוץ ניצנים 10.9"), just below the site header. Tapping
+  top-right ("מופע בקיבוץ גברעם 26.9"), just below the site header. Tapping
   the pill opens the full song sign-up dialog designed for this flow.
 */
 
@@ -13,7 +13,7 @@ import { SONG_SIGNUP_SHEET_URL } from "@/lib/constants";
 
 const YELLOW = "#ffe34d";
 const BLACK = "#1e1c1c";
-const TEASER_TITLE = "לחצו, ובחרו שיר שתרצו לשיר איתנו על הבמה, במופע בקיבוץ ניצנים, 10.9";
+const TEASER_TITLE = "לחצו, ובחרו שיר שתרצו לשיר איתנו על הבמה, במופע בקיבוץ גברעם, 26.9";
 
 type LineupItem = { title: string; artist: string; taken: number };
 
@@ -27,6 +27,19 @@ const LINEUP: LineupItem[] = [
   { title: "ג׳סיקה", artist: "אתניקס", taken: 0 },
   { title: "יעקב", artist: "ללדין", taken: 0 },
   { title: "טיפ טיפה", artist: "אהוד בנאי", taken: 0 },
+  { title: "סוף עונת התפוזים", artist: "תמוז", taken: 0 },
+  { title: "Great Balls of Fire", artist: "Jerry Lee Lewis", taken: 0 },
+  { title: "Crazy Little Thing Called Love", artist: "Queen", taken: 0 },
+  { title: "I Feel Good", artist: "James Brown", taken: 0 },
+  { title: "אהבה בת 20", artist: "יוסי בנאי", taken: 0 },
+  { title: "Could You Be Loved", artist: "Bob Marley", taken: 0 },
+  { title: "או לה פופה", artist: "נועה קירל", taken: 0 },
+  { title: "הכל מבינה", artist: "פורטרט", taken: 0 },
+  { title: "מישהו שומע אותי", artist: "איפה הילד", taken: 0 },
+  { title: "With A Little Help From My Friends", artist: "Joe Cocker", taken: 0 },
+  { title: "הקולות של פיראוס", artist: "חיים משה", taken: 0 },
+  { title: "מה קרה לך", artist: "שוטי הנבואה", taken: 0 },
+  { title: "שיר ישן", artist: "אתניקס", taken: 0 },
 ];
 
 const CSS = `
@@ -342,8 +355,8 @@ export function SongSignupPopup({
             עלו איתנו לבמה.
           </h2>
           <p style={{ margin: "2px 0 0", fontSize: 16, lineHeight: 1.55, textWrap: "pretty" }}>
-            במופע הקרוב בקיבוץ ניצנים נבצע גם את השירים האלה, מוזמנים להצטרף אלינו! בחרו את השיר שאתם רוצים
-            לשיר איתנו — אפשר יותר מאחד — והשאירו פרטים.
+            במופע הקרוב בקיבוץ גברעם, אתם מוזמנים להתרגש איתנו על הבמה, ולהצטרף אלינו בשירה.
+            בחרו את השיר שאתם רוצים לשיר איתנו — אפשר יותר מאחד — והשאירו פרטים.
           </p>
         </div>
 
