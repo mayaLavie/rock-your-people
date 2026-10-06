@@ -8,6 +8,9 @@ import {
 export const SONG_SIGNUP_SHEET_URL =
   "https://script.google.com/macros/s/AKfycbxJExnExbawXbVHbHc7F7CaYdvQfod8uRZU1m1eixruR39XiDKfMguP52EQubFWQ2Yfpw/exec";
 
+/** Flip to true for the next show to show the song sign-up teaser + popup again */
+export const SONG_SIGNUP_POPUP_ENABLED = false;
+
 /** Hero title graphic — also used as navbar home logo */
 export const TITLE_IMAGE = {
   src: "/images/final ryp pic.png",

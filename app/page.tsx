@@ -10,6 +10,7 @@ import { Gallery } from "@/components/Gallery";
 import { ContactSection } from "@/components/ContactSection";
 import { Footer } from "@/components/Footer";
 import { SongSignupPopup } from "@/components/SongSignupPopup";
+import { SONG_SIGNUP_POPUP_ENABLED } from "@/lib/constants";
 
 export default function Home() {
   return (
@@ -33,7 +34,7 @@ export default function Home() {
       <div className="bg-magenta">
         <Footer />
       </div>
-      <SongSignupPopup />
+      {SONG_SIGNUP_POPUP_ENABLED ? <SongSignupPopup /> : null}
     </DesktopEditorialShell>
   );
 }
