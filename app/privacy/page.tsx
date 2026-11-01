@@ -19,7 +19,7 @@ export default function PrivacyPage() {
       <main
         lang="he"
         dir="rtl"
-        className="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-24"
+        className="mx-auto max-w-3xl px-4 pb-16 pt-36 sm:px-6 sm:py-24"
       >
         <Link href="/" className={`font-hebrew text-sm ${linkClass}`}>
           חזרה לאתר

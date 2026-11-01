@@ -40,7 +40,7 @@ export function CookieConsentBanner() {
       aria-label="הודעה על עוגיות"
       lang="he"
       dir="rtl"
-      className="fixed inset-x-0 bottom-0 z-50 border-t-[3px] border-cream bg-black px-4 py-2 sm:px-6 sm:py-4"
+      className="fixed inset-x-0 top-14 z-50 border-b-[3px] border-cream bg-black px-4 py-2 sm:top-auto sm:bottom-0 sm:border-t-[3px] sm:border-b-0 sm:px-6 sm:py-4"
     >
       <div className="mx-auto max-w-[1400px] [text-align-last:justify] sm:flex sm:items-center sm:justify-between sm:gap-4 sm:[text-align-last:auto]">
         <p className="inline font-hebrew text-xs leading-relaxed text-cream/90 sm:block sm:text-sm">
