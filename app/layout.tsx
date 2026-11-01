@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Bebas_Neue, Bowlby_One_SC, Inter, Rubik } from "next/font/google";
+import { CookieConsentBanner } from "@/components/CookieConsentBanner";
 import "./globals.css";
 
 const bowlby = Bowlby_One_SC({
@@ -44,6 +45,7 @@ export default function RootLayout({
         className={`${bowlby.variable} ${inter.variable} ${bebasNeue.variable} ${rubik.variable} min-h-full bg-background font-sans text-foreground antialiased`}
       >
         {children}
+        <CookieConsentBanner />
       </body>
     </html>
   );

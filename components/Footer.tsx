@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { CookieSettingsButton } from "@/components/CookieSettingsButton";
 import { NAV_LINKS, SOCIAL_LINKS } from "@/lib/constants";
 
 export function Footer() {
@@ -56,9 +58,13 @@ export function Footer() {
           </ul>
         </div>
 
-        <p className="mt-10 border-t border-cream/20 pt-8 text-xs text-cream/50">
-          © {year} Rock Your People. All rights reserved.
-        </p>
+        <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-cream/20 pt-8 text-xs text-cream/50">
+          <p>© {year} Rock Your People. All rights reserved.</p>
+          <Link href="/privacy" className="hover:text-cream">
+            Privacy Policy
+          </Link>
+          <CookieSettingsButton className="hover:text-cream" />
+        </div>
       </div>
     </footer>
   );
