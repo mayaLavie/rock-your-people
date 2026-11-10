@@ -13,7 +13,7 @@ import { SONG_SIGNUP_SHEET_URL } from "@/lib/constants";
 
 const YELLOW = "#ffe34d";
 const BLACK = "#1e1c1c";
-const TEASER_TITLE = "לחצו, ובחרו שיר שתרצו לשיר איתנו על הבמה, במופע בקיבוץ גברעם, 26.9";
+const TEASER_TITLE = "לחצו, ובחרו שיר שתרצו לשיר איתנו על הבמה, במופע בקיבוץ פרען, 27.11";
 
 type LineupItem = { title: string; artist: string; taken: number };
 
@@ -40,6 +40,22 @@ const LINEUP: LineupItem[] = [
   { title: "הקולות של פיראוס", artist: "חיים משה", taken: 0 },
   { title: "מה קרה לך", artist: "שוטי הנבואה", taken: 0 },
   { title: "שיר ישן", artist: "אתניקס", taken: 0 },
+  { title: "עוד ארון אחד", artist: "היהודים", taken: 0 },
+  { title: "חלליות", artist: "ברי סחרוף", taken: 0 },
+  { title: "איזה יום היה לי סמואל", artist: "השמחות", taken: 0 },
+  { title: "היו לי פעם חברים", artist: "השמחות", taken: 0 },
+  { title: "ריקדי", artist: "ישי לוי", taken: 0 },
+  { title: "רונה", artist: "סמיר שוקרי", taken: 0 },
+  { title: "תתקעו בחצוצרה", artist: "שב״ק ס׳", taken: 0 },
+  { title: "Valerie", artist: "Amy Winehouse", taken: 0 },
+  { title: "בואי הביתה", artist: "ברי סחרוף", taken: 0 },
+  { title: "עוד יהיה לי", artist: "מרגלית צנעני", taken: 0 },
+  { title: "איש וכינור", artist: "להקת שפתיים", taken: 0 },
+  { title: "Everybody", artist: "Backstreet Boys", taken: 0 },
+  { title: "שכשנבוא", artist: "אריק איינשטיין ומיקי גבריאלוב", taken: 0 },
+  { title: "להתראות נעורים שלום אהבה", artist: "משינה", taken: 0 },
+  { title: "זן נדיר", artist: "קורין אלאל", taken: 0 },
+  { title: "יושב על הגדר", artist: "אריק איינשטיין", taken: 0 },
 ];
 
 const CSS = `
@@ -366,7 +382,7 @@ export function SongSignupPopup({
             עלו איתנו לבמה.
           </h2>
           <p style={{ margin: "2px 0 0", fontSize: 16, lineHeight: 1.55, textWrap: "pretty" }}>
-            במופע הקרוב בקיבוץ גברעם, אתם מוזמנים להתרגש איתנו על הבמה, ולהצטרף אלינו בשירה.
+            במופע הקרוב בקיבוץ פרען, אתם מוזמנים להתרגש איתנו על הבמה, ולהצטרף אלינו בשירה.
             בחרו את השיר שאתם רוצים לשיר איתנו — אפשר יותר מאחד — והשאירו פרטים.
           </p>
         </div>
