@@ -56,6 +56,9 @@ const LINEUP: LineupItem[] = [
   { title: "להתראות נעורים שלום אהבה", artist: "משינה", taken: 0 },
   { title: "זן נדיר", artist: "קורין אלאל", taken: 0 },
   { title: "יושב על הגדר", artist: "אריק איינשטיין", taken: 0 },
+  { title: "אחלום לנצח", artist: "מופע הארנבות של ד״ר קספר", taken: 0 },
+  { title: "אמריקה", artist: "פורטיסחרוף", taken: 0 },
+  { title: "Three Little Birds", artist: "Bob Marley", taken: 0 },
 ];
 
 const CSS = `
