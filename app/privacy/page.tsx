@@ -29,7 +29,7 @@ export default function PrivacyPage() {
           מדיניות פרטיות
         </h1>
         <p className="mt-3 font-hebrew text-sm text-cream/60">
-          עודכן לאחרונה: 1 בנובמבר 2026
+          עודכן לאחרונה: 10 בנובמבר 2026
         </p>
 
         <p className={paragraphClass}>
@@ -43,6 +43,13 @@ export default function PrivacyPage() {
           נפתחת שיחת וואטסאפ עם ההודעה שכתבתם, ואתם בוחרים אם לשלוח אותה. הודעה
           שנשלחת אלינו משמשת אותנו כדי לחזור אליכם ולטפל בפנייה. השימוש בוואטסאפ
           כפוף גם למדיניות הפרטיות של וואטסאפ.
+        </p>
+
+        <h2 className={headingClass}>הרשמה לשירה במופע</h2>
+        <p className={paragraphClass}>
+          כשאתם נרשמים באתר לשיר איתנו במופע, השם, מספר הטלפון וההערה שכתבתם
+          נשמרים בגיליון Google Sheets שלנו, יחד עם השיר שבחרתם. אנחנו משתמשים
+          בפרטים רק כדי לתאם איתכם את ההשתתפות במופע. הגיליון מאוחסן אצל Google.
         </p>
 
         <h2 className={headingClass}>עוגיות ופיקסל של Meta</h2>
