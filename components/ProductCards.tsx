@@ -127,9 +127,11 @@ export function ProductCards() {
           <div className="mx-auto w-fit text-center">
             <p
               id="engagement-heading"
-              className="font-display text-[32px] uppercase leading-none text-cream sm:text-[34px]"
+              lang="he"
+              dir="rtl"
+              className="font-hebrew text-[32px] font-bold leading-none text-cream sm:text-[34px]"
             >
-              choose your engagement
+              מה בא לכם היום?
             </p>
             <h3
               lang="he"

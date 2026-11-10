@@ -6,7 +6,7 @@ import { EXPERIENCES_CARD_HEADLINE_HE } from "@/lib/constants";
 
 const STAGE_IMAGE_SRC = "/images/gemini band pic.png";
 const TRIO_IMAGE_SRC = "/images/Screenshot trio 360.png";
-const WORKSHOP_IMAGE_SRC = "/images/workshop4.png";
+const WORKSHOP_IMAGE_SRC = "/images/band-in-a-day-collage-title.png";
 
 const DEFAULT_ACTIVE_INDEX = 1;
 const SWIPE_THRESHOLD_PX = 50;
@@ -21,6 +21,11 @@ const CARD_IMAGE_CLASS =
 const STAGE_TITLE =
   "font-stage-title uppercase leading-none tracking-wide text-brand-yellow";
 
+const POSTER_TITLE =
+  "block whitespace-nowrap text-center font-poster leading-none text-brand-yellow";
+
+const HEBREW_TEXT = /[\u0590-\u05FF]/;
+
 type ExperienceTheme = "trio" | "stage" | "workshop";
 
 type ExperienceCard = {
@@ -28,6 +33,7 @@ type ExperienceCard = {
   title: string;
   headline: string;
   topText?: string;
+  posterLines?: readonly string[];
   caption: string;
   scrollAriaLabel: string;
   image: string;
@@ -49,8 +55,12 @@ const EXPERIENCE_CARDS: ExperienceCard[] = [
   },
   {
     id: "your-people-on-stage",
-    title: "Your People On Stage",
+    title: "אתם על הבמה",
     headline: "",
+    posterLines: [
+      "להקה מקצועית, מופע חשמלי",
+      "האנשים שלכם הם הכוכבים על הבמה",
+    ],
     topText: "הופעות אינטרקטיביות  - האנשים שלכם על הבמה",
     caption: "מופע גדול ואינטראקטיבי שבו הקהל הופך לחלק מהלהקה.",
     scrollAriaLabel: "גלו עוד על המופע",
@@ -60,7 +70,7 @@ const EXPERIENCE_CARDS: ExperienceCard[] = [
   },
   {
     id: "musical-leadership-workshop",
-    title: "Team Harmony",
+    title: "Band in a Day",
     headline: EXPERIENCES_CARD_HEADLINE_HE["musical-leadership-workshop"],
     topText: "סדנאות מוזיקליות לצוותים ומנהלים",
     caption: "לצאת מהשגרה, להיכנס לקצב ולהפיק יצירה משותפת משלכם.",
@@ -276,14 +286,14 @@ export function ExperienceCarousel() {
   return (
     <div
       ref={regionRef}
-      className="w-full outline-none"
+      className="flex w-full flex-col outline-none"
       role="region"
       aria-roledescription="carousel"
       aria-label="Rock Your People experiences"
       tabIndex={0}
     >
       <div
-        className="mb-[10px] flex min-h-[2.75rem] items-end justify-center sm:min-h-[2.5rem] lg:mb-[15px] lg:min-h-0"
+        className="mb-[10px] flex min-h-[2.75rem] items-end justify-center sm:min-h-[2.5rem] lg:order-last lg:mb-0 lg:mt-1 lg:min-h-[2.75rem] lg:items-start"
         aria-live="polite"
       >
         {displayedCard.topText ? (
@@ -302,7 +312,7 @@ export function ExperienceCarousel() {
         ) : null}
       </div>
 
-      <div className="relative mx-auto w-full max-w-[32rem] lg:max-w-[26rem] lg:overflow-visible lg:px-11 lg:pb-8">
+      <div className="relative mx-auto w-full max-w-[32rem] lg:max-w-[26rem] lg:overflow-visible lg:px-11 lg:pt-6 lg:pb-6">
         <CarouselArrow direction="prev" onClick={prev} />
         <CarouselArrow direction="next" onClick={next} />
 
@@ -384,10 +394,28 @@ function ExperienceCardVisual({
           }`}
         >
           <span
-            className={`${STAGE_TITLE} block text-[33px] ${compact ? "lg:text-2xl" : ""}`}
+            className={
+              HEBREW_TEXT.test(card.title)
+                ? `${POSTER_TITLE} text-[22px] font-bold min-[360px]:text-[25px] ${compact ? "lg:text-[26px]" : ""}`
+                : `${STAGE_TITLE} block text-[33px] ${compact ? "lg:text-2xl" : ""}`
+            }
           >
             {card.title}
           </span>
+          {card.posterLines?.map((line, index) => (
+            <span
+              key={line}
+              lang="he"
+              dir="rtl"
+              className={`block text-center font-poster leading-snug text-brand-yellow ${
+                index === 0
+                  ? `mt-2 whitespace-nowrap text-[13px] min-[360px]:text-[15px] ${compact ? "lg:mt-1.5 lg:text-[14px]" : ""}`
+                  : `mt-0.5 text-[12px] min-[360px]:whitespace-nowrap ${compact ? "lg:text-[12px]" : ""}`
+              }`}
+            >
+              {line}
+            </span>
+          ))}
         </div>
       </div>
     );
@@ -417,7 +445,7 @@ function ExperienceCardVisual({
         alt=""
         fill
         sizes="(max-width: 640px) 75vw, 22rem"
-        className={`object-cover object-center ${CARD_IMAGE_CLASS} ${
+        className={`object-cover object-[50%_75%] ${CARD_IMAGE_CLASS} ${
           isActive ? "brightness-110" : ""
         }`}
       />

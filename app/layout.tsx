@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
-import { Bebas_Neue, Bowlby_One_SC, Inter, Rubik } from "next/font/google";
+import {
+  Bebas_Neue,
+  Bowlby_One_SC,
+  Inter,
+  Rubik,
+  Varela_Round,
+} from "next/font/google";
 import { CookieConsentBanner } from "@/components/CookieConsentBanner";
 import "./globals.css";
 
@@ -26,6 +32,12 @@ const rubik = Rubik({
   variable: "--font-rubik",
 });
 
+const varelaRound = Varela_Round({
+  weight: "400",
+  subsets: ["hebrew", "latin"],
+  variable: "--font-varela",
+});
+
 export const metadata: Metadata = {
   title: "Rock Your People",
   description: "חוויות מוזיקליות אינטראקטיביות לחברות, צוותים ואירועים",
@@ -42,7 +54,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body
-        className={`${bowlby.variable} ${inter.variable} ${bebasNeue.variable} ${rubik.variable} min-h-full bg-background font-sans text-foreground antialiased`}
+        className={`${bowlby.variable} ${inter.variable} ${bebasNeue.variable} ${rubik.variable} ${varelaRound.variable} min-h-full bg-background font-sans text-foreground antialiased`}
       >
         {children}
         <CookieConsentBanner />

@@ -94,14 +94,17 @@ function HebrewBullets({
   return (
     <ul lang="he" dir="rtl" className={`font-hebrew ${className}`}>
       {items.map((item) => {
-        const separatorIndex = item.indexOf(": ");
+        const separatorIndex = item.search(/[:.] /);
         const hasLabel = separatorIndex > 0 && separatorIndex < 40;
         const label = hasLabel ? item.slice(0, separatorIndex + 1) : null;
         const rest = hasLabel ? item.slice(separatorIndex + 1).trimStart() : item;
+        const startsWithEmoji = /^\p{Extended_Pictographic}/u.test(item);
 
         return (
           <li key={item} className="flex gap-3 text-base leading-relaxed sm:text-lg">
-            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-current opacity-80" />
+            {startsWithEmoji ? null : (
+              <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-current opacity-80" />
+            )}
             <span>
               {label ? <strong className="font-bold">{label}</strong> : null}
               {label ? ` ${rest}` : rest}
@@ -361,7 +364,7 @@ function YourPeopleOnStageDetail({ detail }: ProductDetailSectionProps) {
       <div className="relative z-10 mx-auto max-w-3xl lg:max-w-4xl">
         <h2
           id={`${detail.id}-heading`}
-          className={`${DETAIL_HEADLINE} text-[#FFE34D]`}
+          className={`${DETAIL_HEADLINE} font-bold text-[#FFE34D]`}
         >
           {detail.headline}
         </h2>
@@ -380,7 +383,7 @@ function LeadershipWorkshopDetail({ detail }: ProductDetailSectionProps) {
   const bodyClass = `${HEBREW_BODY} text-[#06131D]/85`;
   const hebrew = HebrewDetailCopy({
     detail,
-    subheadlineClass: `${HEBREW_SUBHEADLINE} text-[#FBEEE3]`,
+    subheadlineClass: `mt-6 text-2xl font-semibold leading-snug sm:text-3xl text-[#FBEEE3]`,
     bodyClass,
     bulletClass: `${HEBREW_BULLETS} text-[#06131D]`,
     bulletsHeadingClass: "mt-8 text-lg font-medium text-[#FAF0E4] sm:text-xl",

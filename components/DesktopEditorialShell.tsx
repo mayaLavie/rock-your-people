@@ -30,8 +30,8 @@ export function DesktopEditorialShell({ children }: DesktopEditorialShellProps) 
       <DesktopSiteHeader />
 
       <div className="lg:flex lg:items-start lg:justify-center lg:gap-10 lg:px-6 lg:pb-12 lg:pt-8 xl:gap-14 xl:px-10 2xl:gap-20">
-        <aside className="hidden xl:sticky xl:top-[calc(var(--desktop-site-header-height)+2rem)] xl:flex xl:h-[calc(100dvh-var(--desktop-site-header-height)-2rem)] xl:w-[22rem] xl:shrink-0 xl:flex-col xl:items-center xl:justify-center xl:self-start xl:text-cream 2xl:w-[26rem]">
-          <div className="w-full max-w-[21rem] 2xl:max-w-[25rem]">
+        <aside className="hidden xl:sticky xl:top-[calc(var(--desktop-site-header-height)+2rem)] xl:flex xl:h-[calc(100dvh-var(--desktop-site-header-height)-2rem)] xl:w-[15rem] xl:shrink-0 xl:flex-col xl:items-center xl:justify-center xl:self-start xl:text-cream 2xl:w-[18rem]">
+          <div className="w-full max-w-[13rem] 2xl:max-w-[15rem]">
             <Image
               src={TITLE_IMAGE.src}
               alt={TITLE_IMAGE.alt}
@@ -54,7 +54,7 @@ export function DesktopEditorialShell({ children }: DesktopEditorialShellProps) 
           </div>
         </aside>
 
-        <div className="desktop-editorial-frame w-full lg:max-w-[480px] lg:shrink-0 lg:overflow-x-hidden lg:rounded-[2px] lg:bg-background lg:shadow-[0_28px_90px_rgba(0,0,0,0.42)] lg:ring-1 lg:ring-cream/25">
+        <div className="desktop-editorial-frame w-full lg:max-w-[720px] lg:shrink-0 lg:overflow-x-hidden lg:rounded-[2px] lg:bg-background lg:shadow-[0_28px_90px_rgba(0,0,0,0.42)] lg:ring-1 lg:ring-cream/25">
           {children}
         </div>
       </div>
