@@ -13,7 +13,7 @@ import { SONG_SIGNUP_SHEET_URL } from "@/lib/constants";
 
 const YELLOW = "#ffe34d";
 const BLACK = "#1e1c1c";
-const TEASER_TITLE = "לחצו, ובחרו שיר שתרצו לשיר איתנו על הבמה, במופע בקיבוץ פרען, 27.11";
+const TEASER_TITLE = "לחצו, ובחרו שיר שתרצו לשיר איתנו על הבמה, במופע במושב פראן, 27.11";
 
 type LineupItem = { title: string; artist: string; taken: number };
 
@@ -382,7 +382,7 @@ export function SongSignupPopup({
             עלו איתנו לבמה.
           </h2>
           <p style={{ margin: "2px 0 0", fontSize: 16, lineHeight: 1.55, textWrap: "pretty" }}>
-            במופע הקרוב בקיבוץ פרען, אתם מוזמנים להתרגש איתנו על הבמה, ולהצטרף אלינו בשירה.
+            במופע הקרוב במושב פראן, אתם מוזמנים להתרגש איתנו על הבמה, ולהצטרף אלינו בשירה.
             בחרו את השיר שאתם רוצים לשיר איתנו — אפשר יותר מאחד — והשאירו פרטים.
           </p>
         </div>
