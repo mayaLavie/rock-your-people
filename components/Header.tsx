@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { DesktopNav } from "@/components/DesktopNav";
+import { GalleryIcon } from "@/components/GalleryIcon";
 import { MobileMenu } from "@/components/MobileMenu";
 import { SOCIAL_LINKS, TITLE_IMAGE } from "@/lib/constants";
 
@@ -30,6 +31,13 @@ export function Header() {
         <DesktopNav />
 
         <div className="relative z-20 flex shrink-0 items-center justify-end gap-3 md:col-start-3">
+          <a
+            href="#gallery"
+            aria-label="לגלריית התמונות"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-cream transition hover:bg-cream/15"
+          >
+            <GalleryIcon />
+          </a>
           <a
             href={SOCIAL_LINKS.whatsapp}
             target="_blank"

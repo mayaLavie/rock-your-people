@@ -5,8 +5,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { EXPERIENCES_CARD_HEADLINE_HE } from "@/lib/constants";
 
 const STAGE_IMAGE_SRC = "/images/gemini band pic.png";
-const TRIO_IMAGE_SRC = "/images/Screenshot trio 360.png";
+const TRIO_IMAGE_SRC = "/images/rock-your-dj-party.png";
 const WORKSHOP_IMAGE_SRC = "/images/band-in-a-day-collage-title.png";
+const OFFICE_IMAGE_SRC = "/images/rock-your-people-in-office.jpeg";
 
 const DEFAULT_ACTIVE_INDEX = 1;
 const SWIPE_THRESHOLD_PX = 50;
@@ -22,18 +23,18 @@ const STAGE_TITLE =
   "font-stage-title uppercase leading-none tracking-wide text-brand-yellow";
 
 const POSTER_TITLE =
-  "block whitespace-nowrap text-center font-poster leading-none text-brand-yellow";
+  "block whitespace-nowrap text-center font-hebrew leading-none text-brand-yellow";
 
 const HEBREW_TEXT = /[\u0590-\u05FF]/;
 
-type ExperienceTheme = "trio" | "stage" | "workshop";
+type ExperienceTheme = "trio" | "stage" | "workshop" | "office";
 
 type ExperienceCard = {
   id: string;
   title: string;
   headline: string;
   topText?: string;
-  posterLines?: readonly string[];
+  posterBottomLine?: string;
   caption: string;
   scrollAriaLabel: string;
   image: string;
@@ -44,11 +45,11 @@ type ExperienceCard = {
 const EXPERIENCE_CARDS: ExperienceCard[] = [
   {
     id: "trio-360",
-    title: "Trio 360",
+    title: "Rock Your DJ",
     headline: EXPERIENCES_CARD_HEADLINE_HE["trio-360"],
-    topText: "הופעות חיות במעגל",
+    topText: "מסיבה עם נגנים לייב",
     caption: "טריו חי, קרוב ומשחרר שמתאים גם לחללים קטנים ואינטימיים.",
-    scrollAriaLabel: "גלו עוד על Trio 360",
+    scrollAriaLabel: "גלו עוד על Rock Your DJ",
     image: TRIO_IMAGE_SRC,
     href: "#trio-360",
     theme: "trio",
@@ -57,11 +58,8 @@ const EXPERIENCE_CARDS: ExperienceCard[] = [
     id: "your-people-on-stage",
     title: "אתם על הבמה",
     headline: "",
-    posterLines: [
-      "להקה מקצועית, מופע חשמלי",
-      "האנשים שלכם הם הכוכבים על הבמה",
-    ],
-    topText: "הופעות אינטרקטיביות  - האנשים שלכם על הבמה",
+    posterBottomLine: "להקה מקצועית, מופע חשמלי !",
+    topText: "הופעות אינטרקטיביות - האנשים שלכם הם הכוכבים",
     caption: "מופע גדול ואינטראקטיבי שבו הקהל הופך לחלק מהלהקה.",
     scrollAriaLabel: "גלו עוד על המופע",
     image: STAGE_IMAGE_SRC,
@@ -72,12 +70,23 @@ const EXPERIENCE_CARDS: ExperienceCard[] = [
     id: "musical-leadership-workshop",
     title: "Band in a Day",
     headline: EXPERIENCES_CARD_HEADLINE_HE["musical-leadership-workshop"],
-    topText: "סדנאות מוזיקליות לצוותים ומנהלים",
+    topText: "סדנת גיבוש מוזיקלית",
     caption: "לצאת מהשגרה, להיכנס לקצב ולהפיק יצירה משותפת משלכם.",
     scrollAriaLabel: "גלו עוד על הסדנה",
     image: WORKSHOP_IMAGE_SRC,
     href: "#leadership-workshop",
     theme: "workshop",
+  },
+  {
+    id: "beer-office",
+    title: "בירה ונרימה",
+    headline: "",
+    topText: "הרכב אקוסטי מיוחד - שירים שכולם אוהבים\nואתם שרים איתנו",
+    caption: "",
+    scrollAriaLabel: "גלו עוד על בירה ונרימה",
+    image: OFFICE_IMAGE_SRC,
+    href: "#beer-office",
+    theme: "office",
   },
 ];
 
@@ -301,7 +310,7 @@ export function ExperienceCarousel() {
             key={displayedCard.id}
             lang="he"
             dir="rtl"
-            className={`m-0 mx-auto max-w-md px-2 text-center font-hebrew text-pretty text-[13px] font-medium leading-snug text-cream sm:text-[14px] lg:text-[15px] lg:font-semibold ${TEXT_TRANSITION_BASE} ${
+            className={`m-0 mx-auto max-w-md whitespace-pre-line px-2 text-center font-hebrew text-pretty text-[13px] font-medium leading-snug text-cream sm:text-[14px] lg:text-[15px] lg:font-semibold ${TEXT_TRANSITION_BASE} ${
               isTextTransitioning
                 ? `${TEXT_TRANSITION_HIDDEN} motion-reduce:opacity-100 motion-reduce:translate-y-0`
                 : TEXT_TRANSITION_VISIBLE
@@ -346,7 +355,7 @@ export function ExperienceCarousel() {
                 }
                 aria-current={isActive ? "true" : undefined}
                 onClick={() => handleCardActivate(index)}
-                className={`absolute top-1/2 left-1/2 aspect-[3/4] w-[min(62vw,14.5rem)] max-h-[min(82vw,19.33rem)] cursor-pointer overflow-hidden bg-black transition-[transform,opacity,box-shadow,border-color] duration-500 ease-out motion-reduce:transition-none sm:w-[min(58vw,15.5rem)] md:w-[20rem] md:max-h-none lg:w-[13.75rem] lg:max-h-none ${
+                className={`absolute top-1/2 left-1/2 aspect-[3/4] w-[min(62vw,14.5rem)] max-h-[min(82vw,19.33rem)] cursor-pointer overflow-hidden rounded-[5px] bg-black transition-[transform,opacity,box-shadow,border-color] duration-500 ease-out motion-reduce:transition-none sm:w-[min(58vw,15.5rem)] md:w-[20rem] md:max-h-none lg:w-[13.75rem] lg:max-h-none ${
                   isActive
                     ? `${CARD_BORDER} shadow-[0_20px_50px_rgba(0,0,0,0.45)] ${ACTIVE_CARD_HOVER}`
                     : `${CARD_BORDER} brightness-90`
@@ -389,33 +398,59 @@ function ExperienceCardVisual({
           }`}
         />
         <div
-          className={`absolute inset-x-0 top-0 z-10 bg-gradient-to-b from-black/75 via-black/35 to-transparent px-3 pt-3 pb-8 sm:px-4 sm:pt-4 sm:pb-10 ${
-            compact ? "lg:px-2.5 lg:pt-2.5 lg:pb-6" : ""
+          className={`absolute inset-x-0 top-0 z-10 bg-gradient-to-b from-black/75 via-black/35 to-transparent px-3 pt-5 pb-8 sm:px-4 sm:pt-6 sm:pb-10 ${
+            compact ? "lg:px-2.5 lg:pt-4 lg:pb-6" : ""
           }`}
         >
           <span
             className={
               HEBREW_TEXT.test(card.title)
-                ? `${POSTER_TITLE} text-[22px] font-bold min-[360px]:text-[25px] ${compact ? "lg:text-[26px]" : ""}`
+                ? `${POSTER_TITLE} -mx-3 text-[33px] font-bold sm:-mx-4 ${compact ? "lg:-mx-2.5" : ""}`
                 : `${STAGE_TITLE} block text-[33px] ${compact ? "lg:text-2xl" : ""}`
             }
           >
             {card.title}
           </span>
-          {card.posterLines?.map((line, index) => (
+        </div>
+        {card.posterBottomLine ? (
+          <div
+            className={`absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/75 via-black/35 to-transparent px-3 pt-8 pb-3 sm:px-4 sm:pt-10 sm:pb-4 ${
+              compact ? "lg:px-2.5 lg:pt-6 lg:pb-2.5" : ""
+            }`}
+          >
             <span
-              key={line}
               lang="he"
               dir="rtl"
-              className={`block text-center font-poster leading-snug text-brand-yellow ${
-                index === 0
-                  ? `mt-2 whitespace-nowrap text-[13px] min-[360px]:text-[15px] ${compact ? "lg:mt-1.5 lg:text-[14px]" : ""}`
-                  : `mt-0.5 text-[12px] min-[360px]:whitespace-nowrap ${compact ? "lg:text-[12px]" : ""}`
-              }`}
+              className={`block whitespace-nowrap text-center font-poster leading-snug text-brand-yellow text-[13px] min-[360px]:text-[15px] ${compact ? "lg:text-[14px]" : ""}`}
             >
-              {line}
+              {card.posterBottomLine}
             </span>
-          ))}
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+
+  if (card.theme === "office") {
+    return (
+      <div className="relative h-full w-full">
+        <Image
+          src={encodeURI(card.image)}
+          alt=""
+          fill
+          sizes="(max-width: 640px) 75vw, 22rem"
+          className={`object-cover object-[50%_70%] ${CARD_IMAGE_CLASS} ${
+            isActive ? "brightness-110" : ""
+          }`}
+        />
+        <div
+          className={`absolute inset-x-0 top-0 z-10 bg-gradient-to-b from-white/80 via-white/45 to-transparent px-3 pt-2 pb-8 sm:px-4 sm:pt-3 sm:pb-10 ${
+            compact ? "lg:px-2.5 lg:pt-1.5 lg:pb-6" : ""
+          }`}
+        >
+          <span lang="he" dir="rtl" className={`${POSTER_TITLE} text-[38px] font-bold !text-magenta`}>
+            {card.title}
+          </span>
         </div>
       </div>
     );

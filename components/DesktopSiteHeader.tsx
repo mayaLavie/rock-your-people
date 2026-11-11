@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { DesktopNav } from "@/components/DesktopNav";
+import { GalleryIcon } from "@/components/GalleryIcon";
 import { SOCIAL_LINKS, TITLE_IMAGE } from "@/lib/constants";
 
 export function DesktopSiteHeader() {
@@ -26,6 +27,13 @@ export function DesktopSiteHeader() {
 
         <div className="flex shrink-0 items-center justify-end gap-4">
           <a
+            href="#gallery"
+            aria-label="לגלריית התמונות"
+            className="flex h-10 w-10 items-center justify-center rounded-full text-cream transition hover:bg-cream/15"
+          >
+            <GalleryIcon />
+          </a>
+          <a
             href={SOCIAL_LINKS.whatsapp}
             target="_blank"
             rel="noopener noreferrer"
@@ -37,7 +45,7 @@ export function DesktopSiteHeader() {
           <Link
             href="#contact"
             lang="he"
-            className="inline-flex border border-cream/90 px-5 py-2 font-hebrew text-sm font-medium text-cream transition hover:bg-cream hover:text-magenta"
+            className="inline-flex rounded-[5px] border border-cream/90 px-5 py-2 font-hebrew text-sm font-medium text-cream transition hover:bg-cream hover:text-magenta"
           >
             דברו איתנו
           </Link>

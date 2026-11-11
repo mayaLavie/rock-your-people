@@ -129,7 +129,7 @@ export function ContactSection() {
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 border border-[#25D366] bg-[#25D366] px-6 py-2 font-hebrew text-sm font-medium text-[#0a0a0a] no-underline transition hover:bg-transparent hover:text-[#25D366] sm:w-auto sm:min-w-[200px]"
+              className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-[5px] border border-[#25D366] bg-[#25D366] px-6 py-2 font-hebrew text-sm font-medium text-[#0a0a0a] no-underline transition hover:bg-transparent hover:text-[#25D366] sm:w-auto sm:min-w-[200px]"
             >
               <WhatsAppIcon />
               שליחה בוואטסאפ

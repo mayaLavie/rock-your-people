@@ -6,6 +6,7 @@ const PRODUCT_DETAIL_HASHES = new Set([
   "#trio-360",
   "#your-people-on-stage",
   "#leadership-workshop",
+  "#beer-office",
 ]);
 
 function getSiteHeaderHeight() {

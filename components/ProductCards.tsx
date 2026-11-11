@@ -1,4 +1,5 @@
 import Image from "next/image";
+import type { ReactNode } from "react";
 import {
   EXPERIENCES_INTRO_PARAGRAPHS,
   EXPERIENCES_INTRO_STAGE_IMAGE,
@@ -9,7 +10,7 @@ import {
 } from "@/lib/constants";
 import { ExperienceCarousel } from "@/components/ExperienceCarousel";
 
-export function ProductCards() {
+export function ProductCards({ beforeEngagement }: { beforeEngagement?: ReactNode }) {
   return (
     <>
       <section
@@ -112,17 +113,19 @@ export function ProductCards() {
           </div>
         </div>
 
-        <div
-          className="absolute inset-x-0 bottom-[10px] h-2.5 bg-magenta md:hidden"
-          aria-hidden
-        />
       </section>
+
+      {beforeEngagement}
 
       <section
         id="engagement"
         className="relative flex flex-col overflow-x-hidden overflow-y-visible bg-magenta px-4 pt-8 pb-10 md:px-6 md:py-8 lg:overflow-visible lg:px-4 lg:py-6 lg:pt-7 lg:pb-6"
         aria-labelledby="engagement-heading"
       >
+        <div
+          className="absolute inset-x-0 top-[10px] h-2.5 bg-[#FBEEE3] md:hidden"
+          aria-hidden
+        />
         <div className="mx-auto w-full max-w-[1400px]">
           <div className="mx-auto w-fit text-center">
             <p

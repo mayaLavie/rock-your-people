@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { TRIO_360_SECTION_BG } from "@/lib/constants";
-
 const STAGE_SECTION_BG_SRC = "/images/page%201%20F.png";
+const DJ_SECTION_BG_SRC = "/images/dj-party-neon-bg.png";
+const BEER_SECTION_BG_SRC = "/images/beer-venarima-bg.jpeg";
 
 type ProductDetail = (typeof import("@/lib/product-details").PRODUCT_DETAIL_SECTIONS)[number];
 
@@ -14,7 +14,7 @@ const HEBREW_BULLETS = "mt-8 space-y-3";
 const DETAIL_HEADLINE =
   "font-display text-4xl uppercase leading-tight sm:text-5xl lg:text-6xl";
 const DETAIL_CTA =
-  "inline-flex w-fit border px-6 py-2 text-sm font-medium tracking-wide transition";
+  "inline-flex w-fit rounded-[5px] border px-6 py-2 text-sm font-medium tracking-wide transition";
 const DETAIL_SECTION_PAD = "px-4 py-16 sm:px-6 sm:py-20 lg:px-10";
 const STAGE_SECTION_PAD =
   "px-4 pb-16 pt-[40px] sm:px-6 sm:pb-20 sm:pt-[40px] lg:px-10";
@@ -145,6 +145,9 @@ export function ProductDetailSection({ detail }: ProductDetailSectionProps) {
   }
   if (detail.theme === "stage") {
     return <YourPeopleOnStageDetail detail={detail} />;
+  }
+  if (detail.theme === "beer") {
+    return <BeerDetail detail={detail} />;
   }
   return <LeadershipWorkshopDetail detail={detail} />;
 }
@@ -278,8 +281,58 @@ function HebrewDetailCopy({
 function Trio360Detail({ detail }: ProductDetailSectionProps) {
   const hebrew = HebrewDetailCopy({
     detail,
+    subheadlineClass: `${HEBREW_SUBHEADLINE} font-bold text-[#FBEEE3]`,
+    bodyClass: `${HEBREW_BODY} text-[#FBEEE3]/90`,
+    bulletClass: `${HEBREW_BULLETS} text-[#FBEEE3]`,
+    ctaClass: `${DETAIL_CTA} mt-10 border-[#FBEEE3] bg-[#FBEEE3] text-[#1e1c1c] hover:bg-transparent hover:text-[#FBEEE3]`,
+  });
+
+  return (
+    <section
+      id={detail.id}
+      className={`relative overflow-hidden bg-[#1e1c1c] ${DETAIL_SECTION_PAD}`}
+      aria-labelledby={`${detail.id}-heading`}
+    >
+      <Image
+        src={DJ_SECTION_BG_SRC}
+        alt=""
+        fill
+        sizes="100vw"
+        className="object-cover object-top"
+      />
+      <div
+        className="pointer-events-none absolute inset-0 bg-black/30"
+        aria-hidden
+      />
+
+      <div className="relative z-10 mx-auto max-w-3xl [text-shadow:0_1px_8px_rgba(0,0,0,0.6)] lg:max-w-4xl">
+        <h2
+          id={`${detail.id}-heading`}
+          className={`${DETAIL_HEADLINE} text-[#FBEEE3]`}
+        >
+          {detail.headline}
+        </h2>
+        <HebrewCopyBlock>
+          {hebrew.subheadlineSlot}
+          {hebrew.bodySlot}
+          {hebrew.bulletsSlot}
+          {hebrew.closingBodySlot}
+          {hebrew.ctaSlot}
+        </HebrewCopyBlock>
+      </div>
+      <div
+        className="absolute inset-x-0 bottom-[10px] h-2.5 bg-[#FBEEE3] md:hidden"
+        aria-hidden
+      />
+    </section>
+  );
+}
+
+function BeerDetail({ detail }: ProductDetailSectionProps) {
+  const hebrew = HebrewDetailCopy({
+    detail,
     subheadlineClass:
-      "mt-6 text-[22px] font-medium leading-snug text-[#ff4e1a]",
+      "mt-6 text-[22px] font-bold leading-snug text-[#ff4e1a]",
     bodyClass: "mt-6 max-w-xl text-[20px] leading-relaxed text-[#3D2E2A]",
     bulletClass: `${HEBREW_BULLETS} text-[20px] text-[#3D2E2A]`,
     ctaClass: `${DETAIL_CTA} mt-10 border-[#D72866] bg-[#D72866] text-cream hover:bg-transparent hover:text-[#D72866]`,
@@ -288,18 +341,17 @@ function Trio360Detail({ detail }: ProductDetailSectionProps) {
   return (
     <section
       id={detail.id}
-      className="overflow-hidden bg-cream-muted"
+      className="relative overflow-hidden bg-cream-muted"
       aria-labelledby={`${detail.id}-heading`}
     >
       <div className="relative w-full">
         <div className="relative aspect-[3/2] w-full sm:aspect-[16/9]">
           <Image
-            src={encodeURI(TRIO_360_SECTION_BG.src)}
+            src={BEER_SECTION_BG_SRC}
             alt=""
             fill
             sizes="100vw"
-            className="object-cover object-top"
-            priority
+            className="object-cover object-[50%_65%]"
           />
           <div
             className="pointer-events-none absolute inset-0 bg-cream-muted/25"
@@ -311,9 +363,11 @@ function Trio360Detail({ detail }: ProductDetailSectionProps) {
           />
           <h2
             id={`${detail.id}-heading`}
-            className="absolute inset-x-0 top-4 z-10 text-center font-display text-5xl uppercase leading-none sm:top-6 sm:text-6xl lg:text-7xl"
+            lang="he"
+            dir="rtl"
+            className="absolute inset-x-0 top-4 z-10 text-center font-hebrew text-5xl font-bold leading-none text-magenta sm:top-6 sm:text-6xl lg:text-7xl"
           >
-            <span className="text-[#ff4e1a]">Trio 360</span>
+            {detail.headline}
           </h2>
         </div>
       </div>
@@ -323,9 +377,14 @@ function Trio360Detail({ detail }: ProductDetailSectionProps) {
           {hebrew.subheadlineSlot}
           {hebrew.bodySlot}
           {hebrew.bulletsSlot}
+          {hebrew.closingBodySlot}
           {hebrew.ctaSlot}
         </HebrewCopyBlock>
       </div>
+      <div
+        className="absolute inset-x-0 bottom-[10px] h-2.5 bg-[#FBEEE3] md:hidden"
+        aria-hidden
+      />
     </section>
   );
 }
@@ -375,6 +434,10 @@ function YourPeopleOnStageDetail({ detail }: ProductDetailSectionProps) {
           {hebrew.ctaSlot}
         </HebrewCopyBlock>
       </div>
+      <div
+        className="absolute inset-x-0 bottom-[10px] h-2.5 bg-[#FBEEE3] md:hidden"
+        aria-hidden
+      />
     </section>
   );
 }
@@ -387,7 +450,7 @@ function LeadershipWorkshopDetail({ detail }: ProductDetailSectionProps) {
     bodyClass,
     bulletClass: `${HEBREW_BULLETS} text-[#06131D]`,
     bulletsHeadingClass: "mt-8 text-lg font-medium text-[#FAF0E4] sm:text-xl",
-    ctaClass: `${DETAIL_CTA} mt-10 border-[#06131D] bg-[#06131D] text-[#FAF0E4] hover:bg-transparent hover:text-[#06131D]`,
+    ctaClass: `${DETAIL_CTA} mt-10 border-[#FAF0E4] bg-[#FAF0E4] text-[#06131D] hover:bg-transparent hover:text-[#FAF0E4]`,
   });
 
   return (

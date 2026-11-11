@@ -90,6 +90,29 @@
   animation: use-cases-marquee 25s linear infinite;
 }
 
+/* Reviews run top → bottom: start shifted up by one copy, slide down to 0 */
+@keyframes reviews-marquee {
+  from {
+    transform: translate3d(0, -50%, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.reviews-marquee-track {
+  animation: reviews-marquee 90s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reviews-marquee {
+    overflow-y: auto;
+  }
+  .reviews-marquee-track {
+    animation: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .use-cases-marquee-track {
     animation: none;

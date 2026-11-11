@@ -57,14 +57,14 @@ export function CookieConsentBanner() {
           <button
             type="button"
             onClick={() => setCookieConsent("accepted")}
-            className="border-2 border-cream bg-cream px-2 py-0.5 font-hebrew text-[11px] font-semibold sm:px-5 sm:py-2 sm:text-sm text-black transition hover:bg-cream/80"
+            className="rounded-[5px] border-2 border-cream bg-cream px-2 py-0.5 font-hebrew text-[11px] font-semibold sm:px-5 sm:py-2 sm:text-sm text-black transition hover:bg-cream/80"
           >
             מאשר/ת
           </button>
           <button
             type="button"
             onClick={declineCookies}
-            className="border-2 border-cream px-2 py-0.5 font-hebrew text-[11px] font-semibold sm:px-5 sm:py-2 sm:text-sm text-cream transition hover:bg-cream/15"
+            className="rounded-[5px] border-2 border-cream px-2 py-0.5 font-hebrew text-[11px] font-semibold sm:px-5 sm:py-2 sm:text-sm text-cream transition hover:bg-cream/15"
           >
             לא מאשר/ת
           </button>

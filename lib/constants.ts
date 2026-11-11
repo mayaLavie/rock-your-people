@@ -121,6 +121,11 @@ export const FAQ_NAV_LINK = {
   href: "#faq",
 } as const;
 
+export const REVIEWS_NAV_LINK = {
+  label: "Reviews",
+  href: "#reviews",
+} as const;
+
 export const GALLERY_NAV_LINK = {
   label: "Gallery",
   href: "#gallery",
@@ -132,14 +137,16 @@ export const CONTACT_NAV_LINK = {
 } as const;
 
 export const PRODUCT_NAV_LINKS = [
-  { label: "Trio 360", href: "#trio-360" },
   { label: "אתם על הבמה", href: "#your-people-on-stage" },
   { label: "Band in a Day", href: "#leadership-workshop" },
+  { label: "Rock Your DJ", href: "#trio-360" },
+  { label: "בירה ונרימה", href: "#beer-office" },
 ] as const;
 
 export const NAV_LINKS = [CONTACT_NAV_LINK] as const;
 
 export const DESKTOP_NAV_LINKS = [
+  REVIEWS_NAV_LINK,
   FAQ_NAV_LINK,
   GALLERY_NAV_LINK,
   CONTACT_NAV_LINK,
@@ -148,6 +155,7 @@ export const DESKTOP_NAV_LINKS = [
 /** Mobile hamburger menu */
 export const MOBILE_MENU_LINKS = [
   ...PRODUCT_NAV_LINKS,
+  { label: "המלצות", href: REVIEWS_NAV_LINK.href },
   { label: "מי אנחנו", href: ABOUT_NAV_LINK.href },
   { label: "שאלות נפוצות", href: FAQ_NAV_LINK.href },
   { label: "גלריה", href: GALLERY_NAV_LINK.href },

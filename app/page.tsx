@@ -6,6 +6,7 @@ import { ProductCards } from "@/components/ProductCards";
 import { SocialProof } from "@/components/SocialProof";
 import { FAQSection } from "@/components/FAQSection";
 import { ProductDetails } from "@/components/ProductDetails";
+import { ReviewsSection } from "@/components/ReviewsSection";
 import { Gallery } from "@/components/Gallery";
 import { ContactSection } from "@/components/ContactSection";
 import { Footer } from "@/components/Footer";
@@ -21,15 +22,19 @@ export default function Home() {
           <Hero />
         </div>
       </TopSectionShell>
-      <ProductCards />
+      <ProductCards
+        beforeEngagement={
+          <div className="bg-magenta">
+            <Gallery />
+          </div>
+        }
+      />
       <ProductDetails />
+      <ReviewsSection />
       <main className="bg-magenta">
         <SocialProof />
         <FAQSection />
       </main>
-      <div className="bg-magenta">
-        <Gallery />
-      </div>
       <ContactSection />
       <div className="bg-magenta">
         <Footer />
