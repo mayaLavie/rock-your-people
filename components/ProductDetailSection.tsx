@@ -423,7 +423,9 @@ function YourPeopleOnStageDetail({ detail }: ProductDetailSectionProps) {
       <div className="relative z-10 mx-auto max-w-3xl lg:max-w-4xl">
         <h2
           id={`${detail.id}-heading`}
-          className={`${DETAIL_HEADLINE} font-bold text-[#FFE34D]`}
+          lang="he"
+          dir="rtl"
+          className={`${DETAIL_HEADLINE} text-right font-bold text-[#FFE34D]`}
         >
           {detail.headline}
         </h2>

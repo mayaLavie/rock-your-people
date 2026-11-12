@@ -46,12 +46,12 @@ export function SocialProof() {
     <section
       ref={sectionRef}
       id="experience"
-      className="flex min-h-dvh flex-col border-b-[3px] border-cream bg-magenta md:min-h-0"
+      className="flex h-[calc(100dvh-var(--site-header-height))] flex-col border-b-[3px] border-cream bg-magenta lg:h-[calc(100dvh-var(--desktop-site-header-height))]"
       aria-labelledby="experience-heading"
     >
       <div className="flex min-h-0 flex-1 flex-col">
         <div
-          className={`relative flex min-h-0 w-full flex-1 items-center justify-center transition-opacity ease-in-out motion-reduce:transition-none md:flex-none ${
+          className={`relative min-h-0 w-full flex-1 transition-opacity ease-in-out motion-reduce:transition-none ${
             imageVisible ? "opacity-100" : "opacity-0"
           } motion-reduce:opacity-100`}
           style={{ transitionDuration: `${IMAGE_FADE_MS}ms` }}
@@ -59,10 +59,9 @@ export function SocialProof() {
           <Image
             src={encodeURI(STORY_IMAGE_SRC)}
             alt=""
-            width={1200}
-            height={1600}
-            sizes="100vw"
-            className="h-auto max-h-full w-full object-contain object-center md:max-h-none"
+            fill
+            sizes="(min-width: 1024px) 720px, 100vw"
+            className="object-cover object-[50%_65%]"
           />
         </div>
 

@@ -31,7 +31,7 @@ export function DesktopEditorialShell({ children }: DesktopEditorialShellProps) 
 
       <div className="lg:flex lg:items-start lg:justify-center lg:gap-10 lg:px-6 lg:pb-12 lg:pt-8 xl:gap-14 xl:px-10 2xl:gap-20">
         <aside className="hidden xl:sticky xl:top-[calc(var(--desktop-site-header-height)+2rem)] xl:flex xl:h-[calc(100dvh-var(--desktop-site-header-height)-2rem)] xl:w-[15rem] xl:shrink-0 xl:flex-col xl:items-center xl:justify-center xl:self-start xl:text-cream 2xl:w-[18rem]">
-          <div className="w-full max-w-[13rem] 2xl:max-w-[15rem]">
+          <div data-hero-logo className="w-full max-w-[13rem] 2xl:max-w-[15rem]">
             <Image
               src={TITLE_IMAGE.src}
               alt={TITLE_IMAGE.alt}

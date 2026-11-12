@@ -18,7 +18,10 @@ export function Hero() {
         </h1>
 
         <div className="flex flex-1 flex-col justify-end lg:hidden">
-          <div className="w-full max-w-[180px] shrink-0 sm:max-w-[220px] md:max-w-[240px]">
+          <div
+            data-hero-logo
+            className="w-full max-w-[180px] shrink-0 sm:max-w-[220px] md:max-w-[240px]"
+          >
             <Image
               src={TITLE_IMAGE.src}
               alt={TITLE_IMAGE.alt}

@@ -59,7 +59,7 @@ const EXPERIENCE_CARDS: ExperienceCard[] = [
     title: "אתם על הבמה",
     headline: "",
     posterBottomLine: "להקה מקצועית, מופע חשמלי !",
-    topText: "הופעות אינטרקטיביות - האנשים שלכם הם הכוכבים",
+    topText: "האנשים שלכם הם הכוכבים",
     caption: "מופע גדול ואינטראקטיבי שבו הקהל הופך לחלק מהלהקה.",
     scrollAriaLabel: "גלו עוד על המופע",
     image: STAGE_IMAGE_SRC,
@@ -81,7 +81,7 @@ const EXPERIENCE_CARDS: ExperienceCard[] = [
     id: "beer-office",
     title: "בירה ונרימה",
     headline: "",
-    topText: "הרכב אקוסטי מיוחד - שירים שכולם אוהבים\nואתם שרים איתנו",
+    topText: "הרכב אקוסטי מיוחד",
     caption: "",
     scrollAriaLabel: "גלו עוד על בירה ונרימה",
     image: OFFICE_IMAGE_SRC,
@@ -310,7 +310,7 @@ export function ExperienceCarousel() {
             key={displayedCard.id}
             lang="he"
             dir="rtl"
-            className={`m-0 mx-auto max-w-md whitespace-pre-line px-2 text-center font-hebrew text-pretty text-[13px] font-medium leading-snug text-cream sm:text-[14px] lg:text-[15px] lg:font-semibold ${TEXT_TRANSITION_BASE} ${
+            className={`m-0 mx-auto max-w-md whitespace-pre-line px-2 text-center font-hebrew text-pretty text-[17px] font-semibold leading-snug text-cream sm:text-[18px] lg:text-[19px] ${TEXT_TRANSITION_BASE} ${
               isTextTransitioning
                 ? `${TEXT_TRANSITION_HIDDEN} motion-reduce:opacity-100 motion-reduce:translate-y-0`
                 : TEXT_TRANSITION_VISIBLE

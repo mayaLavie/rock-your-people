@@ -3,16 +3,26 @@
 /*
   Rock Your People — "בחרו שיר, עלו לבמה" popup.
 
-  Shortly after the page loads, a small floating teaser pill appears
-  (centered on mobile, top-right on desktop), just below the site header. Tapping
+  Shortly after the page loads, a small floating teaser pill appears just above
+  the Rock Your People logo (top-right on mid-size desktops with no side logo). Tapping
   the pill opens the full song sign-up dialog designed for this flow.
 */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 import { SONG_SIGNUP_SHEET_URL } from "@/lib/constants";
 
 const YELLOW = "#ffe34d";
 const BLACK = "#1e1c1c";
+const HEART_RED = "#ff2d55";
+const LIKED_SONGS_STORAGE_KEY = "ryp-song-likes";
 const TEASER_TITLE = "לחצו, ובחרו שיר שתרצו לשיר איתנו על הבמה, במופע במושב פארן, 27.11";
 
 type LineupItem = { title: string; artist: string; taken: number };
@@ -70,6 +80,8 @@ const CSS = `
 .ryp-song:hover:not(:disabled){background:rgba(255,255,255,.06)}
 .ryp-song:disabled{opacity:.45;cursor:not-allowed}
 .ryp-cta:hover:not(:disabled){background:#ffd400}
+.ryp-heart:hover{background:rgba(255,255,255,.06)}
+@keyframes ryp-pop{0%{transform:scale(1)}40%{transform:scale(1.3)}100%{transform:scale(1)}}
 .ryp-cta:disabled{opacity:.45;cursor:not-allowed}
 .ryp-x:hover{color:${YELLOW}}
 .ryp-teaser:hover{filter:brightness(1.08)}
@@ -108,6 +120,51 @@ const CSS = `
 `;
 
 type Pick = { name: string; phone: string; note: string };
+
+function readLikedSongs(): Set<string> {
+  try {
+    const raw = localStorage.getItem(LIKED_SONGS_STORAGE_KEY);
+    return new Set(raw ? (JSON.parse(raw) as string[]) : []);
+  } catch {
+    return new Set();
+  }
+}
+
+function writeLikedSongs(liked: Set<string>) {
+  try {
+    localStorage.setItem(LIKED_SONGS_STORAGE_KEY, JSON.stringify([...liked]));
+  } catch {}
+}
+
+const TEASER_LOGO_GAP_PX = 12;
+const TEASER_DESKTOP_MAX_WIDTH_PX = 300;
+
+/** Fixed-position style that sits the teaser just above the visible hero logo. */
+function getTeaserPlacement(wrap: HTMLElement): CSSProperties | null {
+  const logo = Array.from(
+    document.querySelectorAll<HTMLElement>("[data-hero-logo]"),
+  ).find((el) => el.getBoundingClientRect().width > 0);
+  if (!logo) return null;
+
+  const rect = logo.getBoundingClientRect();
+  const isDesktop = window.matchMedia("(min-width:1024px)").matches;
+  // keep the desktop pill about as narrow as the side column so it doesn't cover the page
+  const maxWidth = isDesktop ? TEASER_DESKTOP_MAX_WIDTH_PX : undefined;
+  if (maxWidth) wrap.style.maxWidth = `${maxWidth}px`;
+  // mobile logo scrolls with the page, so place against its spot on the first screen;
+  // the desktop side logo is sticky, so its viewport position is what counts
+  const logoTop = isDesktop ? rect.top : rect.top + window.scrollY;
+  const top = Math.max(
+    TEASER_LOGO_GAP_PX,
+    logoTop - wrap.offsetHeight - TEASER_LOGO_GAP_PX,
+  );
+
+  if (!isDesktop) return { top };
+
+  const width = wrap.offsetWidth;
+  const left = Math.max(16, rect.left + rect.width / 2 - width / 2);
+  return { top, left, right: "auto", marginInline: 0, maxWidth };
+}
 type Picks = Record<number, Pick>;
 
 type Phase = "hidden" | "teaser" | "open";
@@ -140,6 +197,62 @@ export function SongSignupPopup({
   const [tried, setTried] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
+  const teaserRef = useRef<HTMLDivElement>(null);
+  const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
+  // localStorage is missing during server render; readLikedSongs falls back to an empty set
+  const [likedSongs, setLikedSongs] = useState<Set<string>>(readLikedSongs);
+
+  // load everyone's heart counts when the dialog opens
+  useEffect(() => {
+    if (phase !== "open") return;
+    let cancelled = false;
+    fetch(SONG_SIGNUP_SHEET_URL)
+      .then((res) => res.json())
+      .then((data: { likes?: Record<string, number> }) => {
+        if (!cancelled && data.likes) setLikeCounts(data.likes);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [phase]);
+
+  function toggleLike(song: LineupItem) {
+    const liked = !likedSongs.has(song.title);
+    const next = new Set(likedSongs);
+    if (liked) next.add(song.title);
+    else next.delete(song.title);
+    setLikedSongs(next);
+    writeLikedSongs(next);
+    setLikeCounts((counts) => ({
+      ...counts,
+      [song.title]: Math.max(0, (counts[song.title] ?? 0) + (liked ? 1 : -1)),
+    }));
+
+    // sent on its own, separate from the sign-up form
+    fetch(SONG_SIGNUP_SHEET_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({
+        type: "like",
+        action: liked ? "like" : "unlike",
+        song: song.title,
+        artist: song.artist,
+      }),
+    }).catch(() => {});
+  }
+  const [teaserPlacement, setTeaserPlacement] = useState<CSSProperties | null>(null);
+
+  useLayoutEffect(() => {
+    if (phase !== "teaser") return;
+    const place = () => {
+      if (teaserRef.current) setTeaserPlacement(getTeaserPlacement(teaserRef.current));
+    };
+    place();
+    window.addEventListener("resize", place);
+    return () => window.removeEventListener("resize", place);
+  }, [phase]);
 
   // reveal the teaser pill shortly after the page loads, so it's visible on the first screen
   useEffect(() => {
@@ -233,8 +346,10 @@ export function SongSignupPopup({
       <div className="ryp-scope" dir="rtl">
         <style>{CSS}</style>
         <div
+          ref={teaserRef}
           className="ryp-teaser-wrap"
           style={{
+            ...teaserPlacement,
             display: "flex",
             alignItems: "center",
             gap: 2,
@@ -388,6 +503,13 @@ export function SongSignupPopup({
             במופע הקרוב במושב פארן, אתם מוזמנים להתרגש איתנו על הבמה ולהצטרף אלינו בשירה.
             בחרו את השיר/ים שאתם רוצים לבצע איתנו והשאירו פרטים.
           </p>
+          <p style={{ margin: "2px 0 0", fontSize: 15, lineHeight: 1.5, opacity: 0.85 }}>
+            רק רוצים לשמוע? סמנו{" "}
+            <span style={{ color: HEART_RED }} aria-hidden>
+              ♥
+            </span>{" "}
+            ליד השירים שתרצו שננגן.
+          </p>
         </div>
 
         {!submitted ? (
@@ -400,67 +522,111 @@ export function SongSignupPopup({
                 const p = picks[i];
                 const selected = !!p && !!p.name.trim() && !!p.phone.trim();
                 const isOpen = expanded === i;
+                const liked = likedSongs.has(s.title);
+                const likeCount = likeCounts[s.title] ?? 0;
                 return (
                   <div
                     key={i}
                     className="ryp-row"
                     style={{ borderBottom: "1px solid rgba(255,255,255,.14)" }}
                   >
-                    <button
-                      type="button"
-                      className="ryp-song"
-                      onClick={() => toggle(i)}
-                      disabled={full}
-                      aria-expanded={isOpen}
-                      style={{
-                        width: "100%",
-                        textAlign: "right",
-                        background: "transparent",
-                        border: 0,
-                        font: "inherit",
-                        color: "inherit",
-                        cursor: "pointer",
-                        padding: "16px 22px",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 14,
-                      }}
-                    >
-                      <span
-                        aria-hidden
+                    <div style={{ display: "flex", alignItems: "stretch" }}>
+                      <button
+                        type="button"
+                        className="ryp-song"
+                        onClick={() => toggle(i)}
+                        disabled={full}
+                        aria-expanded={isOpen}
                         style={{
-                          flex: "none",
-                          width: 20,
-                          height: 20,
-                          fontSize: 13,
-                          lineHeight: "18px",
-                          textAlign: "center",
-                          border: `1.5px solid ${selected ? YELLOW : "rgba(255,255,255,.45)"}`,
-                          background: selected ? YELLOW : "transparent",
-                          color: BLACK,
-                        }}
-                      >
-                        {selected ? "✓" : ""}
-                      </span>
-
-                      <span
-                        style={{
-                          flex: 1,
-                          minWidth: 0,
+                          width: "100%",
+                          textAlign: "right",
+                          background: "transparent",
+                          border: 0,
+                          font: "inherit",
+                          color: "inherit",
+                          cursor: "pointer",
+                          padding: "16px 22px",
                           display: "flex",
-                          flexDirection: "column",
-                          gap: 3,
+                          alignItems: "center",
+                          gap: 14,
                         }}
                       >
                         <span
-                          className="ryp-title"
-                          style={{ fontSize: 21, fontWeight: 700, lineHeight: 1.2, color: YELLOW }}
+                          aria-hidden
+                          style={{
+                            flex: "none",
+                            width: 20,
+                            height: 20,
+                            fontSize: 13,
+                            lineHeight: "18px",
+                            textAlign: "center",
+                            border: `1.5px solid ${selected ? YELLOW : "rgba(255,255,255,.45)"}`,
+                            background: selected ? YELLOW : "transparent",
+                            color: BLACK,
+                          }}
                         >
-                          {s.title}
+                          {selected ? "✓" : ""}
                         </span>
-                        <span style={{ fontSize: 15, opacity: 0.7 }}>{s.artist}</span>
-                      </span>
-                    </button>
+
+                        <span
+                          style={{
+                            flex: 1,
+                            minWidth: 0,
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 3,
+                          }}
+                        >
+                          <span
+                            className="ryp-title"
+                            style={{ fontSize: 21, fontWeight: 700, lineHeight: 1.2, color: YELLOW }}
+                          >
+                            {s.title}
+                          </span>
+                          <span style={{ fontSize: 15, opacity: 0.7 }}>{s.artist}</span>
+                        </span>
+                      </button>
+                      <button
+                        type="button"
+                        className="ryp-heart"
+                        onClick={() => toggleLike(s)}
+                        aria-pressed={liked}
+                        aria-label={liked ? `ביטול לייק לשיר ${s.title}` : `לייק לשיר ${s.title}`}
+                        style={{
+                          flex: "none",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: 2,
+                          minWidth: 58,
+                          padding: "0 14px",
+                          background: "transparent",
+                          border: 0,
+                          font: "inherit",
+                          color: liked ? HEART_RED : "rgba(255,255,255,.6)",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <svg
+                          key={liked ? "on" : "off"}
+                          aria-hidden
+                          width={24}
+                          height={24}
+                          viewBox="0 0 24 24"
+                          fill={liked ? HEART_RED : "none"}
+                          stroke="currentColor"
+                          strokeWidth={2}
+                          strokeLinejoin="round"
+                          style={liked ? { animation: "ryp-pop .3s ease" } : undefined}
+                        >
+                          <path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.7 4.5c2.1 0 3.8 1.2 5.3 3.1 1.5-1.9 3.2-3.1 5.3-3.1 3.7 0 5.8 3.9 4.3 7.3C19.5 16.4 12 21 12 21z" />
+                        </svg>
+                        <span style={{ fontSize: 13, lineHeight: 1, minHeight: 13 }}>
+                          {likeCount > 0 ? likeCount : ""}
+                        </span>
+                      </button>
+                    </div>
 
                     {isOpen && (
                       <div

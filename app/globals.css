@@ -101,7 +101,7 @@
 }
 
 .reviews-marquee-track {
-  animation: reviews-marquee 90s linear infinite;
+  animation: reviews-marquee 60s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -185,9 +185,11 @@ body {
     scroll-padding-top: var(--desktop-site-header-height);
   }
 
-  .desktop-editorial-frame section[id],
-  .desktop-editorial-frame main[id] {
-    scroll-margin-top: var(--desktop-site-header-height);
+  /* the header grows at xl (taller logo + padding) */
+  @media (min-width: 1280px) {
+    :root {
+      --desktop-site-header-height: 5.3125rem;
+    }
   }
 
   .desktop-site-header {
@@ -217,10 +219,6 @@ body {
   .desktop-editorial-frame .products-carousel-slot {
     margin-bottom: 0;
     margin-top: 0;
-  }
-
-  .desktop-editorial-frame #experience {
-    min-height: 100dvh;
   }
 
   .desktop-editorial-frame #your-people-on-stage {
