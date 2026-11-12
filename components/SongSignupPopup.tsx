@@ -125,6 +125,7 @@ type Pick = { name: string; phone: string; note: string };
 /** Picks key for the free-text "song not on the list" row */
 const CUSTOM_SONG = -1;
 const CUSTOM_SONG_ARTIST = "שיר מחוץ לרשימה";
+const CUSTOM_ROW_OPEN_MS = 320; // matches the ryp-open animation (.3s)
 
 function readLikedSongs(): Set<string> {
   try {
@@ -202,6 +203,24 @@ export function SongSignupPopup({
   const [tried, setTried] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [customSong, setCustomSong] = useState("");
+  const customRowRef = useRef<HTMLDivElement>(null);
+
+  // the free-text row is last in the list, so bring its fields into view when it opens
+  useEffect(() => {
+    if (expanded !== CUSTOM_SONG) return;
+    const row = customRowRef.current;
+    const scroller = row?.closest<HTMLElement>(".ryp-scope");
+    if (!row || !scroller) return;
+    // wait for the fields' open animation, otherwise there is no room to scroll into yet
+    const timer = window.setTimeout(() => {
+      const top =
+        scroller.scrollTop +
+        row.getBoundingClientRect().top -
+        scroller.getBoundingClientRect().top;
+      scroller.scrollTo({ top, behavior: "smooth" });
+    }, CUSTOM_ROW_OPEN_MS);
+    return () => window.clearTimeout(timer);
+  }, [expanded]);
   const panelRef = useRef<HTMLDivElement>(null);
   const teaserRef = useRef<HTMLDivElement>(null);
   const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
@@ -409,7 +428,7 @@ export function SongSignupPopup({
             </span>
           )}
         </Field>
-        {askNote && (
+        {askNote && i !== CUSTOM_SONG && (
           <Field id={`ryp-m${i}`} label={<>הודעה ללהקה <Opt /></>}>
             <input
               id={`ryp-m${i}`}
@@ -585,15 +604,9 @@ export function SongSignupPopup({
             עלו איתנו לבמה.
           </h2>
           <p style={{ margin: "2px 0 0", fontSize: 16, lineHeight: 1.55, textWrap: "pretty" }}>
-            במופע הקרוב במושב פארן, אתם מוזמנים להתרגש איתנו על הבמה ולהצטרף אלינו בשירה.
-            בחרו את השיר/ים שאתם רוצים לבצע איתנו והשאירו פרטים.
-          </p>
-          <p style={{ margin: "2px 0 0", fontSize: 15, lineHeight: 1.5, opacity: 0.85 }}>
-            רק רוצים לשמוע? סמנו{" "}
-            <span style={{ color: HEART_RED }} aria-hidden>
-              ♥
-            </span>{" "}
-            ליד השירים שתרצו שננגן.
+            סמנו ❤️ ליד השירים שתרצו שננגן.
+            <br />
+            רוצים לשיר איתנו? בחרו שיר והשאירו פרטים
           </p>
         </div>
 
@@ -735,6 +748,7 @@ export function SongSignupPopup({
                 const isOpen = expanded === CUSTOM_SONG;
                 return (
                   <div
+                    ref={customRowRef}
                     className="ryp-row"
                     style={{ borderBottom: "1px solid rgba(255,255,255,.14)" }}
                   >
@@ -891,7 +905,7 @@ export function SongSignupPopup({
                   borderRadius: 5,
                 }}
               >
-                שריינו לי מקום על הבמה
+                שלח
               </button>
             </div>
           </>

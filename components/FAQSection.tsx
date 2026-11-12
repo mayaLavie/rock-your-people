@@ -91,7 +91,7 @@ export function FAQSection() {
       id="faq"
       dir="rtl"
       lang="he"
-      className="scroll-mt-24 border-b-[3px] border-cream bg-magenta px-4 py-12 sm:px-6 sm:py-16 lg:px-10 lg:py-20"
+      className="border-b-[3px] border-cream bg-magenta px-4 pt-8 pb-8 sm:px-6 sm:pt-9 sm:pb-10 lg:px-10 lg:pt-10 lg:pb-12"
       aria-label="FAQ — שאלות נפוצות"
     >
       <SectionHeading
@@ -99,11 +99,11 @@ export function FAQSection() {
         description="שאלות נפוצות"
         descriptionLang="he"
         descriptionDir="rtl"
-        descriptionClassName="font-hebrew text-[#FBEEE3]/90"
+        descriptionClassName="mt-1! font-hebrew text-[#FBEEE3]/90"
         titleClassName="text-cream"
       />
 
-      <div className="mx-auto mt-10 flex w-full max-w-[52rem] flex-col gap-3 sm:mt-12 sm:gap-4">
+      <div className="mx-auto mt-5 flex w-full max-w-[52rem] flex-col gap-3 sm:mt-6 sm:gap-4">
         {FAQ_ITEMS.map((item, index) => {
           const isOpen = openIndex === index;
 

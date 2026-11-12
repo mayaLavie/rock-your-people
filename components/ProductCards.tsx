@@ -83,9 +83,9 @@ export function ProductCards({ beforeEngagement }: { beforeEngagement?: ReactNod
                 sizes="480px"
               />
             </div>
-            <div className="mt-[10px] font-hebrew text-pretty leading-relaxed text-magenta/90">
+            <div className="mt-5 font-hebrew text-pretty leading-relaxed text-magenta/90">
               <div
-                className="use-cases-marquee -mx-4 overflow-hidden md:-mx-6 lg:-mx-4"
+                className="use-cases-marquee -mx-4 overflow-hidden py-2.5 text-magenta md:-mx-6 lg:-mx-4"
                 aria-label={EXPERIENCES_SECTION_USE_CASES.join(" · ")}
               >
                 <div className="use-cases-marquee-track flex w-max">
@@ -93,7 +93,7 @@ export function ProductCards({ beforeEngagement }: { beforeEngagement?: ReactNod
                     <ul
                       key={copy}
                       lang="he"
-                      className="m-0 flex list-none items-center gap-6 p-0 pr-6 text-[15px] font-normal whitespace-nowrap lg:gap-8 lg:pr-8 lg:text-[17px] lg:font-bold"
+                      className="m-0 flex list-none items-center gap-6 p-0 pr-6 text-[16px] font-semibold whitespace-nowrap lg:gap-8 lg:pr-8 lg:text-[18px] lg:font-bold"
                       aria-hidden={copy === 1}
                     >
                       {EXPERIENCES_SECTION_USE_CASES.map((item) => (
