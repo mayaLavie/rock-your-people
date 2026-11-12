@@ -199,7 +199,7 @@ export function GalleryStory() {
                     item.fit === "contain" ? "object-contain" : "object-cover"
                   }`}
                   playsInline
-                  preload="metadata"
+                  preload={isInView ? "auto" : "none"}
                   poster={item.poster ? encodeURI(item.poster) : undefined}
                   onEnded={next}
                   aria-label={item.alt}
