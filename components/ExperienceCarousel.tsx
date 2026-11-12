@@ -128,7 +128,7 @@ function getCardTransform(offset: number, layout: "mobile" | "desktop") {
   if (layout === "desktop") {
     const translateX = offset * 108;
     const scale = offset === 0 ? 1 : 0.86;
-    const opacity = offset === 0 ? 1 : 0.52;
+    const opacity = offset === 0 ? 1 : 0.9;
     const zIndex = offset === 0 ? 30 : 20;
 
     return {
@@ -141,7 +141,7 @@ function getCardTransform(offset: number, layout: "mobile" | "desktop") {
 
   const translateX = offset * 30;
   const scale = offset === 0 ? 1 : 0.82;
-  const opacity = offset === 0 ? 1 : 0.55;
+  const opacity = offset === 0 ? 1 : 0.9;
   const zIndex = offset === 0 ? 30 : 20;
 
   return {
@@ -167,29 +167,30 @@ function useDesktopCarouselLayout() {
   return isDesktop;
 }
 
-function CarouselArrow({
-  direction,
-  onClick,
-}: {
-  direction: "prev" | "next";
-  onClick: () => void;
-}) {
-  const label =
-    direction === "prev" ? "החוויה הקודמת" : "החוויה הבאה";
-
+/** White chevron over a side poster, on its outer edge, hinting that the carousel moves */
+function SideCardArrow({ side }: { side: "left" | "right" }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label={label}
-      className={`absolute top-1/2 z-40 hidden h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center border-0 bg-transparent text-2xl leading-none text-[#FBEEE3]/75 transition-[opacity,transform] duration-200 hover:scale-110 hover:text-[#FBEEE3] lg:flex ${
-        direction === "prev"
-          ? "left-4 lg:-left-3 xl:-left-6"
-          : "right-4 lg:-right-3 xl:-right-6"
+    <span
+      aria-hidden
+      // centered on the strip of the side poster that peeks out past the front one
+      className={`pointer-events-none absolute inset-y-0 z-10 flex items-center ${
+        side === "left"
+          ? "left-[35%] -translate-x-1/2 md:left-[60%] lg:left-[35%]"
+          : "right-[35%] translate-x-1/2 md:right-[60%] lg:right-[35%]"
       }`}
     >
-      {direction === "prev" ? "‹" : "›"}
-    </button>
+      <svg
+        viewBox="0 0 24 24"
+        className="h-9 w-9 text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)] lg:h-8 lg:w-8"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={3}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d={side === "left" ? "M15 5l-7 7 7 7" : "M9 5l7 7-7 7"} />
+      </svg>
+    </span>
   );
 }
 
@@ -322,8 +323,6 @@ export function ExperienceCarousel() {
       </div>
 
       <div className="relative mx-auto w-full max-w-[32rem] lg:max-w-[26rem] lg:overflow-visible lg:px-11 lg:pt-6 lg:pb-6">
-        <CarouselArrow direction="prev" onClick={prev} />
-        <CarouselArrow direction="next" onClick={next} />
 
         <div
           className="experience-carousel-viewport relative mx-auto h-[min(83vw,19.33rem)] w-full overflow-hidden touch-pan-y md:max-lg:h-[28rem] md:max-w-[44rem] lg:h-[calc(13.75rem*4/3)] lg:min-h-0 lg:max-w-full lg:overflow-x-hidden lg:overflow-y-visible lg:p-0"
@@ -358,15 +357,22 @@ export function ExperienceCarousel() {
                 className={`absolute top-1/2 left-1/2 aspect-[3/4] w-[min(62vw,14.5rem)] max-h-[min(82vw,19.33rem)] cursor-pointer overflow-hidden rounded-[5px] bg-black transition-[transform,opacity,box-shadow,border-color] duration-500 ease-out motion-reduce:transition-none sm:w-[min(58vw,15.5rem)] md:w-[20rem] md:max-h-none lg:w-[13.75rem] lg:max-h-none ${
                   isActive
                     ? `${CARD_BORDER} shadow-[0_20px_50px_rgba(0,0,0,0.45)] ${ACTIVE_CARD_HOVER}`
-                    : `${CARD_BORDER} brightness-90`
+                    : CARD_BORDER
                 }`}
                 style={style}
               >
-                <ExperienceCardVisual
-                  card={card}
-                  isActive={isActive}
-                  compact={isDesktopLayout}
-                />
+                <div
+                  className={`absolute inset-0 transition-[filter] duration-500 motion-reduce:transition-none ${
+                    isActive ? "" : "blur-[3px] brightness-75"
+                  }`}
+                >
+                  <ExperienceCardVisual
+                    card={card}
+                    isActive={isActive}
+                    compact={isDesktopLayout}
+                  />
+                </div>
+                {offset !== 0 ? <SideCardArrow side={offset < 0 ? "left" : "right"} /> : null}
               </button>
             );
           })}
