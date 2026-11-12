@@ -16,6 +16,7 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type ReactNode,
 } from "react";
 import { SONG_SIGNUP_SHEET_URL } from "@/lib/constants";
 
@@ -121,6 +122,10 @@ const CSS = `
 
 type Pick = { name: string; phone: string; note: string };
 
+/** Picks key for the free-text "song not on the list" row */
+const CUSTOM_SONG = -1;
+const CUSTOM_SONG_ARTIST = "שיר מחוץ לרשימה";
+
 function readLikedSongs(): Set<string> {
   try {
     const raw = localStorage.getItem(LIKED_SONGS_STORAGE_KEY);
@@ -196,6 +201,7 @@ export function SongSignupPopup({
   const [picks, setPicks] = useState<Picks>({});
   const [tried, setTried] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [customSong, setCustomSong] = useState("");
   const panelRef = useRef<HTMLDivElement>(null);
   const teaserRef = useRef<HTMLDivElement>(null);
   const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
@@ -266,6 +272,7 @@ export function SongSignupPopup({
     setPicks({});
     setTried(false);
     setSubmitted(false);
+    setCustomSong("");
     if (isControlled) onClose?.();
     else setSelfPhase("teaser");
   }, [isControlled, onClose]);
@@ -305,15 +312,23 @@ export function SongSignupPopup({
     }));
   }
 
+  function songFor(i: number): { title: string; artist: string } {
+    return i === CUSTOM_SONG
+      ? { title: customSong.trim(), artist: CUSTOM_SONG_ARTIST }
+      : LINEUP[i];
+  }
+
   const valid = useMemo(
     () =>
       Object.keys(picks)
         .filter((k) => {
-          const p = picks[Number(k)];
+          const i = Number(k);
+          const p = picks[i];
+          if (i === CUSTOM_SONG && !customSong.trim()) return false;
           return p.name.trim() && p.phone.trim();
         })
         .map(Number),
-    [picks],
+    [picks, customSong],
   );
 
   function submit() {
@@ -327,8 +342,8 @@ export function SongSignupPopup({
         mode: "no-cors",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({
-          song: LINEUP[i].title,
-          artist: LINEUP[i].artist,
+          song: songFor(i).title,
+          artist: songFor(i).artist,
           name: p.name.trim(),
           phone: p.phone.trim(),
           note: p.note.trim(),
@@ -337,6 +352,76 @@ export function SongSignupPopup({
     }
 
     setSubmitted(true);
+  }
+
+  // name / phone / note fields shown when a song row is opened
+  function renderSignupFields(i: number, extraField?: ReactNode) {
+    const p = picks[i];
+    return (
+      <div
+        style={{
+          padding: "18px 22px 22px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 18,
+        }}
+      >
+        {extraField}
+        <Field id={`ryp-n${i}`} label={<>שם מלא <span style={{ color: YELLOW }}>*</span></>}>
+          <input
+            id={`ryp-n${i}`}
+            className="ryp-in"
+            type="text"
+            required
+            value={p?.name || ""}
+            onChange={(e) => setField(i, "name", e.target.value)}
+          />
+          {tried && !p?.name.trim() && (
+            <span style={{ fontSize: 13, color: YELLOW }}>
+              צריך שם מלא כדי לשריין מקום
+            </span>
+          )}
+        </Field>
+        <Field
+          id={`ryp-p${i}`}
+          label={
+            <>
+              טלפון <span style={{ color: YELLOW }}>*</span>{" "}
+              <span style={{ color: "#fff", opacity: 0.55 }}>
+                (שנהיה בקשר לפני שעולים לבמה)
+              </span>
+            </>
+          }
+        >
+          <input
+            id={`ryp-p${i}`}
+            className="ryp-in"
+            type="tel"
+            required
+            dir="ltr"
+            style={{ textAlign: "right" }}
+            value={p?.phone || ""}
+            onChange={(e) => setField(i, "phone", e.target.value)}
+          />
+          {tried && !p?.phone.trim() && (
+            <span style={{ fontSize: 13, color: YELLOW }}>
+              צריך מספר טלפון כדי לשריין מקום
+            </span>
+          )}
+        </Field>
+        {askNote && (
+          <Field id={`ryp-m${i}`} label={<>הודעה ללהקה <Opt /></>}>
+            <input
+              id={`ryp-m${i}`}
+              className="ryp-in"
+              type="text"
+              value={p?.note || ""}
+              onChange={(e) => setField(i, "note", e.target.value)}
+            />
+          </Field>
+        )}
+      </div>
+    );
   }
 
   if (phase === "hidden") return null;
@@ -637,73 +722,110 @@ export function SongSignupPopup({
                           borderTop: "1px solid rgba(255,255,255,.14)",
                         }}
                       >
-                        <div
-                          style={{
-                            padding: "18px 22px 22px",
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: 18,
-                          }}
-                        >
-                          <Field id={`ryp-n${i}`} label={<>שם מלא <span style={{ color: YELLOW }}>*</span></>}>
-                            <input
-                              id={`ryp-n${i}`}
-                              className="ryp-in"
-                              type="text"
-                              required
-                              value={p?.name || ""}
-                              onChange={(e) => setField(i, "name", e.target.value)}
-                            />
-                            {tried && !p?.name.trim() && (
-                              <span style={{ fontSize: 13, color: YELLOW }}>
-                                צריך שם מלא כדי לשריין מקום
-                              </span>
-                            )}
-                          </Field>
-                          <Field
-                            id={`ryp-p${i}`}
-                            label={
-                              <>
-                                טלפון <span style={{ color: YELLOW }}>*</span>{" "}
-                                <span style={{ color: "#fff", opacity: 0.55 }}>
-                                  (שנהיה בקשר לפני שעולים לבמה)
-                                </span>
-                              </>
-                            }
-                          >
-                            <input
-                              id={`ryp-p${i}`}
-                              className="ryp-in"
-                              type="tel"
-                              required
-                              dir="ltr"
-                              style={{ textAlign: "right" }}
-                              value={p?.phone || ""}
-                              onChange={(e) => setField(i, "phone", e.target.value)}
-                            />
-                            {tried && !p?.phone.trim() && (
-                              <span style={{ fontSize: 13, color: YELLOW }}>
-                                צריך מספר טלפון כדי לשריין מקום
-                              </span>
-                            )}
-                          </Field>
-                          {askNote && (
-                            <Field id={`ryp-m${i}`} label={<>הודעה ללהקה <Opt /></>}>
-                              <input
-                                id={`ryp-m${i}`}
-                                className="ryp-in"
-                                type="text"
-                                value={p?.note || ""}
-                                onChange={(e) => setField(i, "note", e.target.value)}
-                              />
-                            </Field>
-                          )}
-                        </div>
+                        {renderSignupFields(i)}
                       </div>
                     )}
                   </div>
                 );
               })}
+              {(() => {
+                const p = picks[CUSTOM_SONG];
+                const selected =
+                  !!p && !!p.name.trim() && !!p.phone.trim() && !!customSong.trim();
+                const isOpen = expanded === CUSTOM_SONG;
+                return (
+                  <div
+                    className="ryp-row"
+                    style={{ borderBottom: "1px solid rgba(255,255,255,.14)" }}
+                  >
+                    <button
+                      type="button"
+                      className="ryp-song"
+                      onClick={() => toggle(CUSTOM_SONG)}
+                      aria-expanded={isOpen}
+                      style={{
+                        width: "100%",
+                        textAlign: "right",
+                        background: "transparent",
+                        border: 0,
+                        font: "inherit",
+                        color: "inherit",
+                        cursor: "pointer",
+                        padding: "16px 22px",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 14,
+                      }}
+                    >
+                      <span
+                        aria-hidden
+                        style={{
+                          flex: "none",
+                          width: 20,
+                          height: 20,
+                          fontSize: 13,
+                          lineHeight: "18px",
+                          textAlign: "center",
+                          border: `1.5px solid ${selected ? YELLOW : "rgba(255,255,255,.45)"}`,
+                          background: selected ? YELLOW : "transparent",
+                          color: BLACK,
+                        }}
+                      >
+                        {selected ? "✓" : ""}
+                      </span>
+                      <span
+                        style={{
+                          flex: 1,
+                          minWidth: 0,
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: 3,
+                        }}
+                      >
+                        <span
+                          className="ryp-title"
+                          style={{ fontSize: 21, fontWeight: 700, lineHeight: 1.2, color: YELLOW }}
+                        >
+                          {selected ? customSong.trim() : "רוצים לבצע איתנו שיר שלא ברשימה? מוזמנים להציע"}
+                        </span>
+                      </span>
+                    </button>
+
+                    {isOpen && (
+                      <div
+                        style={{
+                          overflow: "hidden",
+                          animation: "ryp-open .3s ease both",
+                          background: "rgba(255,255,255,.05)",
+                          borderTop: "1px solid rgba(255,255,255,.14)",
+                        }}
+                      >
+                        {renderSignupFields(
+                          CUSTOM_SONG,
+                          <Field
+                            id="ryp-custom-song"
+                            label={<>שם השיר והאמן <span style={{ color: YELLOW }}>*</span></>}
+                          >
+                            <input
+                              id="ryp-custom-song"
+                              className="ryp-in"
+                              type="text"
+                              required
+                              value={customSong}
+                              onChange={(e) => setCustomSong(e.target.value)}
+                            />
+                            {tried && !customSong.trim() && (
+                              <span style={{ fontSize: 13, color: YELLOW }}>
+                                כתבו איזה שיר תרצו לבצע
+                              </span>
+                            )}
+                          </Field>,
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
 
             <div
@@ -805,8 +927,8 @@ export function SongSignupPopup({
             >
               {valid.map((i) => (
                 <div key={i} style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
-                  <span style={{ fontSize: 19, fontWeight: 700, color: YELLOW }}>{LINEUP[i].title}</span>
-                  <span style={{ fontSize: 15, opacity: 0.7 }}>{LINEUP[i].artist}</span>
+                  <span style={{ fontSize: 19, fontWeight: 700, color: YELLOW }}>{songFor(i).title}</span>
+                  <span style={{ fontSize: 15, opacity: 0.7 }}>{songFor(i).artist}</span>
                 </div>
               ))}
             </div>
