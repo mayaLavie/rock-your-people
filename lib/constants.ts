@@ -244,15 +244,19 @@ export type GalleryStoryItem = {
  */
 export const GALLERY_STORY_ITEMS: readonly GalleryStoryItem[] = [
   {
-    type: "image",
-    src: "/images/GALLERY_IMAGES/forGallery1.jpg",
-    alt: "Gallery photo 1",
-    fit: "contain",
+    type: "video",
+    src: "/images/GALLERY_IMAGES/tapuchi.mp4",
+    alt: "תפוחי",
   },
   {
     type: "image",
-    src: "/images/GALLERY_IMAGES/galleryIshaiAndDor.jpeg",
-    alt: "Gallery photo 2",
+    src: "/images/GALLERY_IMAGES/gvaram.jpg",
+    alt: "הופעה בגברעם",
+  },
+  {
+    type: "video",
+    src: "/images/GALLERY_IMAGES/li.mp4",
+    alt: "לי",
   },
   {
     type: "video",
@@ -260,15 +264,9 @@ export const GALLERY_STORY_ITEMS: readonly GalleryStoryItem[] = [
     alt: "ישי סולו",
   },
   {
-    type: "image",
-    src: "/images/GALLERY_IMAGES/appluse.jpeg",
-    alt: "Gallery photo 3",
-    fit: "contain",
-  },
-  {
     type: "video",
-    src: "/images/GALLERY_IMAGES/Tal.mp4",
-    alt: "טל על הבמה",
+    src: "/images/GALLERY_IMAGES/amdursky.mp4",
+    alt: "אמדורסקי",
   },
   {
     type: "image",
@@ -278,8 +276,29 @@ export const GALLERY_STORY_ITEMS: readonly GalleryStoryItem[] = [
   },
   {
     type: "video",
+    src: "/images/GALLERY_IMAGES/butchi.mp4",
+    alt: "בוצ'י",
+  },
+  {
+    type: "image",
+    src: "/images/GALLERY_IMAGES/appluse.jpeg",
+    alt: "Gallery photo 3",
+    fit: "contain",
+  },
+  {
+    type: "video",
+    src: "/images/GALLERY_IMAGES/dafna.mp4",
+    alt: "דפנה",
+  },
+  {
+    type: "video",
     src: "/images/GALLERY_IMAGES/miri at shapes.mp4",
     alt: "מירי ב-Shapes",
+  },
+  {
+    type: "video",
+    src: "/images/GALLERY_IMAGES/Tal.mp4",
+    alt: "טל על הבמה",
   },
   {
     type: "video",
@@ -298,7 +317,8 @@ export const GALLERY_STORY_ITEMS: readonly GalleryStoryItem[] = [
   },
   {
     type: "image",
-    src: "/images/rock-your-people-in-office.jpeg",
-    alt: "Rock Your People in the office",
+    src: "/images/GALLERY_IMAGES/longShotCroud.jpeg",
+    alt: "Gallery photo 4",
+    fit: "contain",
   },
 ];

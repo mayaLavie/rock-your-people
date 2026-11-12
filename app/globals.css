@@ -223,8 +223,8 @@ body {
     height: auto;
     min-height: 0;
     overflow: visible;
-    padding-top: 1.75rem;
-    padding-bottom: 0.75rem;
+    padding-top: 3rem;
+    padding-bottom: 2.5rem;
     padding-left: 1rem;
     padding-right: 1rem;
   }

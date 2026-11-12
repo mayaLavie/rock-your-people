@@ -119,7 +119,7 @@ export function ProductCards({ beforeEngagement }: { beforeEngagement?: ReactNod
 
       <section
         id="engagement"
-        className="relative flex flex-col overflow-x-hidden overflow-y-visible bg-magenta px-4 pt-8 pb-10 md:px-6 md:py-8 lg:overflow-visible lg:px-4 lg:py-6 lg:pt-7 lg:pb-6"
+        className="relative flex flex-col overflow-x-hidden overflow-y-visible bg-magenta px-4 pt-14 pb-14 md:px-6 md:py-12 lg:overflow-visible lg:px-4 lg:pt-12 lg:pb-10"
         aria-labelledby="engagement-heading"
       >
         <div
@@ -145,7 +145,7 @@ export function ProductCards({ beforeEngagement }: { beforeEngagement?: ReactNod
             </h3>
           </div>
 
-          <div className="products-carousel-slot mt-5 w-full overflow-visible pb-1 lg:mt-4 lg:pb-0">
+          <div className="products-carousel-slot mt-7 w-full overflow-visible pb-1 lg:mt-5 lg:pb-0">
             <ExperienceCarousel />
             <p
               lang="he"
