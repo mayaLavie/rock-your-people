@@ -92,7 +92,7 @@ const CSS = `
 @keyframes ryp-open{from{opacity:0;max-height:0}to{opacity:1;max-height:340px}}
 @keyframes ryp-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 
-/* teaser: a singing donkey that drops in from the top and lands just above the scroll arrows */
+/* teaser: a singing donkey that drops in from the top and lands on the Rock Your People logo */
 .ryp-teaser-wrap{
   position:absolute;
   top:0;
@@ -145,19 +145,51 @@ function visibleMarker(selector: string) {
   );
 }
 
-/** Lands the donkey on the right of the first screen (data-donkey-anchor); it scrolls away with the hero. */
+/**
+ * Lands the donkey right on top of the Rock Your People logo. The mobile hero
+ * logo scrolls with the page, so the donkey is pinned to the page; the desktop
+ * side logo is sticky, so the donkey stays fixed with it. Mid-size desktops
+ * have no side logo, so the donkey sits by the scroll-down arrows instead.
+ */
 function getTeaserPlacement(wrap: HTMLElement): CSSProperties | null {
-  const hint = visibleMarker("[data-donkey-anchor]");
-  const container = wrap.offsetParent;
-  if (!hint || !container) return null;
+  const isDesktop = window.matchMedia("(min-width:1024px)").matches;
+  const logo = visibleMarker("[data-hero-logo]");
+  if (logo && isDesktop) {
+    const rect = logo.getBoundingClientRect();
+    return {
+      position: "fixed",
+      top: rect.top - wrap.offsetHeight - TEASER_HINT_GAP_PX,
+      left: rect.left + rect.width / 2 - wrap.offsetWidth / 2,
+      right: "auto",
+    };
+  }
 
-  const rect = hint.getBoundingClientRect();
+  // measured against the positioned page wrapper (a fixed wrap has no offsetParent)
+  const container = wrap.closest(".ryp-scope")?.parentElement?.closest<HTMLElement>(".relative");
+  if (!container) return null;
   const box = container.getBoundingClientRect();
+
+  if (logo) {
+    const rect = logo.getBoundingClientRect();
+    return {
+      position: "absolute",
+      top: rect.top - box.top - wrap.offsetHeight - TEASER_HINT_GAP_PX,
+      left: rect.left - box.left,
+      right: "auto",
+    };
+  }
+
+  const anchor = visibleMarker("[data-donkey-anchor]");
+  if (!anchor) return null;
+  const rect = anchor.getBoundingClientRect();
   return {
+    position: "absolute",
     top: rect.top - box.top - wrap.offsetHeight - TEASER_HINT_GAP_PX,
     right: Math.max(0, box.right - rect.right - 14),
+    left: "auto",
   };
 }
+
 type Picks = Record<number, Pick>;
 
 type Phase = "hidden" | "teaser" | "open";

@@ -35,12 +35,6 @@ export function Hero() {
             <ScrollDownHint />
           </div>
           <div className="relative mt-[7px] w-full">
-            {/* where the song-signup donkey lands: right side, just above this line */}
-            <div
-              data-donkey-anchor
-              aria-hidden
-              className="absolute bottom-full right-1 h-0 w-[30px] sm:right-2"
-            />
             <p
               lang="he"
               dir="rtl"
