@@ -246,6 +246,7 @@ export const GALLERY_STORY_ITEMS: readonly GalleryStoryItem[] = [
   {
     type: "video",
     src: "/images/GALLERY_IMAGES/tapuchi.mp4",
+    poster: "/images/GALLERY_IMAGES/posters/tapuchi.jpg",
     alt: "תפוחי",
   },
   {
@@ -256,16 +257,19 @@ export const GALLERY_STORY_ITEMS: readonly GalleryStoryItem[] = [
   {
     type: "video",
     src: "/images/GALLERY_IMAGES/li.mp4",
+    poster: "/images/GALLERY_IMAGES/posters/li.jpg",
     alt: "לי",
   },
   {
     type: "video",
     src: "/images/GALLERY_IMAGES/ishai solo.mp4",
+    poster: "/images/GALLERY_IMAGES/posters/ishai-solo.jpg",
     alt: "ישי סולו",
   },
   {
     type: "video",
     src: "/images/GALLERY_IMAGES/amdursky.mp4",
+    poster: "/images/GALLERY_IMAGES/posters/amdursky.jpg",
     alt: "אמדורסקי",
   },
   {
@@ -277,6 +281,7 @@ export const GALLERY_STORY_ITEMS: readonly GalleryStoryItem[] = [
   {
     type: "video",
     src: "/images/GALLERY_IMAGES/butchi.mp4",
+    poster: "/images/GALLERY_IMAGES/posters/butchi.jpg",
     alt: "בוצ'י",
   },
   {
@@ -288,21 +293,25 @@ export const GALLERY_STORY_ITEMS: readonly GalleryStoryItem[] = [
   {
     type: "video",
     src: "/images/GALLERY_IMAGES/dafna.mp4",
+    poster: "/images/GALLERY_IMAGES/posters/dafna.jpg",
     alt: "דפנה",
   },
   {
     type: "video",
     src: "/images/GALLERY_IMAGES/miri at shapes.mp4",
+    poster: "/images/GALLERY_IMAGES/posters/miri-at-shapes.jpg",
     alt: "מירי ב-Shapes",
   },
   {
     type: "video",
     src: "/images/GALLERY_IMAGES/Tal.mp4",
+    poster: "/images/GALLERY_IMAGES/posters/Tal.jpg",
     alt: "טל על הבמה",
   },
   {
     type: "video",
     src: "/images/GALLERY_IMAGES/jessice reim.mp4",
+    poster: "/images/GALLERY_IMAGES/posters/jessice-reim.jpg",
     alt: "ג'סיקה ברעים",
   },
   {
@@ -313,6 +322,7 @@ export const GALLERY_STORY_ITEMS: readonly GalleryStoryItem[] = [
   {
     type: "video",
     src: "/images/beatles.mp4",
+    poster: "/images/GALLERY_IMAGES/posters/beatles.jpg",
     alt: "מחרוזת ביטלס",
   },
   {

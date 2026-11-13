@@ -85,38 +85,32 @@ const CSS = `
 @keyframes ryp-pop{0%{transform:scale(1)}40%{transform:scale(1.3)}100%{transform:scale(1)}}
 .ryp-cta:disabled{opacity:.45;cursor:not-allowed}
 .ryp-x:hover{color:${YELLOW}}
-.ryp-teaser:hover{filter:brightness(1.08)}
+.ryp-teaser:hover{transform:scale(1.04)}
 :where(.ryp-scope) *:focus-visible{outline:2px solid ${YELLOW};outline-offset:2px}
 @keyframes ryp-rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 @keyframes ryp-fade{from{opacity:0}to{opacity:1}}
 @keyframes ryp-open{from{opacity:0;max-height:0}to{opacity:1;max-height:340px}}
 @keyframes ryp-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 
-/* teaser pill: centered on mobile, top-right on desktop, gently floating */
+/* teaser: a singing donkey that drops in from the top and lands just above the scroll arrows */
 .ryp-teaser-wrap{
-  position:fixed;
-  left:16px;
+  position:absolute;
+  top:0;
   right:16px;
-  width:fit-content;
-  max-width:calc(100vw - 32px);
-  margin-inline:auto;
-  top:calc(var(--site-header-height, 60px) + 12px + env(safe-area-inset-top));
-  z-index:9998;
-  animation:
-    ryp-rise .4s cubic-bezier(.2,.8,.25,1) both,
-    ryp-float 1.4s ease-in-out .4s infinite;
+  z-index:150;
+  width:var(--ryp-donkey-w,195px);
+  animation:ryp-drop 1.1s cubic-bezier(.25,.9,.3,1.15) both;
 }
-@media (min-width:1024px){
-  .ryp-teaser-wrap{
-    left:auto;
-    right:16px;
-    margin-inline:0;
-    max-width:none;
-    top:calc(var(--desktop-site-header-height, 72px) + 12px + env(safe-area-inset-top));
-  }
+.ryp-teaser-wrap.ryp-landed{animation:ryp-float 2.4s ease-in-out infinite}
+@media (max-width:379px){.ryp-teaser-wrap{--ryp-donkey-w:150px}}
+@media (min-width:1024px){.ryp-teaser-wrap{--ryp-donkey-w:235px}}
+@keyframes ryp-drop{
+  0%{opacity:0;transform:translateY(-110vh)}
+  15%{opacity:1}
+  100%{opacity:1;transform:none}
 }
 @media (prefers-reduced-motion: reduce){
-  .ryp-teaser-wrap{animation:ryp-rise .4s cubic-bezier(.2,.8,.25,1) both}
+  .ryp-teaser-wrap,.ryp-teaser-wrap.ryp-landed{animation:ryp-fade .4s ease both}
 }
 `;
 
@@ -142,34 +136,27 @@ function writeLikedSongs(liked: Set<string>) {
   } catch {}
 }
 
-const TEASER_LOGO_GAP_PX = 12;
-const TEASER_DESKTOP_MAX_WIDTH_PX = 300;
+const TEASER_DONKEY_SRC = "/images/paran-donkey-v2.png";
+const TEASER_HINT_GAP_PX = 4;
 
-/** Fixed-position style that sits the teaser just above the visible hero logo. */
-function getTeaserPlacement(wrap: HTMLElement): CSSProperties | null {
-  const logo = Array.from(
-    document.querySelectorAll<HTMLElement>("[data-hero-logo]"),
-  ).find((el) => el.getBoundingClientRect().width > 0);
-  if (!logo) return null;
-
-  const rect = logo.getBoundingClientRect();
-  const isDesktop = window.matchMedia("(min-width:1024px)").matches;
-  // keep the desktop pill about as narrow as the side column so it doesn't cover the page
-  const maxWidth = isDesktop ? TEASER_DESKTOP_MAX_WIDTH_PX : undefined;
-  if (maxWidth) wrap.style.maxWidth = `${maxWidth}px`;
-  // mobile logo scrolls with the page, so place against its spot on the first screen;
-  // the desktop side logo is sticky, so its viewport position is what counts
-  const logoTop = isDesktop ? rect.top : rect.top + window.scrollY;
-  const top = Math.max(
-    TEASER_LOGO_GAP_PX,
-    logoTop - wrap.offsetHeight - TEASER_LOGO_GAP_PX,
+function visibleMarker(selector: string) {
+  return Array.from(document.querySelectorAll<HTMLElement>(selector)).find(
+    (el) => el.getBoundingClientRect().width > 0,
   );
+}
 
-  if (!isDesktop) return { top };
+/** Lands the donkey on the right of the first screen (data-donkey-anchor); it scrolls away with the hero. */
+function getTeaserPlacement(wrap: HTMLElement): CSSProperties | null {
+  const hint = visibleMarker("[data-donkey-anchor]");
+  const container = wrap.offsetParent;
+  if (!hint || !container) return null;
 
-  const width = wrap.offsetWidth;
-  const left = Math.max(16, rect.left + rect.width / 2 - width / 2);
-  return { top, left, right: "auto", marginInline: 0, maxWidth };
+  const rect = hint.getBoundingClientRect();
+  const box = container.getBoundingClientRect();
+  return {
+    top: rect.top - box.top - wrap.offsetHeight - TEASER_HINT_GAP_PX,
+    right: Math.max(0, box.right - rect.right - 14),
+  };
 }
 type Picks = Record<number, Pick>;
 
@@ -268,6 +255,7 @@ export function SongSignupPopup({
     }).catch(() => {});
   }
   const [teaserPlacement, setTeaserPlacement] = useState<CSSProperties | null>(null);
+  const [teaserLanded, setTeaserLanded] = useState(false);
 
   useLayoutEffect(() => {
     if (phase !== "teaser") return;
@@ -275,8 +263,13 @@ export function SongSignupPopup({
       if (teaserRef.current) setTeaserPlacement(getTeaserPlacement(teaserRef.current));
     };
     place();
+    // the hero image above can still be loading and shift the arrows
+    const settle = window.setTimeout(place, 600);
     window.addEventListener("resize", place);
-    return () => window.removeEventListener("resize", place);
+    return () => {
+      window.clearTimeout(settle);
+      window.removeEventListener("resize", place);
+    };
   }, [phase]);
 
   // reveal the teaser pill shortly after the page loads, so it's visible on the first screen
@@ -451,36 +444,39 @@ export function SongSignupPopup({
         <style>{CSS}</style>
         <div
           ref={teaserRef}
-          className="ryp-teaser-wrap"
+          className={`ryp-teaser-wrap${teaserLanded ? " ryp-landed" : ""}`}
           style={{
             ...teaserPlacement,
-            display: "flex",
-            alignItems: "center",
-            gap: 2,
-            fontFamily: '"Frank Ruhl Libre", Georgia, serif',
+            visibility: teaserPlacement ? "visible" : "hidden",
+          }}
+          onAnimationEnd={(e) => {
+            if (e.animationName === "ryp-drop") setTeaserLanded(true);
           }}
         >
           <button
             type="button"
             className="ryp-teaser"
             onClick={openFull}
+            aria-label={TEASER_TITLE}
             style={{
-              border: `1.5px solid ${YELLOW}`,
-              background: BLACK,
-              color: YELLOW,
-              font: "inherit",
-              fontWeight: 700,
-              fontSize: 15,
-              lineHeight: 1.3,
-              padding: "12px 16px",
-              minHeight: 48,
+              display: "block",
+              width: "100%",
+              padding: 0,
+              border: 0,
+              background: "transparent",
               cursor: "pointer",
-              borderRadius: "5px",
-              boxShadow: "0 8px 24px rgba(0,0,0,.35)",
               transition: "transform .15s ease",
+              filter: "drop-shadow(0 8px 16px rgba(0,0,0,.35))",
             }}
           >
-            {TEASER_TITLE}
+            {/* eslint-disable-next-line @next/next/no-img-element -- small pre-sized PNG, skips the image optimizer */}
+            <img
+              src={TEASER_DONKEY_SRC}
+              alt=""
+              width={560}
+              height={557}
+              style={{ display: "block", width: "100%", height: "auto" }}
+            />
           </button>
           <button
             type="button"
@@ -488,16 +484,23 @@ export function SongSignupPopup({
             onClick={dismissTeaser}
             aria-label="סגירה"
             style={{
-              alignSelf: "stretch",
+              position: "absolute",
+              // just above the donkey's left shoulder (right side of the image)
+              top: "56%",
+              right: -2,
+              width: 22,
+              height: 22,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
               border: 0,
-              background: "transparent",
+              borderRadius: "50%",
+              background: "rgba(30,28,28,.75)",
               color: "#fff",
-              font: "inherit",
-              fontSize: 22,
+              fontSize: 15,
               lineHeight: 1,
               cursor: "pointer",
-              padding: "0 8px",
-              boxShadow: "none",
+              padding: 0,
             }}
           >
             ×

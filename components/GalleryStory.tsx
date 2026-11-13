@@ -21,6 +21,8 @@ export function GalleryStory() {
   const [autoAdvance, setAutoAdvance] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [volume, setVolume] = useState(DEFAULT_VOLUME);
+  // the browser refused autoplay even muted (e.g. iPhone Low Power Mode)
+  const [needsTapToPlay, setNeedsTapToPlay] = useState(false);
 
   const frameRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -81,11 +83,17 @@ export function GalleryStory() {
     video.volume = volumeRef.current;
 
     // Browsers reject unmuted autoplay until the page has a user gesture
-    void video.play().catch(() => {
-      video.muted = true;
-      setIsMuted(true);
-      void video.play().catch(() => undefined);
-    });
+    void video
+      .play()
+      .then(() => setNeedsTapToPlay(false))
+      .catch(() => {
+        video.muted = true;
+        setIsMuted(true);
+        void video
+          .play()
+          .then(() => setNeedsTapToPlay(false))
+          .catch(() => setNeedsTapToPlay(true));
+      });
   }, [activeIndex, isInView]);
 
   useEffect(() => {
@@ -199,7 +207,7 @@ export function GalleryStory() {
                     item.fit === "contain" ? "object-contain" : "object-cover"
                   }`}
                   playsInline
-                  preload={isInView ? "auto" : "none"}
+                  preload="metadata"
                   poster={item.poster ? encodeURI(item.poster) : undefined}
                   onEnded={next}
                   aria-label={item.alt}
@@ -275,6 +283,25 @@ export function GalleryStory() {
 
       <StoryArrow direction="prev" onClick={prev} />
       <StoryArrow direction="next" onClick={next} />
+
+      {activeItem.type === "video" && needsTapToPlay ? (
+        <button
+          type="button"
+          onClick={() => {
+            const video = videoRef.current;
+            if (!video) return;
+            void video.play().then(() => setNeedsTapToPlay(false)).catch(() => undefined);
+          }}
+          aria-label="הפעלת הסרטון"
+          className="absolute inset-0 z-20 flex cursor-pointer items-center justify-center border-0 bg-black/25"
+        >
+          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-black/55 text-cream backdrop-blur-sm">
+            <svg aria-hidden viewBox="0 0 24 24" className="ml-1 h-8 w-8" fill="currentColor">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </span>
+        </button>
+      ) : null}
 
       {activeItem.type === "video" ? (
         <SoundControls

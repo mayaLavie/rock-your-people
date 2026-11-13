@@ -18,23 +18,29 @@ export function Hero() {
         </h1>
 
         <div className="flex flex-1 flex-col justify-end lg:hidden">
-          <div
-            data-hero-logo
-            className="w-full max-w-[180px] shrink-0 sm:max-w-[220px] md:max-w-[240px]"
-          >
-            <Image
-              src={TITLE_IMAGE.src}
-              alt={TITLE_IMAGE.alt}
-              width={TITLE_IMAGE.width}
-              height={TITLE_IMAGE.height}
-              priority
-              className="h-auto w-full"
-            />
+          <div className="flex items-end gap-4">
+            <div
+              data-hero-logo
+              className="w-full max-w-[180px] shrink-0 sm:max-w-[220px] md:max-w-[240px]"
+            >
+              <Image
+                src={TITLE_IMAGE.src}
+                alt={TITLE_IMAGE.alt}
+                width={TITLE_IMAGE.width}
+                height={TITLE_IMAGE.height}
+                priority
+                className="h-auto w-full"
+              />
+            </div>
+            <ScrollDownHint />
           </div>
           <div className="relative mt-[7px] w-full">
-            <div className="absolute bottom-full right-1 z-20 mb-5 sm:right-2 sm:mb-6">
-              <ScrollDownHint />
-            </div>
+            {/* where the song-signup donkey lands: right side, just above this line */}
+            <div
+              data-donkey-anchor
+              aria-hidden
+              className="absolute bottom-full right-1 h-0 w-[30px] sm:right-2"
+            />
             <p
               lang="he"
               dir="rtl"
@@ -55,7 +61,7 @@ export function Hero() {
               {EXPERIENCES_SECTION_SUBTITLE_HE}
             </p>
             <div className="relative mx-auto max-w-3xl">
-              <div className="absolute bottom-full right-0 z-20 mb-5">
+              <div data-donkey-anchor className="absolute bottom-full right-0 z-20 mb-5">
                 <ScrollDownHint />
               </div>
               <p
