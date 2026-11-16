@@ -147,6 +147,8 @@ for (const s of summary) P(`| ${s.title} | ${s.project} | ${s.status} | ${s.hits
 P();
 P(`Computed checks failed: ${failures}.`);
 P();
+P("Privacy note: in form mode the browser sends the raw phone and name only to this site's own /api/meta/event route (same origin); the route hashes them (SHA-256, normalized) before building the payload for Meta, and the browser pixel hit never contains them.");
+P();
 P("Scenarios that only call the API directly (the \"conversions API route\" group: dry run, hashing, validation, rejects missing consent) use Playwright's request client, not a browser, so they have no pixel traffic; they are asserted in tests/tracking.spec.ts (all passed).");
 P();
 lines.push(...bodyBlocks);
