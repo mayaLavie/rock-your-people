@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import { OPEN_GRAPH_BASE } from "@/lib/seo";
 import { DesktopEditorialShell } from "@/components/DesktopEditorialShell";
 import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
@@ -12,6 +14,11 @@ import { ContactSection } from "@/components/ContactSection";
 import { Footer } from "@/components/Footer";
 import { SongSignupPopup } from "@/components/SongSignupPopup";
 import { SONG_SIGNUP_POPUP_ENABLED } from "@/lib/constants";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+  openGraph: { ...OPEN_GRAPH_BASE, url: "/" },
+};
 
 export default function Home() {
   return (

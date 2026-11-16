@@ -207,7 +207,7 @@ export function GalleryStory() {
                     item.fit === "contain" ? "object-contain" : "object-cover"
                   }`}
                   playsInline
-                  preload="metadata"
+                  preload="none"
                   poster={item.poster ? encodeURI(item.poster) : undefined}
                   onEnded={next}
                   aria-label={item.alt}
@@ -231,7 +231,6 @@ export function GalleryStory() {
                   fill
                   sizes="(max-width: 640px) 100vw, 430px"
                   className="object-contain object-center"
-                  priority={index === 0}
                 />
               </>
             ) : (
@@ -241,7 +240,6 @@ export function GalleryStory() {
                 fill
                 sizes="(max-width: 640px) 100vw, 430px"
                 className="object-cover object-center"
-                priority={index === 0}
               />
             )}
           </div>

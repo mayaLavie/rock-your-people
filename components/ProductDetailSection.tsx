@@ -152,69 +152,6 @@ export function ProductDetailSection({ detail }: ProductDetailSectionProps) {
   return <LeadershipWorkshopDetail detail={detail} />;
 }
 
-function DetailContent({
-  headingId,
-  headline,
-  headlineSlot,
-  subheadlineSlot,
-  subheadline,
-  bodySlot,
-  body,
-  bulletsSlot,
-  bullets,
-  ctaSlot,
-  cta,
-  headlineClass,
-  subheadlineClass,
-  bodyClass,
-  bulletClass,
-  ctaClass,
-}: {
-  headingId: string;
-  headline: string;
-  headlineSlot?: ReactNode;
-  subheadlineSlot?: ReactNode;
-  subheadline: string;
-  bodySlot?: ReactNode;
-  body: string;
-  bulletsSlot?: ReactNode;
-  bullets: readonly string[];
-  ctaSlot?: ReactNode;
-  cta: string;
-  headlineClass: string;
-  subheadlineClass: string;
-  bodyClass: string;
-  bulletClass: string;
-  ctaClass: string;
-}) {
-  return (
-    <div className="flex flex-col justify-center">
-      {headlineSlot ?? (
-        <h2 id={headingId} className={headlineClass}>
-          {headline}
-        </h2>
-      )}
-      {subheadlineSlot ?? <p className={subheadlineClass}>{subheadline}</p>}
-      {bodySlot ?? <p className={bodyClass}>{body}</p>}
-      {bulletsSlot ?? (
-        <ul className={`mt-8 space-y-3 ${bulletClass}`}>
-          {bullets.map((item) => (
-            <li key={item} className="flex gap-3 text-base leading-relaxed sm:text-lg">
-              <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-current opacity-80" />
-              {item}
-            </li>
-          ))}
-        </ul>
-      )}
-      {ctaSlot ?? (
-        <Link href="#contact" className={ctaClass}>
-          {cta}
-        </Link>
-      )}
-    </div>
-  );
-}
-
 function HebrewDetailCopy({
   detail,
   subheadlineClass,
