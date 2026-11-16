@@ -70,7 +70,7 @@ test.describe("round 2: hero", () => {
 });
 
 test.describe("round 3: LCP guard", () => {
-  test("phone stage photo under the hero is requested only after the first input", async ({ page, isMobile }) => {
+  test("phone stage photo (inside the first screen at 390x844) is not requested at load, only at first input or after the settle delay", async ({ page, isMobile }) => {
     test.skip(!isMobile, "phone layout only");
     const stage = /evyatar(%20|%2520| )stage/;
     const requested: string[] = [];
@@ -83,6 +83,33 @@ test.describe("round 3: LCP guard", () => {
     await page.mouse.wheel(0, 200);
     await expect(page.locator('#products img[alt="אביתר על הבמה"]').first()).toBeVisible();
     await expect.poll(() => requested.length).toBeGreaterThan(0);
+  });
+
+  test("phone stage photo: far below the fold it is not requested even after the settle delay", async ({
+    page,
+    isMobile,
+  }) => {
+    test.skip(!isMobile, "phone layout only");
+    const stage = /evyatar(%20|%2520| )stage/;
+    const requested: string[] = [];
+    page.on("request", (r) => {
+      if (stage.test(r.url())) requested.push(r.url());
+    });
+    // A very tall viewport is the opposite case: the slot is far from the fold only if the viewport
+    // is short, so shrink it: the slot (about y=570) is then beyond one extra viewport height.
+    await page.setViewportSize({ width: 390, height: 200 });
+    await page.goto("/", { waitUntil: "load" });
+    await page.waitForTimeout(4600);
+    expect(requested).toHaveLength(0);
+  });
+
+  test("phone stage photo with no input still arrives after the settle delay when it is in the first screen", async ({
+    page,
+    isMobile,
+  }) => {
+    test.skip(!isMobile, "phone layout only");
+    await page.goto("/", { waitUntil: "load" });
+    await expect(page.locator('#products img[alt="אביתר על הבמה"]').first()).toBeAttached({ timeout: 8000 });
   });
 });
 
