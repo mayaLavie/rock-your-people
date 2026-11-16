@@ -47,6 +47,17 @@ export default defineConfig({
     command: `npm run build && npm run start -- -p ${PORT}`,
     url: baseURL,
     reuseExistingServer: true,
+    // Build-time public env for the tests: a fake pixel id, and the switch that lets
+    // tracking-form.spec.ts flip the lead mode per browser. Never real values.
+    env: {
+      NEXT_PUBLIC_META_PIXEL_ID: "1234567890123456",
+      NEXT_PUBLIC_E2E: "1",
+      // Make sure nothing from the developer's shell turns the server routes "live".
+      META_CAPI_ACCESS_TOKEN: "",
+      META_CAPI_ENDPOINT: "",
+      META_TEST_EVENT_CODE: "",
+      LEAD_WEBHOOK_URL: "",
+    },
     timeout: 300_000,
   },
 });

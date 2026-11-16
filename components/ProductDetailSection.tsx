@@ -1,3 +1,4 @@
+import { productSlugForDetailId } from "@/lib/tracking/products";
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -290,6 +291,7 @@ function Trio360Detail({ detail }: ProductDetailSectionProps) {
   return (
     <section
       id={detail.id}
+      data-product={productSlugForDetailId(detail.id)}
       className={`relative overflow-hidden bg-[#1e1c1c] ${DETAIL_SECTION_PAD}`}
       aria-labelledby={`${detail.id}-heading`}
     >
@@ -341,6 +343,7 @@ function BeerDetail({ detail }: ProductDetailSectionProps) {
   return (
     <section
       id={detail.id}
+      data-product={productSlugForDetailId(detail.id)}
       className="relative overflow-hidden bg-cream-muted"
       aria-labelledby={`${detail.id}-heading`}
     >
@@ -401,6 +404,7 @@ function YourPeopleOnStageDetail({ detail }: ProductDetailSectionProps) {
   return (
     <section
       id={detail.id}
+      data-product={productSlugForDetailId(detail.id)}
       className={`relative min-h-dvh overflow-hidden bg-[#1e1c1c] md:min-h-0 ${STAGE_SECTION_PAD}`}
       aria-labelledby={`${detail.id}-heading`}
     >
@@ -458,6 +462,7 @@ function LeadershipWorkshopDetail({ detail }: ProductDetailSectionProps) {
   return (
     <section
       id={detail.id}
+      data-product={productSlugForDetailId(detail.id)}
       className={`relative z-10 -mt-1 min-h-[calc(100dvh-var(--site-header-height))] overflow-hidden bg-[#6DB380] md:min-h-0 ${WORKSHOP_SECTION_PAD}`}
       aria-labelledby={`${detail.id}-heading`}
     >

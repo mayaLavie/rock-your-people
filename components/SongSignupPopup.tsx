@@ -19,6 +19,7 @@ import {
   type ReactNode,
 } from "react";
 import { SONG_SIGNUP_SHEET_URL } from "@/lib/constants";
+import { track } from "@/lib/tracking/track";
 
 const YELLOW = "#ffe34d";
 const BLACK = "#1e1c1c";
@@ -395,6 +396,7 @@ export function SongSignupPopup({
       }).catch(() => {});
     }
 
+    track("CompleteRegistration", { content_name: "song-signup" });
     setSubmitted(true);
   }
 

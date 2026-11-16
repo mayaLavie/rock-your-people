@@ -1,13 +1,25 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   buildContactMessage,
   buildWhatsAppApiUrl,
   buildWhatsAppUrl,
   CONTACT_INSTAGRAM_HANDLE,
+  openExternalLink,
   WHATSAPP_CHAT_URL,
 } from "@/lib/contact";
+import { LEAD_ROUTE } from "@/lib/tracking/config";
+import { validateLead } from "@/lib/tracking/phone";
+import {
+  detectProduct,
+  PRODUCT_NAMES_HE,
+  type ProductOrGeneral,
+} from "@/lib/tracking/products";
+import { readAttribution } from "@/lib/tracking/attribution";
+import { LEAD_SUBMIT_ATTR } from "@/lib/tracking/clicks";
+import { resolveLeadMode, type LeadMode } from "@/lib/tracking/config";
+import { newEventId, track, trackingEnabled } from "@/lib/tracking/track";
 import { SOCIAL_LINKS } from "@/lib/constants";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
@@ -17,6 +29,8 @@ type FormData = {
   message: string;
 };
 
+type FieldErrors = { name?: string; phone?: string };
+
 const initialForm: FormData = {
   name: "",
   company: "",
@@ -25,9 +39,25 @@ const initialForm: FormData = {
 
 export function ContactSection() {
   const [form, setForm] = useState<FormData>(initialForm);
+  const [phone, setPhone] = useState("");
+  const [errors, setErrors] = useState<FieldErrors>({});
   const [whatsappHint, setWhatsappHint] = useState<string | null>(null);
+  // Lead mode and product are resolved in the browser (the product comes from the
+  // closest [data-product] ancestor, so landing pages need no props).
+  const [leadMode, setLeadMode] = useState<LeadMode>("whatsapp");
+  const [product, setProduct] = useState<ProductOrGeneral>("general");
+  const sectionRef = useCallback((node: HTMLElement | null) => {
+    if (!node) return;
+    setProduct(detectProduct(node));
+    setLeadMode(resolveLeadMode());
+  }, []);
 
-  const composedMessage = useMemo(() => buildContactMessage(form), [form]);
+  const composedMessage = useMemo(() => {
+    const base = buildContactMessage(form);
+    return product === "general"
+      ? base
+      : `${base} (מתעניינ/ת ב: ${PRODUCT_NAMES_HE[product]})`;
+  }, [form, product]);
 
   const whatsappUrl = useMemo(
     () => buildWhatsAppUrl(composedMessage),
@@ -37,6 +67,55 @@ export function ContactSection() {
   function updateField(field: keyof FormData, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
     setWhatsappHint(null);
+    if (field === "name") setErrors((e) => ({ ...e, name: undefined }));
+  }
+
+  /** whatsapp mode: the submit link is the Lead (the global Contact listener skips it). */
+  function handleWhatsAppSubmitClick() {
+    track("Lead", { content_name: product, lead_type: "whatsapp_click" });
+  }
+
+  /** form mode: validate, send the lead, fire Lead, then always open WhatsApp. */
+  function handleFormSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (leadMode !== "form") return;
+
+    const found = validateLead(form.name, phone);
+    setErrors(found);
+    if (found.name || found.phone) {
+      const id = found.name ? "contact-name" : "contact-phone";
+      document.getElementById(id)?.focus();
+      return;
+    }
+
+    const eventId = trackingEnabled() ? newEventId() : undefined;
+    const consented = Boolean(eventId);
+    // Everything below is fire-and-forget so the WhatsApp window opens inside the
+    // click (popup blockers) and a failing API can never block the visitor.
+    fetch(LEAD_ROUTE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      keepalive: true,
+      body: JSON.stringify({
+        name: form.name.trim(),
+        phone: phone.trim(),
+        company: form.company.trim(),
+        message: form.message.trim(),
+        product,
+        utm: consented ? readAttribution().utm : {},
+        page: window.location.pathname,
+        event_id: eventId,
+      }),
+    }).catch(() => {});
+    track(
+      "Lead",
+      { content_name: product, lead_type: "form" },
+      {
+        eventId,
+        userData: { phone: phone.trim(), firstName: form.name.trim() },
+      },
+    );
+    openExternalLink(buildWhatsAppUrl(composedMessage));
   }
 
   async function copyWhatsAppLink() {
@@ -50,6 +129,7 @@ export function ContactSection() {
 
   return (
     <section
+      ref={sectionRef}
       id="contact"
       className="border-t-[3px] border-cream bg-black px-4 pb-16 pt-[40px] sm:px-6 sm:pb-24 lg:px-10"
       aria-labelledby="contact-heading"
@@ -70,10 +150,12 @@ export function ContactSection() {
           </a>
         </div>
 
-        <div
+        <form
           className="border-[3px] border-cream p-6 sm:p-8"
           lang="he"
           dir="rtl"
+          noValidate
+          onSubmit={handleFormSubmit}
         >
           <p className="font-hebrew text-xs font-semibold tracking-wide text-cream/60">
             ההודעה שלכם
@@ -86,7 +168,12 @@ export function ContactSection() {
           </h3>
 
           <div className="mt-6 grid gap-5">
-            <FormField label="שם" htmlFor="contact-name">
+            <FormField
+              label="שם"
+              htmlFor="contact-name"
+              required={leadMode === "form"}
+              error={errors.name}
+            >
               <input
                 id="contact-name"
                 name="name"
@@ -96,8 +183,43 @@ export function ContactSection() {
                 onChange={(e) => updateField("name", e.target.value)}
                 className={inputClass}
                 placeholder="השם שלכם"
+                required={leadMode === "form"}
+                aria-required={leadMode === "form" || undefined}
+                aria-invalid={errors.name ? true : undefined}
+                aria-describedby={errors.name ? "contact-name-error" : undefined}
               />
             </FormField>
+
+            {leadMode === "form" ? (
+              <FormField
+                label="טלפון"
+                htmlFor="contact-phone"
+                required
+                error={errors.phone}
+              >
+                <input
+                  id="contact-phone"
+                  name="phone"
+                  type="tel"
+                  inputMode="tel"
+                  autoComplete="tel"
+                  dir="ltr"
+                  value={phone}
+                  onChange={(e) => {
+                    setPhone(e.target.value);
+                    setErrors((er) => ({ ...er, phone: undefined }));
+                  }}
+                  className={`${inputClass} text-right placeholder:text-right`}
+                  placeholder="050-1234567"
+                  required
+                  aria-required="true"
+                  aria-invalid={errors.phone ? true : undefined}
+                  aria-describedby={
+                    errors.phone ? "contact-phone-error" : undefined
+                  }
+                />
+              </FormField>
+            ) : null}
 
             <FormField label="מאיפה / חברה / אירוע" htmlFor="contact-company">
               <input
@@ -125,15 +247,24 @@ export function ContactSection() {
           </div>
 
           <div className="mt-8">
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-[5px] border border-[#25D366] bg-[#25D366] px-6 py-2 font-hebrew text-sm font-medium text-[#0a0a0a] no-underline transition hover:bg-transparent hover:text-[#25D366] sm:w-auto sm:min-w-[200px]"
-            >
-              <WhatsAppIcon />
-              שליחה בוואטסאפ
-            </a>
+            {leadMode === "form" ? (
+              <button type="submit" className={submitClass}>
+                <WhatsAppIcon />
+                שליחה בוואטסאפ
+              </button>
+            ) : (
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                {...{ [LEAD_SUBMIT_ATTR]: "" }}
+                onClick={handleWhatsAppSubmitClick}
+                className={submitClass}
+              >
+                <WhatsAppIcon />
+                שליחה בוואטסאפ
+              </a>
+            )}
           </div>
 
           {whatsappHint ? (
@@ -202,7 +333,7 @@ export function ContactSection() {
               {composedMessage}
             </pre>
           </details>
-        </div>
+        </form>
       </div>
     </section>
   );
@@ -221,16 +352,21 @@ function WhatsAppIcon() {
   );
 }
 
+const submitClass =
+  "inline-flex min-h-[44px] w-full cursor-pointer items-center justify-center gap-2 rounded-[5px] border border-[#25D366] bg-[#25D366] px-6 py-2 font-hebrew text-sm font-medium text-[#0a0a0a] no-underline transition hover:bg-transparent hover:text-[#25D366] sm:w-auto sm:min-w-[200px]";
+
 const inputClass =
   "w-full border-2 border-cream/30 bg-transparent px-4 py-3 font-hebrew text-sm text-cream placeholder:text-cream/40 outline-none transition focus:border-cream";
 
 type FormFieldProps = {
   label: string;
   htmlFor: string;
+  required?: boolean;
+  error?: string;
   children: React.ReactNode;
 };
 
-function FormField({ label, htmlFor, children }: FormFieldProps) {
+function FormField({ label, htmlFor, required, error, children }: FormFieldProps) {
   return (
     <div>
       <label
@@ -238,8 +374,23 @@ function FormField({ label, htmlFor, children }: FormFieldProps) {
         className="mb-2 block font-hebrew text-xs font-semibold tracking-wide text-cream/80"
       >
         {label}
+        {required ? (
+          <span aria-hidden className="text-[#ffe34d]">
+            {" "}
+            *
+          </span>
+        ) : null}
       </label>
       {children}
+      {error ? (
+        <p
+          id={`${htmlFor}-error`}
+          role="alert"
+          className="mt-2 font-hebrew text-sm text-[#ff8a8a]"
+        >
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }
