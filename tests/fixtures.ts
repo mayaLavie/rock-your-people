@@ -38,11 +38,12 @@ export const test = base.extend<{ meta: MetaNetwork; netlog: void }>({
         context.on("response", async (res) => {
           const url = res.url();
           if (!url.includes("/api/meta/event") && !url.includes("/api/lead")) return;
-          let body: unknown = null;
+          // Push first, fill the body afterwards: a test can end before the body has been read.
+          const entry: NetEntry = { t: Date.now() - t0, kind: "response", url, status: res.status(), body: null };
+          entries.push(entry);
           try {
-            body = await res.json();
+            entry.body = await res.json();
           } catch {}
-          entries.push({ t: Date.now() - t0, kind: "response", url, status: res.status(), body });
         });
       }
       await use();
