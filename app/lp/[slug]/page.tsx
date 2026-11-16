@@ -98,12 +98,9 @@ export default async function LandingPage({
       <LandingFits content={content} intro={USE_CASE_INTRO} />
       <ReviewsSection />
       <LandingFaq items={content.faq} />
-      {/* The footer is authored for an LTR page (English labels). ContactSection sets its own dir. */}
-      <div dir="ltr">
-        <ContactSection />
-        <div className="bg-magenta pb-[calc(5rem+env(safe-area-inset-bottom))] sm:pb-0">
-          <Footer />
-        </div>
+      <ContactSection />
+      <div className="bg-magenta pb-[calc(5rem+env(safe-area-inset-bottom))] sm:pb-0">
+        <Footer />
       </div>
       <LandingStickyBar
         label={ctaLabel}
