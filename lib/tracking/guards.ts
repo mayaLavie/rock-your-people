@@ -1,4 +1,4 @@
-import { createHmac, timingSafeEqual } from "node:crypto";
+import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 
 /*
  * Server-side guards shared by /api/meta/event, /api/lead and /api/consent.
@@ -32,11 +32,14 @@ function sign(payload: string, secret: string): string {
   return createHmac("sha256", secret).update(payload, "utf8").digest("base64url");
 }
 
-/** Cookie value `granted.<issuedAtSeconds>.<hmac>`, or null when no secret is available. */
+/**
+ * Cookie value `granted.<issuedAtSeconds>.<nonce>.<hmac>`, or null when no secret is available.
+ * The random nonce makes every issued cookie distinct (it identifies a visitor behind a shared IP).
+ */
 export function createConsentValue(nowSeconds = Math.floor(Date.now() / 1000)): string | null {
   const secret = consentSecret();
   if (!secret) return null;
-  const payload = `granted.${nowSeconds}`;
+  const payload = `granted.${nowSeconds}.${randomBytes(8).toString("base64url")}`;
   return `${payload}.${sign(payload, secret)}`;
 }
 
@@ -44,12 +47,12 @@ export function verifyConsentValue(value: string | undefined): boolean {
   if (!value) return false;
   const secret = consentSecret();
   if (!secret) return false;
-  const match = /^granted\.(\d{9,11})\.([A-Za-z0-9_-]{20,64})$/.exec(value);
+  const match = /^granted\.(\d{9,11})\.([A-Za-z0-9_-]{8,16})\.([A-Za-z0-9_-]{20,64})$/.exec(value);
   if (!match) return false;
   const age = Math.floor(Date.now() / 1000) - Number(match[1]);
   if (age < -60 || age > CONSENT_MAX_AGE_S) return false;
-  const expected = Buffer.from(sign(`granted.${match[1]}`, secret));
-  const given = Buffer.from(match[2]);
+  const expected = Buffer.from(sign(`granted.${match[1]}.${match[2]}`, secret));
+  const given = Buffer.from(match[3]);
   return expected.length === given.length && timingSafeEqual(expected, given);
 }
 
@@ -65,6 +68,31 @@ export function readCookieHeader(headers: Headers, name: string): string | undef
 
 export function hasValidConsent(request: Request): boolean {
   return verifyConsentValue(readCookieHeader(request.headers, CONSENT_COOKIE));
+}
+
+/**
+ * Identifier of the visitor's consent cookie (its signature part), or undefined when the cookie is
+ * missing or invalid. Used to tell visitors apart behind one shared IP (an office on NAT).
+ */
+export function consentId(request: Request): string | undefined {
+  const value = readCookieHeader(request.headers, CONSENT_COOKIE);
+  if (!verifyConsentValue(value)) return undefined;
+  return value!.split(".").slice(2).join(".");
+}
+
+/** What the secret setup looks like, without revealing any value. */
+export function consentSecretStatus(): "configured" | "dev-fallback" | "missing" {
+  if (process.env.CONSENT_COOKIE_SECRET?.trim()) return "configured";
+  return isRelaxedEnv() ? "dev-fallback" : "missing";
+}
+
+let warnedMissingSecret = false;
+
+/** One loud log line when production runs without CONSENT_COOKIE_SECRET (server events are off). */
+export function warnIfConsentSecretMissing(): void {
+  if (warnedMissingSecret || consentSecretStatus() !== "missing") return;
+  warnedMissingSecret = true;
+  console.error("[tracking] CONSENT_COOKIE_SECRET missing — server events are disabled");
 }
 
 function isHttps(request: Request): boolean {
@@ -166,6 +194,8 @@ export function rateLimited(
   ip: string | undefined,
   limit: number,
   windowMs = 60_000,
+  /** Optional second key part (for example the consent-cookie id) within the same IP. */
+  sub?: string,
 ): boolean {
   if (process.env.NEXT_PUBLIC_E2E === "1" && (!ip || /^(::1|127\.0\.0\.1|::ffff:127\.0\.0\.1)$/.test(ip))) {
     return false; // test build: every local request shares the loopback address
@@ -175,7 +205,7 @@ export function rateLimited(
   if (store.size > 5000) {
     for (const [k, b] of store) if (b.resetAt <= now) store.delete(k);
   }
-  const key = `${route}:${ip ?? "unknown"}`;
+  const key = `${route}:${ip ?? "unknown"}${sub ? `|${sub}` : ""}`;
   const bucket = store.get(key);
   if (!bucket || bucket.resetAt <= now) {
     store.set(key, { count: 1, resetAt: now + windowMs });

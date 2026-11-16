@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Footer } from "@/components/Footer";
 import { LegalPageHeader } from "@/components/LegalPageHeader";
+import { LegalToc } from "@/components/LegalToc";
 import { CONTACT_INSTAGRAM_HANDLE } from "@/lib/contact";
 import { SOCIAL_LINKS } from "@/lib/constants";
 
@@ -9,10 +10,22 @@ export const metadata: Metadata = {
   description: "איך Rock Your People משתמשת במידע ובעוגיות באתר",
 };
 
-const headingClass = "mt-10 font-hebrew text-xl font-semibold text-cream";
+const headingClass = "mt-10 scroll-mt-4 font-hebrew text-xl font-semibold text-cream";
 const paragraphClass = "mt-3 font-hebrew leading-relaxed text-cream";
 const listClass = "mt-3 list-disc space-y-2 pr-6 font-hebrew leading-relaxed text-cream marker:text-cream/60";
 const linkClass = "underline underline-offset-2 hover:text-cream";
+
+const TOC = [
+  { id: "controller", title: "מי אחראית על המידע" },
+  { id: "contact-form", title: "טופס יצירת הקשר" },
+  { id: "song-signup", title: "הרשמה לשירה במופע" },
+  { id: "cookies-meta", title: "עוגיות ופיקסל של Meta" },
+  { id: "browser-storage", title: "מה נשמר בדפדפן שלכם" },
+  { id: "change-choice", title: "שינוי הבחירה שלכם" },
+  { id: "retention", title: "תקופת שמירה" },
+  { id: "hosting", title: "אחסון האתר" },
+  { id: "rights", title: "הזכויות שלכם ויצירת קשר" },
+];
 
 export default function PrivacyPage() {
   return (
@@ -28,13 +41,15 @@ export default function PrivacyPage() {
           עודכן לאחרונה: 16 בנובמבר 2026
         </p>
 
+        <LegalToc items={TOC} />
+
         <p className={paragraphClass}>
           מדיניות זו מסבירה איזה מידע נאסף כשאתם מבקרים באתר rockyourpeople.com,
           למה, מי מקבל אותו ומה הזכויות שלכם. היא נכתבה בהתאם לאופן שבו האתר
           פועל בפועל.
         </p>
 
-        <h2 className={headingClass}>מי אחראית על המידע</h2>
+        <h2 id="controller" className={headingClass}>מי אחראית על המידע</h2>
         <p className={paragraphClass}>
           מחזיקת המידע והאחראית עליו היא Rock Your People (&quot;אנחנו&quot;). אפשר לפנות
           אלינו בכל עניין הנוגע למידע ב
@@ -64,7 +79,7 @@ export default function PrivacyPage() {
           פרטים אפשר לגלוש באתר ולפנות אלינו ישירות בוואטסאפ.
         </p>
 
-        <h2 className={headingClass}>טופס יצירת הקשר</h2>
+        <h2 id="contact-form" className={headingClass}>טופס יצירת הקשר</h2>
         <p className={paragraphClass}>
           לטופס יש שני אופני פעולה, לפי ההגדרה של האתר באותה תקופה.
         </p>
@@ -80,15 +95,15 @@ export default function PrivacyPage() {
             ההודעה, סוג האירוע, מספר המשתתפים והתאריך המשוער. בנוסף נשמרים הדף
             שבו מילאתם את הטופס, המוצר שאליו התייחסתם ופרמטרי הקמפיין
             (utm_source ודומיו) אם הגעתם דרך מודעה ואישרתם עוגיות. הפרטים נשלחים
-            לשירות לניהול פניות שאנחנו מגדירים (למשל Zapier, Make או Google Apps
-            Script), שעשוי להיות מופעל מחוץ לישראל, ומשמשים אותנו כדי לחזור
+            לשירות ניהול פניות חיצוני (כגון גיליון גוגל או מערכת CRM) שהלהקה
+            בוחרת, שעשוי להיות מופעל מחוץ לישראל, ומשמשים אותנו כדי לחזור
             אליכם בנוגע לאירוע. במקביל נפתחת שיחת וואטסאפ עם ההודעה שלכם. את
             הפרטים האלה אנחנו שומרים גם אם לא אישרתם עוגיות, כי מדובר בפנייה
             שביקשתם בעצמכם.
           </li>
         </ul>
 
-        <h2 className={headingClass}>הרשמה לשירה במופע</h2>
+        <h2 id="song-signup" className={headingClass}>הרשמה לשירה במופע</h2>
         <p className={paragraphClass}>
           כשאתם נרשמים באתר לשיר איתנו במופע, השם, מספר הטלפון וההערה שכתבתם
           נשמרים בגיליון Google Sheets שלנו, יחד עם השיר שבחרתם, באמצעות סקריפט
@@ -96,10 +111,16 @@ export default function PrivacyPage() {
           ההשתתפות במופע. הגיליון מאוחסן אצל Google, שעשויה לעבד אותו גם מחוץ
           לישראל. סימון לב ליד שיר נשמר בדפדפן שלכם ונשלח לגיליון כסימון על השיר
           בלבד, בלי שם או טלפון. פתיחת חלון ההרשמה טוענת את מספרי הלבבות מ-Google, ולכן
-          כתובת ה-IP שלכם נחשפת אליה.
+          כתובת ה-IP שלכם נחשפת אליה
+        </p>
+        <p className={paragraphClass}>
+          אם אישרתם עוגיות, בסיום ההרשמה נשלח ל-Meta, מהדפדפן וגם מהשרת שלנו,
+          אירוע השלמת הרשמה (CompleteRegistration) עם התווית song-signup, יחד
+          עם המידע הטכני שמתואר בסעיף על הפיקסל. השם, הטלפון וההערה שכתבתם, וכן
+          השיר שבחרתם, אינם נשלחים ל-Meta. אם לא אישרתם עוגיות, האירוע אינו נשלח.
         </p>
 
-        <h2 className={headingClass}>עוגיות ופיקסל של Meta</h2>
+        <h2 id="cookies-meta" className={headingClass}>עוגיות ופיקסל של Meta</h2>
         <p className={paragraphClass}>
           רק אם תאשרו זאת בהודעה שמופיעה באתר (הכפתור &quot;אישור&quot;), נפעיל את הפיקסל
           של Meta (החברה שמפעילה את פייסבוק ואינסטגרם) ואת ממשק ה-Conversions
@@ -111,7 +132,7 @@ export default function PrivacyPage() {
         <ul className={listClass}>
           <li>
             מידע על הביקור: הדפים שבהם צפיתם, צפייה בחוויות השונות, לחיצות על
-            קישורי וואטסאפ ושליחת הטופס, וכן פרמטרי הקמפיין (utm) וכתובת הדף ללא
+            קישורי וואטסאפ, שליחת הטופס והשלמת הרשמה לשירה במופע, וכן פרמטרי הקמפיין (utm) וכתובת הדף ללא
             שאר הפרמטרים שבה. מזהה הלחיצה על המודעה (fbclid) אינו נשלח כפרמטר,
             והוא משמש רק ליצירת העוגייה _fbc.
           </li>
@@ -137,7 +158,7 @@ export default function PrivacyPage() {
           המדיניות שלה.
         </p>
 
-        <h2 className={headingClass}>מה נשמר בדפדפן שלכם</h2>
+        <h2 id="browser-storage" className={headingClass}>מה נשמר בדפדפן שלכם</h2>
         <ul className={listClass}>
           <li>
             פרמטרי קמפיין (utm) ומזהה fbclid מכתובת הדף נשמרים ב-sessionStorage
@@ -160,7 +181,7 @@ export default function PrivacyPage() {
           </li>
         </ul>
 
-        <h2 className={headingClass}>שינוי הבחירה שלכם</h2>
+        <h2 id="change-choice" className={headingClass}>שינוי הבחירה שלכם</h2>
         <p className={paragraphClass}>
           אפשר לשנות את הבחירה בכל עת דרך הקישור &quot;הגדרות עוגיות&quot; (Cookie
           settings) בתחתית האתר. דחייה או ביטול פועלים מיד, בלי טעינה מחדש של
@@ -169,7 +190,7 @@ export default function PrivacyPage() {
           משפיעה על השימוש באתר.
         </p>
 
-        <h2 className={headingClass}>תקופת שמירה</h2>
+        <h2 id="retention" className={headingClass}>תקופת שמירה</h2>
         <p className={paragraphClass}>
           פרטי פנייה שנמסרו בטופס או בהרשמה לשירה נשמרים עד 24 חודשים ממועד
           הפנייה, אלא אם נדרש אחרת לפי דין. נתוני הפיקסל וה-Conversions API
@@ -177,7 +198,7 @@ export default function PrivacyPage() {
           עד 90 יום.
         </p>
 
-        <h2 className={headingClass}>אחסון האתר</h2>
+        <h2 id="hosting" className={headingClass}>אחסון האתר</h2>
         <p className={paragraphClass}>
           האתר מאוחסן אצל ספק אירוח, שעשוי לרשום נתונים טכניים רגילים כמו כתובת
           IP ומועד הביקור לצורך הפעלת האתר ואבטחתו. השרת שלנו משתמש בכתובת ה-IP
@@ -185,7 +206,7 @@ export default function PrivacyPage() {
           בלבד, ובלי לשמור אותה.
         </p>
 
-        <h2 className={headingClass}>הזכויות שלכם ויצירת קשר</h2>
+        <h2 id="rights" className={headingClass}>הזכויות שלכם ויצירת קשר</h2>
         <p className={paragraphClass}>
           אפשר לפנות אלינו כדי לעיין במידע ששמור אצלנו עליכם, לתקן אותו או
           לבקש למחוק אותו. נשמח לעזור באותם ערוצי קשר שצוינו בראש המדיניות.

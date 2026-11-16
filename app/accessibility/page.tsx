@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Footer } from "@/components/Footer";
 import { LegalPageHeader } from "@/components/LegalPageHeader";
+import { LegalToc } from "@/components/LegalToc";
 import {
   CONTACT_INSTAGRAM_HANDLE,
   CONTACT_WHATSAPP_PHONE,
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
     "הצהרת הנגישות של אתר Rock Your People: התאמות הנגישות באתר, מגבלות ידועות ופרטי יצירת קשר לפניות בנושא נגישות",
 };
 
-const headingClass = "mt-10 font-hebrew text-xl font-semibold text-cream";
+const headingClass = "mt-10 scroll-mt-4 font-hebrew text-xl font-semibold text-cream";
 const paragraphClass = "mt-3 font-hebrew leading-relaxed text-cream";
 const listClass =
   "mt-3 list-disc space-y-2 pr-6 font-hebrew leading-relaxed text-cream";
@@ -21,6 +22,13 @@ const linkClass = "underline underline-offset-2 hover:text-white";
 
 /** 972524632111 -> 052-463-2111 */
 const WHATSAPP_PHONE_DISPLAY = `0${CONTACT_WHATSAPP_PHONE.slice(3, 5)}-${CONTACT_WHATSAPP_PHONE.slice(5, 8)}-${CONTACT_WHATSAPP_PHONE.slice(8)}`;
+
+const TOC = [
+  { id: "standard", title: "התקן שאליו אנחנו מכוונים" },
+  { id: "features", title: "התאמות הנגישות שקיימות באתר" },
+  { id: "limitations", title: "מגבלות ידועות" },
+  { id: "coordinator", title: "רכז הנגישות ופניות בנושא" },
+];
 
 export default function AccessibilityPage() {
   return (
@@ -36,6 +44,8 @@ export default function AccessibilityPage() {
             עודכן לאחרונה: 16 בנובמבר 2026
           </p>
 
+          <LegalToc items={TOC} />
+
           <p className={paragraphClass}>
             אנחנו, להקת Rock Your People, רוצים שכל אדם יוכל להכיר את האתר שלנו
             ולפנות אלינו, כולל אנשים עם מוגבלות. אנחנו פועלים כדי להנגיש את האתר
@@ -44,14 +54,14 @@ export default function AccessibilityPage() {
             התשע&quot;ג-2013.
           </p>
 
-          <h2 className={headingClass}>התקן שאליו אנחנו מכוונים</h2>
+          <h2 id="standard" className={headingClass}>התקן שאליו אנחנו מכוונים</h2>
           <p className={paragraphClass}>
             האתר נבנה בשאיפה לעמוד בדרישות תקן ישראלי ת&quot;י 5568, שמבוסס על
             הנחיות WCAG 2.0 ברמה AA. עדיין לא עשינו ביקורת נגישות מקצועית מלאה,
             ולכן איננו מצהירים שהאתר עומד בתקן בכל חלקיו.
           </p>
 
-          <h2 className={headingClass}>התאמות הנגישות שקיימות באתר</h2>
+          <h2 id="features" className={headingClass}>התאמות הנגישות שקיימות באתר</h2>
           <ul className={listClass}>
             <li>
               התוכן בעברית מסומן כעברית וכמוצג מימין לשמאל, כדי שקוראי מסך
@@ -86,7 +96,7 @@ export default function AccessibilityPage() {
             </li>
           </ul>
 
-          <h2 className={headingClass}>מגבלות ידועות</h2>
+          <h2 id="limitations" className={headingClass}>מגבלות ידועות</h2>
           <ul className={listClass}>
             <li>
               ההמלצות באתר מוצגות כתמונות, ולא כטקסט. אנחנו עובדים על הוספת
@@ -106,7 +116,7 @@ export default function AccessibilityPage() {
             את המידע או השירות בדרך אחרת.
           </p>
 
-          <h2 className={headingClass}>רכז הנגישות ופניות בנושא</h2>
+          <h2 id="coordinator" className={headingClass}>רכז הנגישות ופניות בנושא</h2>
           <p className={paragraphClass}>
             לשאלות, לבקשות להתאמה ולדיווח על בעיית נגישות אפשר לפנות לרכז
             הנגישות שלנו.

@@ -45,6 +45,12 @@ async function accept(page: Page) {
   await page.getByRole("button", { name: ACCEPT, exact: true }).click();
 }
 
+/** Form mode keeps the optional event details behind a disclosure. */
+async function openDetails(page: Page) {
+  const toggle = page.getByRole("button", { name: /הוסיפו פרטים על האירוע/ });
+  if ((await toggle.getAttribute("aria-expanded")) !== "true") await toggle.click();
+}
+
 async function openAccepted(page: Page, path = "/") {
   await page.goto(path, { waitUntil: "load" });
   await accept(page);
@@ -365,6 +371,47 @@ test.describe("attribution", () => {
   });
 });
 
+test.describe("attribution precedence", () => {
+  const fbcCookie = async (context: BrowserContext) =>
+    (await context.cookies()).find((c) => c.name === "_fbc")?.value;
+  const stored = (page: Page) =>
+    page.evaluate(() => JSON.parse(window.sessionStorage.getItem("ryp-attribution") ?? "null"));
+
+  test("a new, different fbclid refreshes _fbc; a utm-only landing keeps the fbclid", async ({
+    page,
+    context,
+    meta,
+  }) => {
+    await watch(context);
+    await page.goto("/?utm_source=fb&fbclid=AAA", { waitUntil: "load" });
+    await accept(page);
+    await meta.expectEventOnce("PageView");
+    const first = await fbcCookie(context);
+    expect(first).toMatch(/^fb\.1\.\d{13}\.AAA$/);
+
+    await page.waitForTimeout(20);
+    await page.goto("/?utm_source=fb2&fbclid=BBB", { waitUntil: "load" });
+    await expect.poll(() => fbcCookie(context)).toMatch(/^fb\.1\.\d{13}\.BBB$/);
+    const second = (await fbcCookie(context))!;
+    expect(Number(second.split(".")[2])).toBeGreaterThan(Number(first!.split(".")[2]));
+
+    // utm-only landing: utm_* replaced (latest touch), fbclid and _fbc untouched
+    await page.goto("/lp/on-stage?utm_source=newsletter&utm_campaign=c3", { waitUntil: "load" });
+    await page.waitForTimeout(500);
+    const kept = await stored(page);
+    expect(kept.fbclid).toBe("BBB");
+    expect(kept.utm).toEqual({ utm_source: "newsletter", utm_campaign: "c3" });
+    expect(await fbcCookie(context)).toBe(second);
+
+    // a landing with no parameters keeps everything
+    await page.goto("/", { waitUntil: "load" });
+    await page.waitForTimeout(300);
+    const again = await stored(page);
+    expect(again.fbclid).toBe("BBB");
+    expect(again.utm).toEqual({ utm_source: "newsletter", utm_campaign: "c3" });
+  });
+});
+
 test.describe("conversions API route", () => {
   const endpoint = "/api/meta/event";
   const base = {
@@ -379,7 +426,7 @@ test.describe("conversions API route", () => {
   async function grantConsent(request: APIRequestContext) {
     const res = await request.post("/api/consent", { headers: sameOrigin });
     expect(res.status()).toBe(200);
-    expect(res.headers()["set-cookie"]).toMatch(/ryp_consent=granted\.\d+\.[\w-]+;.*HttpOnly.*SameSite=Lax/i);
+    expect(res.headers()["set-cookie"]).toMatch(/ryp_consent=granted\.\d+\.[\w-]+\.[\w-]+;.*HttpOnly.*SameSite=Lax/i);
   }
 
   test("without a token it answers a dry run with hashed user data only", async ({ request }) => {
@@ -479,8 +526,8 @@ test.describe("conversions API route", () => {
     // a real value with a changed timestamp no longer verifies
     const granting = await request.post("/api/consent", { headers: sameOrigin });
     const real = /ryp_consent=([^;]+)/.exec(granting.headers()["set-cookie"] ?? "")![1];
-    const [, ts, mac] = real.split(".");
-    const forged = `granted.${Number(ts) + 1}.${mac}`;
+    const [, ts, nonce, mac] = real.split(".");
+    const forged = `granted.${Number(ts) + 1}.${nonce}.${mac}`;
     const fresh = await playwright.request.newContext({ baseURL: ORIGIN });
     const res = await fresh.post(endpoint, {
       headers: { ...sameOrigin, cookie: `ryp_consent=${forged}` },
@@ -539,23 +586,51 @@ test.describe("conversions API route", () => {
     expect((await request.post(endpoint, { ...h, data: big })).status()).toBe(413);
   });
 
-  test("events are rate limited per client IP (30/min)", async ({ request }, info) => {
-    await grantConsent(request);
+  test("events are limited per visitor (IP + consent id) at 60/min, not per IP", async ({
+    playwright,
+  }, info) => {
     // one address per project: mobile and desktop run in parallel against the same server
     const n = info.project.name === "mobile" ? 0 : 100;
     const headers = { ...sameOrigin, "x-vercel-forwarded-for": `198.51.100.${77 + n}` };
+    const visitor = async () => {
+      const ctx = await playwright.request.newContext({ baseURL: ORIGIN });
+      const res = await ctx.post("/api/consent", { headers });
+      expect(res.status()).toBe(200);
+      return ctx;
+    };
+    const a = await visitor();
+    const b = await visitor(); // a colleague behind the same office IP
     let limited = 0;
-    for (let i = 0; i < 34; i++) {
-      const res = await request.post(endpoint, { headers, data: base });
-      if (res.status() === 429) limited++;
+    let firstLimitedAt = 0;
+    for (let i = 1; i <= 64; i++) {
+      const res = await a.post(endpoint, { headers, data: base });
+      if (res.status() === 429) {
+        limited++;
+        if (!firstLimitedAt) firstLimitedAt = i;
+      }
     }
-    expect(limited).toBeGreaterThanOrEqual(3);
-    // another client is unaffected
-    const other = await request.post(endpoint, {
-      headers: { ...sameOrigin, "x-vercel-forwarded-for": `198.51.100.${78 + n}` },
-      data: base,
-    });
-    expect(other.status()).toBe(202);
+    expect(firstLimitedAt).toBe(61);
+    expect(limited).toBe(4);
+    // same IP, different consent cookie: not throttled as one visitor
+    expect((await b.post(endpoint, { headers, data: base })).status()).toBe(202);
+    // another IP is unaffected too
+    const other = { ...sameOrigin, "x-vercel-forwarded-for": `198.51.100.${78 + n}` };
+    expect((await a.post(endpoint, { headers: other, data: base })).status()).toBe(202);
+    await a.dispose();
+    await b.dispose();
+  });
+
+  test("GET /api/meta/health reports the state without exposing any secret", async ({ request }) => {
+    const res = await request.get("/api/meta/health");
+    expect(res.status()).toBe(200);
+    const body = await res.json();
+    // the test build has a pixel id, no access token, and a relaxed (dev fallback) consent secret
+    expect(body.capi).toBe("dry-run");
+    expect(body.reason).toContain("META_CAPI_ACCESS_TOKEN");
+    expect(Object.keys(body).sort()).toEqual(["capi", "reason"]);
+    const text = JSON.stringify(body);
+    expect(text).not.toContain("1234567890123456");
+    expect(text).not.toContain("dev-only-insecure");
   });
 
   test("lead route validates, rate limits (5/min) and answers a dry run without a webhook", async ({
@@ -668,9 +743,10 @@ test.describe("lead mode: form", () => {
     await page.locator("#contact").scrollIntoViewIfNeeded();
     await page.locator("#contact-name").fill("דנה כהן");
     await page.locator("#contact-phone").fill("050-123-4567");
+    await openDetails(page);
     await page.locator("#contact-event-type").selectOption("יום גיבוש");
     await page.locator("#contact-headcount").fill("85");
-    await page.locator("#contact-date").fill("2027-02-14");
+    await page.locator("#contact-date").fill("14/02/2027");
     await page.locator("#contact button[type=submit]").click();
 
     const hit = await meta.expectEventOnce("Lead", { lead_type: "form" });
@@ -684,11 +760,11 @@ test.describe("lead mode: form", () => {
     const wa = decodeURIComponent(seen.whatsapp[0]);
     expect(wa).toContain("יום גיבוש");
     expect(wa).toContain("85");
-    expect(wa).toContain("2027-02-14");
+    expect(wa).toContain("14/02/2027");
 
     // none of the optional fields is part of what Meta receives (pixel or Conversions API)
     const capi = JSON.stringify(seen.capi.filter((c) => c.body.event_name === "Lead"));
-    for (const v of ["יום גיבוש", "2027-02-14", "event_type", "headcount", "event_date"]) {
+    for (const v of ["יום גיבוש", "2027-02-14", "14/02/2027", "event_type", "headcount", "event_date"]) {
       expect(capi).not.toContain(v);
       expect(JSON.stringify(hit)).not.toContain(encodeURIComponent(v));
     }
@@ -748,6 +824,7 @@ test.describe("lead mode: form", () => {
     await page.locator("#contact").scrollIntoViewIfNeeded();
     await page.locator("#contact-name").fill("דנה כהן");
     await page.locator("#contact-phone").fill("+972 50-123-4567");
+    await openDetails(page);
     await page.locator("#contact-company").fill("חברת דוגמה");
     await page.locator("#contact-message").fill("אירוע בדצמבר");
     await page.locator("#contact button[type=submit]").click();

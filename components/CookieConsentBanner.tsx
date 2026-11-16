@@ -65,8 +65,8 @@ export function CookieConsentBanner() {
     >
       <div className="mx-auto flex max-w-[1400px] flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
         <p className="font-hebrew text-xs leading-[1.25] text-cream sm:text-sm">
-          אנו משתמשים בעוגיות ובפיקסל של Meta למדידה ופרסום, והמידע עשוי לעבור
-          אל מחוץ לישראל.{" "}
+          עוגיות ופיקסל של Meta לשתי מטרות, באישור אחד: מדידה, והצגת מודעות
+          מותאמות. המידע עשוי לעבור אל מחוץ לישראל.{" "}
           <Link
             href="/privacy"
             className="whitespace-nowrap font-semibold underline underline-offset-2"

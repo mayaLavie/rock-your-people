@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useId, useMemo, useState } from "react";
 import {
   buildContactMessage,
   buildWhatsAppApiUrl,
@@ -10,7 +10,7 @@ import {
   WHATSAPP_CHAT_URL,
 } from "@/lib/contact";
 import { EVENT_TYPES, LEAD_ROUTE } from "@/lib/tracking/config";
-import { validateLead } from "@/lib/tracking/phone";
+import { parseHebrewDate, validateLead } from "@/lib/tracking/phone";
 import {
   detectProduct,
   PRODUCT_NAMES_HE,
@@ -34,7 +34,7 @@ type FormData = {
   eventDate: string;
 };
 
-type FieldErrors = { name?: string; phone?: string };
+type FieldErrors = { name?: string; phone?: string; eventDate?: string };
 
 const initialForm: FormData = {
   name: "",
@@ -49,6 +49,8 @@ export function ContactSection() {
   const [form, setForm] = useState<FormData>(initialForm);
   const [phone, setPhone] = useState("");
   const [errors, setErrors] = useState<FieldErrors>({});
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const detailsId = useId();
   const [whatsappHint, setWhatsappHint] = useState<string | null>(null);
   // Lead mode and product are resolved in the browser (the product comes from the
   // closest [data-product] ancestor, so landing pages need no props).
@@ -70,7 +72,7 @@ export function ContactSection() {
     const extras: string[] = [];
     if (form.eventType) extras.push(`סוג אירוע: ${form.eventType}`);
     if (form.headcount.trim()) extras.push(`מספר משתתפים: ${form.headcount.trim()}`);
-    if (form.eventDate) extras.push(`תאריך: ${form.eventDate}`);
+    if (form.eventDate.trim()) extras.push(`תאריך: ${form.eventDate.trim()}`);
     return extras.length ? `${withProduct}\n${extras.join(" | ")}` : withProduct;
   }, [form, product, leadMode]);
 
@@ -83,6 +85,7 @@ export function ContactSection() {
     setForm((prev) => ({ ...prev, [field]: value }));
     setWhatsappHint(null);
     if (field === "name") setErrors((e) => ({ ...e, name: undefined }));
+    if (field === "eventDate") setErrors((e) => ({ ...e, eventDate: undefined }));
   }
 
   /**
@@ -106,11 +109,17 @@ export function ContactSection() {
     event.preventDefault();
     if (leadMode !== "form") return;
 
-    const found = validateLead(form.name, phone);
+    const found: FieldErrors = validateLead(form.name, phone);
+    const isoDate = form.eventDate.trim() ? parseHebrewDate(form.eventDate) : "";
+    if (isoDate === null) {
+      found.eventDate = "התאריך לא תקין. כתבו יום/חודש/שנה, למשל 14/02/2027, או השאירו ריק.";
+    }
     setErrors(found);
-    if (found.name || found.phone) {
-      const id = found.name ? "contact-name" : "contact-phone";
-      document.getElementById(id)?.focus();
+    if (found.name || found.phone || found.eventDate) {
+      const id = found.name ? "contact-name" : found.phone ? "contact-phone" : "contact-date";
+      if (found.eventDate && !found.name && !found.phone) setDetailsOpen(true);
+      // The details panel may have just opened: focus after it is rendered visible.
+      setTimeout(() => document.getElementById(id)?.focus(), 0);
       return;
     }
 
@@ -129,7 +138,7 @@ export function ContactSection() {
         message: form.message.trim(),
         event_type: form.eventType,
         headcount: form.headcount.trim(),
-        event_date: form.eventDate,
+        event_date: isoDate ?? "",
         product,
         utm: consented ? readAttribution().utm : {},
         page: window.location.pathname,
@@ -155,6 +164,33 @@ export function ContactSection() {
       setWhatsappHint("לא הצלחנו להעתיק. השתמשו בקישור למטה.");
     }
   }
+
+  const companyField = (
+    <FormField label="מאיפה / חברה / אירוע" htmlFor="contact-company">
+      <input
+        id="contact-company"
+        name="company"
+        type="text"
+        value={form.company}
+        onChange={(e) => updateField("company", e.target.value)}
+        className={inputClass}
+        placeholder="לדוגמה: ניצנים, אירוע חברה, סדנה…"
+      />
+    </FormField>
+  );
+  const messageField = (
+    <FormField label="הודעה" htmlFor="contact-message">
+      <textarea
+        id="contact-message"
+        name="message"
+        rows={4}
+        value={form.message}
+        onChange={(e) => updateField("message", e.target.value)}
+        className={`${inputClass} min-h-[100px] resize-y`}
+        placeholder="תאריכים, מיקום, גודל קהל, מה מחפשים…"
+      />
+    </FormField>
+  );
 
   return (
     <section
@@ -255,79 +291,92 @@ export function ContactSection() {
               </FormField>
             ) : null}
 
-            <FormField label="מאיפה / חברה / אירוע" htmlFor="contact-company">
-              <input
-                id="contact-company"
-                name="company"
-                type="text"
-                value={form.company}
-                onChange={(e) => updateField("company", e.target.value)}
-                className={inputClass}
-                placeholder="לדוגמה: ניצנים, אירוע חברה, סדנה…"
-              />
-            </FormField>
-
-            <FormField label="הודעה" htmlFor="contact-message">
-              <textarea
-                id="contact-message"
-                name="message"
-                rows={4}
-                value={form.message}
-                onChange={(e) => updateField("message", e.target.value)}
-                className={`${inputClass} min-h-[100px] resize-y`}
-                placeholder="תאריכים, מיקום, גודל קהל, מה מחפשים…"
-              />
-            </FormField>
-
             {leadMode === "form" ? (
-              <fieldset className="grid gap-5 border-0 p-0">
-                <legend className="mb-3 font-hebrew text-xs font-semibold tracking-wide text-cream/60">
-                  פרטים על האירוע (לא חובה)
-                </legend>
-                <FormField label="סוג האירוע" htmlFor="contact-event-type">
-                  <select
-                    id="contact-event-type"
-                    name="eventType"
-                    value={form.eventType}
-                    onChange={(e) => updateField("eventType", e.target.value)}
-                    className={`${inputClass} bg-black`}
+              <div>
+                <button
+                  type="button"
+                  aria-expanded={detailsOpen}
+                  aria-controls={detailsId}
+                  onClick={() => setDetailsOpen((o) => !o)}
+                  className="flex min-h-[44px] w-full items-center justify-between gap-3 border-2 border-cream/30 px-4 py-2 text-start font-hebrew text-sm font-semibold text-cream transition hover:border-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cream"
+                >
+                  <span>הוסיפו פרטים על האירוע (לא חובה)</span>
+                  <svg
+                    aria-hidden
+                    viewBox="0 0 12 12"
+                    className={`h-3 w-3 shrink-0 transition-transform ${detailsOpen ? "rotate-180" : ""}`}
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
                   >
-                    <option value="">בחרו סוג אירוע</option>
-                    {EVENT_TYPES.map((t) => (
-                      <option key={t} value={t}>
-                        {t}
-                      </option>
-                    ))}
-                  </select>
-                </FormField>
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField label="מספר משתתפים" htmlFor="contact-headcount">
-                    <input
-                      id="contact-headcount"
-                      name="headcount"
-                      type="number"
-                      inputMode="numeric"
-                      min={1}
-                      max={100000}
-                      value={form.headcount}
-                      onChange={(e) => updateField("headcount", e.target.value)}
-                      className={inputClass}
-                      placeholder="לדוגמה: 60"
-                    />
+                    <path d="M2 4l4 4 4-4" />
+                  </svg>
+                </button>
+                <div id={detailsId} hidden={!detailsOpen} className="mt-5 grid gap-5">
+                  {companyField}
+                  {messageField}
+                  <FormField label="סוג האירוע" htmlFor="contact-event-type">
+                    <select
+                      id="contact-event-type"
+                      name="eventType"
+                      value={form.eventType}
+                      onChange={(e) => updateField("eventType", e.target.value)}
+                      className={`${inputClass} bg-black`}
+                    >
+                      <option value="">בחרו סוג אירוע</option>
+                      {EVENT_TYPES.map((t) => (
+                        <option key={t} value={t}>
+                          {t}
+                        </option>
+                      ))}
+                    </select>
                   </FormField>
-                  <FormField label="תאריך משוער" htmlFor="contact-date">
-                    <input
-                      id="contact-date"
-                      name="eventDate"
-                      type="date"
-                      value={form.eventDate}
-                      onChange={(e) => updateField("eventDate", e.target.value)}
-                      className={`${inputClass} [color-scheme:dark]`}
-                    />
-                  </FormField>
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField label="מספר משתתפים" htmlFor="contact-headcount">
+                      <input
+                        id="contact-headcount"
+                        name="headcount"
+                        type="number"
+                        inputMode="numeric"
+                        min={1}
+                        max={100000}
+                        value={form.headcount}
+                        onChange={(e) => updateField("headcount", e.target.value)}
+                        className={inputClass}
+                        placeholder="לדוגמה: 60"
+                      />
+                    </FormField>
+                    <FormField
+                      label="תאריך משוער"
+                      htmlFor="contact-date"
+                      error={errors.eventDate}
+                    >
+                      <input
+                        id="contact-date"
+                        name="eventDate"
+                        type="text"
+                        inputMode="numeric"
+                        autoComplete="off"
+                        lang="he"
+                        dir="ltr"
+                        maxLength={10}
+                        value={form.eventDate}
+                        onChange={(e) => updateField("eventDate", e.target.value)}
+                        className={`${inputClass} text-right placeholder:text-right`}
+                        placeholder="יום/חודש/שנה"
+                        aria-invalid={errors.eventDate ? true : undefined}
+                        aria-describedby={errors.eventDate ? "contact-date-error" : undefined}
+                      />
+                    </FormField>
+                  </div>
                 </div>
-              </fieldset>
-            ) : null}
+              </div>
+            ) : (
+              <>
+                {companyField}
+                {messageField}
+              </>
+            )}
           </div>
 
           <div className="mt-8">
@@ -460,7 +509,7 @@ const submitClass =
   "inline-flex min-h-[44px] w-full cursor-pointer items-center justify-center gap-2 rounded-[5px] border border-[#25D366] bg-[#25D366] px-6 py-2 font-hebrew text-sm font-medium text-[#0a0a0a] no-underline transition hover:bg-[#3ee27a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cream sm:w-auto sm:min-w-[200px]";
 
 const inputClass =
-  "w-full border-2 border-cream/30 bg-transparent px-4 py-3 font-hebrew text-sm text-cream placeholder:text-cream/40 outline-none transition focus:border-cream";
+  "w-full border-2 border-cream/30 bg-transparent px-4 py-3 font-hebrew text-sm text-cream placeholder:text-cream/60 outline-none transition focus:border-cream";
 
 type FormFieldProps = {
   label: string;

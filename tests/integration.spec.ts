@@ -95,6 +95,7 @@ test.describe("contact section", () => {
     const contact = page.locator("#contact");
     await expect(contact).toContainText("הפרטים יישלחו אל Rock Your People");
     await expect(contact.getByRole("link", { name: "מדיניות הפרטיות" })).toHaveAttribute("href", "/privacy");
+    await contact.getByRole("button", { name: /הוסיפו פרטים על האירוע/ }).click();
     for (const id of ["#contact-event-type", "#contact-headcount", "#contact-date"]) {
       await expect(contact.locator(id)).toBeVisible();
       await expect(contact.locator(id)).not.toHaveAttribute("required", "");
@@ -127,6 +128,8 @@ test.describe("privacy policy", () => {
       "24 חודשים",
       "מחוץ לישראל",
       "אינה חובה",
+      "CompleteRegistration",
+      "שירות ניהול פניות חיצוני",
     ]) {
       await expect(main).toContainText(phrase);
     }

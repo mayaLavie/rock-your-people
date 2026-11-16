@@ -1,7 +1,9 @@
 import {
   cleanSourceUrl,
   clientIp,
+  consentId,
   hasValidConsent,
+  warnIfConsentSecretMissing,
   originAllowed,
   rateLimited,
   readCappedText,
@@ -18,7 +20,10 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const MAX_BODY_CHARS = 10_000;
-const EVENTS_PER_MINUTE = 30;
+/** Per visitor (IP + consent-cookie id): an office behind one NAT is not throttled as one visitor. */
+const EVENTS_PER_MINUTE = 60;
+/** Coarse ceiling for one IP across all of its visitors. */
+const EVENTS_PER_MINUTE_PER_IP = 600;
 const COOKIE_VALUE = /^fb\.\d\.\d{10,13}\.[\w.-]{1,512}$/;
 
 function json(body: unknown, status: number) {
@@ -29,18 +34,23 @@ function json(body: unknown, status: number) {
 }
 
 /**
- * Meta Conversions API relay. Guards, in order: Origin/Referer allowlist, per-IP rate limit
- * (30/min), signed consent cookie (set by /api/consent), body size cap, event-name whitelist. Browser sends the same event (same event_id) as
+ * Meta Conversions API relay. Guards, in order: Origin/Referer allowlist, coarse per-IP ceiling
+ * (600/min), signed consent cookie (set by /api/consent), per-visitor limit (IP + consent id, 60/min),
+ * body size cap, event-name whitelist. Browser sends the same event (same event_id) as
  * the pixel; Meta de-duplicates. Raw phone / name are hashed here and never logged.
  */
 export async function POST(request: Request) {
   if (!originAllowed(request)) return json({ ok: false, error: "origin_not_allowed" }, 403);
   const ip = clientIp(request.headers);
-  if (rateLimited("meta-event", ip, EVENTS_PER_MINUTE)) {
+  warnIfConsentSecretMissing();
+  if (rateLimited("meta-event-ip", ip, EVENTS_PER_MINUTE_PER_IP)) {
     return json({ ok: false, error: "rate_limited" }, 429);
   }
   // Consent is verified from the signed first-party cookie, never from a flag in the body.
   if (!hasValidConsent(request)) return json({ ok: false, error: "consent_required" }, 403);
+  if (rateLimited("meta-event", ip, EVENTS_PER_MINUTE, 60_000, consentId(request))) {
+    return json({ ok: false, error: "rate_limited" }, 429);
+  }
 
   const pixelId = (process.env.NEXT_PUBLIC_META_PIXEL_ID ?? "").trim();
   if (!pixelId) return json({ ok: false, error: "pixel_not_configured" }, 202);

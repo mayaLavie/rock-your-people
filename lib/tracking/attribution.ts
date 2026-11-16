@@ -35,7 +35,13 @@ export function readAttribution(): Attribution {
   return { utm: {} };
 }
 
-/** Call on every full load. New campaign parameters replace the stored ones. */
+/**
+ * Call on every full load. Precedence within a session:
+ * - utm_*: latest touch wins. A landing that carries any utm_* replaces the stored set as a whole;
+ *   a landing with no utm_* keeps the stored set.
+ * - fbclid: kept until replaced. A landing with only utm_* (no fbclid) never erases it; a new,
+ *   different fbclid replaces it and gets a fresh timestamp (used as the creation time in _fbc).
+ */
 export function captureAttribution(): void {
   try {
     const params = new URLSearchParams(window.location.search);
@@ -46,7 +52,16 @@ export function captureAttribution(): void {
     }
     const fbclid = clean(params.get("fbclid"));
     if (!Object.keys(utm).length && !fbclid) return;
-    const attribution: Attribution = { utm, fbclid, ts: Date.now() };
+    const stored = readAttribution();
+    const nextFbclid = fbclid ?? stored.fbclid;
+    const attribution: Attribution = {
+      utm: Object.keys(utm).length ? utm : stored.utm,
+      fbclid: nextFbclid,
+      ts:
+        fbclid && fbclid !== stored.fbclid
+          ? Date.now()
+          : (stored.ts ?? Date.now()),
+    };
     window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(attribution));
   } catch {
     // Storage can be blocked.
@@ -65,10 +80,19 @@ function writeCookie(name: string, value: string) {
   document.cookie = `${name}=${encodeURIComponent(value)}; Max-Age=${maxAge}; path=/; SameSite=Lax`;
 }
 
-/** After consent only: creates _fbc from fbclid and _fbp when missing. */
+/** The fbclid encoded in an _fbc cookie value (`fb.1.<ts>.<fbclid>`), if any. */
+function fbclidOfFbc(value: string | undefined): string | undefined {
+  const m = value ? /^fb\.\d\.\d+\.(.+)$/.exec(value) : null;
+  return m?.[1];
+}
+
+/**
+ * After consent only: creates _fbc from fbclid (and refreshes it, with a new timestamp, when a new
+ * fbclid differs from the one already encoded in the cookie) and _fbp when missing.
+ */
 export function ensureMetaCookies(): void {
   const { fbclid, ts } = readAttribution();
-  if (fbclid && !readCookie("_fbc")) {
+  if (fbclid && fbclidOfFbc(readCookie("_fbc")) !== fbclid) {
     writeCookie("_fbc", `fb.1.${ts ?? Date.now()}.${fbclid}`);
   }
   if (!readCookie("_fbp")) {
