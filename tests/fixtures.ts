@@ -4,6 +4,7 @@ import { installMetaNetwork, type MetaNetwork } from "./helpers/meta-network";
 /** `meta` is installed before any navigation, so no facebook request can ever escape. */
 export const test = base.extend<{ meta: MetaNetwork }>({
   meta: async ({ context }, use) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks -- Playwright fixture callback, not a React hook
     await use(await installMetaNetwork(context));
   },
 });

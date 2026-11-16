@@ -214,8 +214,6 @@ export function ExperienceCarousel() {
   const isDesktopLayout = useDesktopCarouselLayout();
   const carouselLayout = isDesktopLayout ? "desktop" : "mobile";
 
-  displayedIndexRef.current = displayedIndex;
-
   const displayedCard = EXPERIENCE_CARDS[displayedIndex]!;
 
   const cardCount = EXPERIENCE_CARDS.length;
@@ -247,6 +245,10 @@ export function ExperienceCarousel() {
   );
 
   useEffect(() => {
+    displayedIndexRef.current = displayedIndex;
+  }, [displayedIndex]);
+
+  useEffect(() => {
     if (activeIndex === displayedIndexRef.current) return;
 
     const reducedMotion = window.matchMedia(
@@ -254,12 +256,16 @@ export function ExperienceCarousel() {
     ).matches;
 
     if (reducedMotion) {
-      setDisplayedIndex(activeIndex);
-      setIsTextTransitioning(false);
-      return;
+      const instantTimeout = window.setTimeout(() => {
+        setDisplayedIndex(activeIndex);
+        setIsTextTransitioning(false);
+      }, 0);
+      return () => window.clearTimeout(instantTimeout);
     }
 
-    setIsTextTransitioning(true);
+    const startTimeout = window.setTimeout(() => {
+      setIsTextTransitioning(true);
+    }, 0);
 
     const swapTimeout = window.setTimeout(() => {
       setDisplayedIndex(activeIndex);
@@ -270,6 +276,7 @@ export function ExperienceCarousel() {
     }, TEXT_TRANSITION_MS);
 
     return () => {
+      window.clearTimeout(startTimeout);
       window.clearTimeout(swapTimeout);
       window.clearTimeout(endTimeout);
     };

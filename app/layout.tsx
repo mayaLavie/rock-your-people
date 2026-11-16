@@ -1,6 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { CookieConsentBanner } from "@/components/CookieConsentBanner";
+import { JsonLd } from "@/components/JsonLd";
+import { OG_IMAGE, OPEN_GRAPH_BASE, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/seo";
 import "./globals.css";
 
 /*
@@ -73,11 +75,23 @@ const bodyFontVars = {
 } as React.CSSProperties;
 
 export const metadata: Metadata = {
-  title: "Rock Your People",
-  description: "חוויות מוזיקליות אינטראקטיביות לחברות, צוותים ואירועים",
+  metadataBase: new URL(SITE_URL),
+  title: { default: SITE_NAME, template: `%s | ${SITE_NAME}` },
+  description: SITE_DESCRIPTION,
+  openGraph: { ...OPEN_GRAPH_BASE },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    images: [OG_IMAGE.url],
+  },
   icons: {
     icon: "/favicon.svg",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#ff2d73",
 };
 
 export default function RootLayout({
@@ -86,11 +100,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="he" className="scroll-smooth">
       <body
         style={bodyFontVars}
         className={`${bowlby.variable} ${inter.variable} ${bebasNeue.variable} min-h-full bg-background font-sans text-foreground antialiased`}
       >
+        <JsonLd />
         {children}
         <CookieConsentBanner />
       </body>

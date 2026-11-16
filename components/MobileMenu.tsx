@@ -1,7 +1,7 @@
 "use client";
 
 import { MOBILE_MENU_LINKS } from "@/lib/constants";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 
 function readDetailsOpen(details: HTMLDetailsElement | null) {
@@ -11,14 +11,15 @@ function readDetailsOpen(details: HTMLDetailsElement | null) {
 export function MobileMenu() {
   const detailsRef = useRef<HTMLDetailsElement>(null);
   const [open, setOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  // false on the server and during hydration, true afterwards (no setState in an effect).
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
 
   const syncOpenFromDetails = useCallback(() => {
     setOpen(readDetailsOpen(detailsRef.current));
-  }, []);
-
-  useEffect(() => {
-    setMounted(true);
   }, []);
 
   useEffect(() => {

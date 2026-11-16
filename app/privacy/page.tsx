@@ -5,7 +5,7 @@ import { CONTACT_INSTAGRAM_HANDLE } from "@/lib/contact";
 import { SOCIAL_LINKS } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "מדיניות פרטיות | Rock Your People",
+  title: "מדיניות פרטיות",
   description: "איך Rock Your People משתמשת במידע ובעוגיות באתר",
 };
 
