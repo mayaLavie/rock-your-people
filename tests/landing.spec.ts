@@ -155,19 +155,47 @@ test("sticky bar appears after hero, hides over the contact form (mobile only)",
   await expect(bar).toHaveAttribute("aria-hidden", "true");
 });
 
-test("sticky bar hides while the consent bar is open", async ({ page, isMobile }) => {
+test("sticky bar hides while the consent bar is open and appears after accepting", async ({ page, isMobile }) => {
   test.skip(!isMobile, "sticky bar is mobile-only");
   await page.goto("/lp/on-stage", { waitUntil: "load" });
   const bar = page.getByTestId("landing-sticky-bar");
+  const banner = page.getByTestId("cookie-banner");
+  await expect(banner).toBeVisible();
+  await expect(page.locator("html")).toHaveAttribute("data-consent-banner", "open");
   await page.locator("#reviews").scrollIntoViewIfNeeded();
   await expect(bar).toHaveAttribute("aria-hidden", "false");
-  await expect(bar).toBeVisible();
-  await page.evaluate(() => {
-    document.documentElement.dataset.consentBanner = "open";
-  });
   await expect(bar).toBeHidden();
-  await page.evaluate(() => {
-    delete document.documentElement.dataset.consentBanner;
-  });
+  await page.getByRole("button", { name: "אישור", exact: true }).click();
+  await expect(banner).toHaveCount(0);
   await expect(bar).toBeVisible();
+});
+
+test.describe("first visit on mobile: primary CTAs sit above the cookie bar", () => {
+  const above = async (
+    page: import("@playwright/test").Page,
+    cta: import("@playwright/test").Locator,
+  ) => {
+    const banner = page.getByTestId("cookie-banner");
+    await expect(banner).toBeVisible();
+    await expect(cta).toBeVisible();
+    const c = await cta.boundingBox();
+    const b = await banner.boundingBox();
+    expect(c && b).toBeTruthy();
+    expect(c!.y).toBeGreaterThanOrEqual(0);
+    expect(c!.y + c!.height).toBeLessThanOrEqual(b!.y + 0.5);
+  };
+
+  test("homepage hero CTA", async ({ page, isMobile }) => {
+    test.skip(!isMobile, "mobile-only layout check");
+    await page.goto("/", { waitUntil: "load" });
+    await above(page, page.locator('a[data-placement="hero"]').first());
+  });
+
+  for (const slug of SLUGS) {
+    test(`/lp/${slug} primary CTA`, async ({ page, isMobile }) => {
+      test.skip(!isMobile, "mobile-only layout check");
+      await page.goto(`/lp/${slug}`, { waitUntil: "load" });
+      await above(page, page.locator("#lp-hero-cta"));
+    });
+  }
 });
