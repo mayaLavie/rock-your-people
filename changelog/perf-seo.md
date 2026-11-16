@@ -38,4 +38,4 @@
 - קבצים: כל הנתיבים שמופיעים למעלה, בעיקר app/layout.tsx, app/page.tsx, app/privacy/page.tsx, app/sitemap.ts, app/robots.ts, lib/seo.ts, components/JsonLd.tsx, components/GalleryStory.tsx, components/MobileMenu.tsx, components/ExperienceCarousel.tsx, components/ProductDetailSection.tsx, public/**.
 - משתנה סביבה: NEXT_PUBLIC_SITE_URL קובע את כתובת האתר, וברירת המחדל היא https://rockyourpeople.com.
 - שחזור קובץ שנמחק או נדחס: `git checkout 595d94a -- "<נתיב הקובץ>"`.
-- קומיט: `git revert <hash>` של הקומיט שמופיע ביומן ה-git בענף feat/perf-seo.
+- קומיט: `git revert 3c26adb` (הקומיט היחיד בענף feat/perf-seo).

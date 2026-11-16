@@ -117,7 +117,7 @@ test.describe("events", () => {
   test("the four homepage detail sections carry their visible-name slug", async ({ page }) => {
     await page.goto("/");
     for (const slug of ["on-stage", "band-in-a-day", "rock-your-dj", "beer-office"]) {
-      await expect(page.locator(`[data-product="${slug}"]`)).toHaveCount(1);
+      await expect(page.locator(`section[data-product="${slug}"]`)).toHaveCount(1);
     }
   });
 

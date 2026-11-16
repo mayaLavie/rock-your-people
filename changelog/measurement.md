@@ -2,7 +2,7 @@
 
 ## הערה על הקומיט
 - כל העבודה של תחום המדידה נמצאת בקומיט אחד בענף `feat/measurement`, כי החלקים תלויים זה בזה.
-- ערך שנכתב באותו קומיט לא יכול להכיל את האש של עצמו, ולכן בכל ערך כתוב `<hash>` של הקומיט הזה, ואפשר למצוא אותו עם `git log --oneline -- changelog/measurement.md`.
+- ערך שנכתב באותו קומיט לא יכול להכיל את האש של עצמו, ולכן בכל ערך מצוין האש של הקומיט הזה, 717710c, שהוזן לאחר הכתיבה.
 - החזרה חלקית של ערך בודד מתבצעת לפי רשימת הקבצים שלו, והחזרה מלאה מתבצעת עם `git revert` של הקומיט.
 
 ## משתני סביבה
@@ -30,7 +30,7 @@
 ### איך מחזירים
 - קבצים: `tests/tracking.spec.ts`, `playwright.config.ts`.
 - משתנה סביבה: `NEXT_PUBLIC_E2E`.
-- קומיט: `git revert <hash>` של קומיט הבדיקות ב-`feat/measurement`.
+- קומיט: `git revert 717710c` (הקומיט היחיד בענף `feat/measurement`, והחזרה שלו מבטלת את כל תחום המדידה).
 
 ## טופס ליד במצב form והרשמה לשיר (2026-11-16)
 
@@ -49,7 +49,7 @@
 ### איך מחזירים
 - קבצים: `components/ContactSection.tsx`, `components/SongSignupPopup.tsx`, `app/api/lead/route.ts`, `lib/tracking/phone.ts`.
 - משתנה סביבה: `NEXT_PUBLIC_LEAD_MODE` (להשאיר `whatsapp` או לא להגדיר מבטל את המצב בלי קוד), `LEAD_WEBHOOK_URL`.
-- קומיט: `git revert <hash>` של קומיט הטופס ב-`feat/measurement`.
+- קומיט: `git revert 717710c` (הקומיט היחיד בענף `feat/measurement`, והחזרה שלו מבטלת את כל תחום המדידה).
 - הערה: בטקסט העזר שמתחת לכפתור (`אפשר למלא את הפרטים...`) לא שונתה מילה, כי שינוי נוסח אינו בתחום המדידה.
 
 ## Conversions API בצד שרת (2026-11-16)
@@ -66,7 +66,7 @@
 ### איך מחזירים
 - קבצים: `app/api/meta/event/route.ts`, `lib/tracking/server.ts`.
 - משתנה סביבה: `META_CAPI_ACCESS_TOKEN` (ריק מכבה את השליחה החוצה).
-- קומיט: `git revert <hash>` של קומיט ה-CAPI ב-`feat/measurement`.
+- קומיט: `git revert 717710c` (הקומיט היחיד בענף `feat/measurement`, והחזרה שלו מבטלת את כל תחום המדידה).
 - הערה: ללא המסלול, `track()` ממשיך לעבוד בדפדפן, והשליחה לשרת נכשלת בשקט.
 
 ## ייחוס קמפיין ושימור פרמטרים (2026-11-16)
@@ -83,7 +83,7 @@
 ### איך מחזירים
 - קבצים: `lib/tracking/attribution.ts`, `components/CookieConsentBanner.tsx`.
 - משתנה סביבה: אין.
-- קומיט: `git revert <hash>` של קומיט הייחוס ב-`feat/measurement`.
+- קומיט: `git revert 717710c` (הקומיט היחיד בענף `feat/measurement`, והחזרה שלו מבטלת את כל תחום המדידה).
 - הערה: פתיחה של קישור פנימי בלשונית חדשה לא מעבירה `sessionStorage`, ולכן הייחוס יילכד שוב רק אם יש פרמטרים בכתובת.
 
 ## מודול מדידה מרכזי ואירועים (2026-11-16)
@@ -108,4 +108,4 @@
 ### איך מחזירים
 - קבצים: `components/MetaPixel.tsx`, `components/CookieConsentBanner.tsx`, `components/ProductDetailSection.tsx`, `components/ContactSection.tsx`, `lib/tracking/*`, `.env.example`, `.gitignore`.
 - משתנה סביבה: `NEXT_PUBLIC_META_PIXEL_ID` (ריק מכבה את כל המדידה).
-- קומיט: `git revert <hash>` של קומיט המודול ב-`feat/measurement`. שימו לב שהחזרה כוללת חזרה למזהה הקבוע הישן.
+- קומיט: `git revert 717710c` (הקומיט היחיד בענף `feat/measurement`, והחזרה שלו מבטלת את כל תחום המדידה). שימו לב שהחזרה כוללת חזרה למזהה הקבוע הישן.
