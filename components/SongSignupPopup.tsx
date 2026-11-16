@@ -115,6 +115,14 @@ const CSS = `
 @media (prefers-reduced-motion: reduce){
   .ryp-teaser-wrap,.ryp-teaser-wrap.ryp-landed{animation:ryp-fade .4s ease both}
 }
+
+/* "sign up in pairs" line: yellow, with a soft pulse so it is read first */
+.ryp-pairs{display:inline-block;color:${YELLOW};font-weight:700;animation:ryp-pulse 1.6s ease-in-out infinite}
+@keyframes ryp-pulse{
+  0%,100%{transform:scale(1);text-shadow:none}
+  50%{transform:scale(1.05);text-shadow:0 0 10px rgba(255,227,77,.55)}
+}
+@media (prefers-reduced-motion: reduce){.ryp-pairs{animation:none}}
 `;
 
 type Pick = { name: string; phone: string; note: string };
@@ -695,6 +703,8 @@ export function SongSignupPopup({
             סמנו ❤️ ליד השירים שתרצו שננגן.
             <br />
             רוצים לשיר איתנו? בחרו שיר והשאירו פרטים
+            <br />
+            <span className="ryp-pairs">מוזמנים להירשם גם בזוגות או יותר</span>
           </p>
         </div>
 
