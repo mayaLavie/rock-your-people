@@ -2,7 +2,15 @@
 
 import { getCookieConsent } from "@/lib/cookie-consent";
 import { readAttribution, readCookie } from "./attribution";
-import { CAPI_ROUTE, META_PIXEL_ID, type MetaEventName } from "./config";
+import { toInternationalDigits } from "./phone";
+import { readCtaPlacement } from "./placement";
+import {
+  CAPI_ROUTE,
+  LEAD_CURRENCY,
+  LEAD_VALUE,
+  META_PIXEL_ID,
+  type MetaEventName,
+} from "./config";
 
 export type TrackParams = Record<string, string | number | boolean | undefined>;
 
@@ -27,6 +35,22 @@ export function trackingEnabled(): boolean {
 
 export function newEventId(): string {
   return crypto.randomUUID();
+}
+
+function advancedMatching(userData?: TrackUserData): Record<string, string> | undefined {
+  if (!userData) return undefined;
+  const out: Record<string, string> = {};
+  if (userData.phone) {
+    const ph = toInternationalDigits(userData.phone);
+    if (ph.length >= 8) out.ph = ph;
+  }
+  const fn = userData.firstName
+    ?.trim()
+    .toLowerCase()
+    .split(/\s+/)[0]
+    ?.replace(/[^\p{L}\p{N}]/gu, "");
+  if (fn) out.fn = fn;
+  return Object.keys(out).length ? out : undefined;
 }
 
 function sendToServer(body: unknown) {
@@ -72,15 +96,27 @@ export function track(
   for (const [k, v] of Object.entries(params)) {
     if (v !== undefined) customData[k] = v;
   }
+  if (eventName === "Lead" || eventName === "Contact") {
+    const placement = readCtaPlacement();
+    if (placement) customData.cta_placement = placement;
+  }
+  // Only when NEXT_PUBLIC_LEAD_VALUE is set; nothing is invented otherwise.
+  if (eventName === "Lead" && LEAD_VALUE !== undefined) {
+    customData.value = LEAD_VALUE;
+    customData.currency = LEAD_CURRENCY;
+  }
 
   try {
+    // Browser advanced matching (form mode only): the pixel hashes these itself. Done before the
+    // track call so the Lead carries them; the server sends the hashed pair too, with the same event_id.
+    const matching = advancedMatching(options.userData);
+    if (matching) window.fbq?.("init", META_PIXEL_ID, matching);
     window.fbq?.("track", eventName, customData, { eventID: eventId });
   } catch {
     // A broken pixel must never break the page.
   }
 
   sendToServer({
-    consent: true,
     event_name: eventName,
     event_id: eventId,
     event_time: Math.floor(Date.now() / 1000),

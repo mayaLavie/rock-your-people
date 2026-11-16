@@ -73,3 +73,64 @@ test.describe("contact hint per lead mode", () => {
     await expect(contact).not.toContainText("גם אם השדות ריקים");
   });
 });
+
+test.describe("contact section", () => {
+  test("Hebrew heading, rtl on the homepage and on landing pages", async ({ page }) => {
+    for (const path of ["/", "/lp/on-stage"]) {
+      await page.goto(path);
+      const section = page.locator("section#contact");
+      await expect(section).toHaveAttribute("dir", "rtl");
+      await expect(section.locator("h2")).toHaveText("מוכנים לגרום לאנשים שלכם לרקוד?");
+      await expect(section).not.toContainText("READY TO ROCK");
+      await expect(section).toContainText("ההודעה תיפתח בוואטסאפ");
+    }
+  });
+
+  test("form mode: notice with privacy link, optional fields, solid submit button in the error state", async ({
+    page,
+    context,
+  }) => {
+    await context.addInitScript(() => localStorage.setItem("ryp-e2e-lead-mode", "form"));
+    await page.goto("/");
+    const contact = page.locator("#contact");
+    await expect(contact).toContainText("הפרטים יישלחו אל Rock Your People");
+    await expect(contact.getByRole("link", { name: "מדיניות הפרטיות" })).toHaveAttribute("href", "/privacy");
+    for (const id of ["#contact-event-type", "#contact-headcount", "#contact-date"]) {
+      await expect(contact.locator(id)).toBeVisible();
+      await expect(contact.locator(id)).not.toHaveAttribute("required", "");
+    }
+    const submit = contact.locator("button[type=submit]");
+    await submit.click();
+    await expect(page.locator("#contact-name-error")).toBeVisible();
+    const colors = await submit.evaluate((el) => {
+      const cs = getComputedStyle(el);
+      return { bg: cs.backgroundColor, color: cs.color };
+    });
+    expect(colors.bg).not.toBe("rgba(0, 0, 0, 0)");
+    const errorColor = await page.locator("#contact-name-error").evaluate((el) => getComputedStyle(el).color);
+    expect(errorColor).toBe("rgb(255, 180, 180)");
+  });
+});
+
+test.describe("privacy policy", () => {
+  test("matches the code: Meta CAPI, hashing, lead webhook, retention, rights, date", async ({ page }) => {
+    await page.goto("/privacy");
+    const main = page.locator("main");
+    await expect(main).toContainText("16 בנובמבר 2026");
+    for (const phrase of [
+      "Conversions",
+      "SHA-256",
+      "פסאודונימיזציה",
+      "Google Sheets",
+      "ryp_consent",
+      "sessionStorage",
+      "24 חודשים",
+      "מחוץ לישראל",
+      "אינה חובה",
+    ]) {
+      await expect(main).toContainText(phrase);
+    }
+    await expect(main).not.toContainText("אינם נשמרים באתר.");
+    await expect(main).not.toContainText("[למילוי");
+  });
+});

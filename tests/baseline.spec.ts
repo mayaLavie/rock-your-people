@@ -1,6 +1,6 @@
 import { test } from "./fixtures";
 
-const ACCEPT = "מאשר/ת";
+const ACCEPT = "אישור";
 
 test.describe("baseline consent + pixel behaviour", () => {
   test("no facebook requests before consent", async ({ page, meta }) => {

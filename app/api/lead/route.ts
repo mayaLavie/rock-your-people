@@ -1,10 +1,25 @@
+import {
+  clientIp,
+  originAllowed,
+  rateLimited,
+  readCappedText,
+} from "@/lib/tracking/guards";
+import { EVENT_TYPES } from "@/lib/tracking/config";
 import { isValidIsraeliPhone, normalizeIsraeliPhone } from "@/lib/tracking/phone";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+const MAX_BODY_CHARS = 8_000;
+const LEADS_PER_MINUTE = 5;
+
 function clip(v: unknown, max: number): string {
   return typeof v === "string" ? v.trim().slice(0, max) : "";
+}
+
+function parseHeadcount(v: unknown): number | undefined {
+  const n = typeof v === "number" ? v : Number(typeof v === "string" ? v.trim() : NaN);
+  return Number.isInteger(n) && n >= 1 && n <= 100_000 ? n : undefined;
 }
 
 function flatStrings(v: unknown): Record<string, string> {
@@ -22,9 +37,20 @@ function flatStrings(v: unknown): Record<string, string> {
  * The raw phone and name are never logged.
  */
 export async function POST(request: Request) {
+  if (!originAllowed(request)) {
+    return Response.json({ ok: false, error: "origin_not_allowed" }, { status: 403 });
+  }
+  if (rateLimited("lead", clientIp(request.headers), LEADS_PER_MINUTE)) {
+    return Response.json({ ok: false, error: "rate_limited" }, { status: 429 });
+  }
+  const text = await readCappedText(request, MAX_BODY_CHARS);
+  if (text === null) {
+    return Response.json({ ok: false, error: "too_large" }, { status: 413 });
+  }
   let body: Record<string, unknown>;
   try {
-    body = await request.json();
+    body = JSON.parse(text);
+    if (!body || typeof body !== "object" || Array.isArray(body)) throw new Error("shape");
   } catch {
     return Response.json({ ok: false, error: "invalid_json" }, { status: 400 });
   }
@@ -39,6 +65,11 @@ export async function POST(request: Request) {
     name,
     phone: normalizeIsraeliPhone(phoneRaw),
     company: clip(body.company, 200),
+    event_type: (EVENT_TYPES as readonly string[]).includes(clip(body.event_type, 40))
+      ? clip(body.event_type, 40)
+      : "",
+    headcount: parseHeadcount(body.headcount),
+    event_date: /^\d{4}-\d{2}-\d{2}$/.test(clip(body.event_date, 10)) ? clip(body.event_date, 10) : "",
     message: clip(body.message, 2000),
     product: clip(body.product, 40) || "general",
     utm: flatStrings(body.utm),

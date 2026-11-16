@@ -9,7 +9,7 @@ import {
   openExternalLink,
   WHATSAPP_CHAT_URL,
 } from "@/lib/contact";
-import { LEAD_ROUTE } from "@/lib/tracking/config";
+import { EVENT_TYPES, LEAD_ROUTE } from "@/lib/tracking/config";
 import { validateLead } from "@/lib/tracking/phone";
 import {
   detectProduct,
@@ -21,12 +21,17 @@ import { LEAD_SUBMIT_ATTR } from "@/lib/tracking/clicks";
 import { resolveLeadMode, type LeadMode } from "@/lib/tracking/config";
 import { newEventId, track, trackingEnabled } from "@/lib/tracking/track";
 import { SOCIAL_LINKS } from "@/lib/constants";
+import Link from "next/link";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
 type FormData = {
   name: string;
   company: string;
   message: string;
+  /** form mode only, all optional: sent to the lead webhook and the WhatsApp text, never to Meta */
+  eventType: string;
+  headcount: string;
+  eventDate: string;
 };
 
 type FieldErrors = { name?: string; phone?: string };
@@ -35,6 +40,9 @@ const initialForm: FormData = {
   name: "",
   company: "",
   message: "",
+  eventType: "",
+  headcount: "",
+  eventDate: "",
 };
 
 export function ContactSection() {
@@ -54,10 +62,17 @@ export function ContactSection() {
 
   const composedMessage = useMemo(() => {
     const base = buildContactMessage(form);
-    return product === "general"
-      ? base
-      : `${base} (מתעניינ/ת ב: ${PRODUCT_NAMES_HE[product]})`;
-  }, [form, product]);
+    const withProduct =
+      product === "general"
+        ? base
+        : `${base} (מתעניינ/ת ב: ${PRODUCT_NAMES_HE[product]})`;
+    if (leadMode !== "form") return withProduct;
+    const extras: string[] = [];
+    if (form.eventType) extras.push(`סוג אירוע: ${form.eventType}`);
+    if (form.headcount.trim()) extras.push(`מספר משתתפים: ${form.headcount.trim()}`);
+    if (form.eventDate) extras.push(`תאריך: ${form.eventDate}`);
+    return extras.length ? `${withProduct}\n${extras.join(" | ")}` : withProduct;
+  }, [form, product, leadMode]);
 
   const whatsappUrl = useMemo(
     () => buildWhatsAppUrl(composedMessage),
@@ -70,9 +85,20 @@ export function ContactSection() {
     if (field === "name") setErrors((e) => ({ ...e, name: undefined }));
   }
 
-  /** whatsapp mode: the submit link is the Lead (the global Contact listener skips it). */
+  /**
+   * whatsapp mode: the submit link is handled here (the global Contact listener skips it).
+   * It is a Lead only when the visitor actually wrote something: a name AND a company or a message.
+   * An empty (or name-only) click just opens WhatsApp, which is a Contact.
+   */
   function handleWhatsAppSubmitClick() {
-    track("Lead", { content_name: product, lead_type: "whatsapp_click" });
+    const filled =
+      form.name.trim() !== "" &&
+      (form.company.trim() !== "" || form.message.trim() !== "");
+    if (filled) {
+      track("Lead", { content_name: product, lead_type: "whatsapp_click" });
+    } else {
+      track("Contact", { content_name: product, placement: "contact-form" });
+    }
   }
 
   /** form mode: validate, send the lead, fire Lead, then always open WhatsApp. */
@@ -101,6 +127,9 @@ export function ContactSection() {
         phone: phone.trim(),
         company: form.company.trim(),
         message: form.message.trim(),
+        event_type: form.eventType,
+        headcount: form.headcount.trim(),
+        event_date: form.eventDate,
         product,
         utm: consented ? readAttribution().utm : {},
         page: window.location.pathname,
@@ -130,20 +159,27 @@ export function ContactSection() {
   return (
     <section
       ref={sectionRef}
+      dir="rtl"
+      lang="he"
       id="contact"
       className="border-t-[3px] border-cream bg-black px-4 pb-16 pt-[40px] sm:px-6 sm:pb-24 lg:px-10"
       aria-labelledby="contact-heading"
     >
       <div className="mx-auto grid max-w-[1400px] gap-12 lg:grid-cols-2 lg:items-start lg:gap-16">
         <div>
-          <SectionHeading align="left" title="Ready to rock your people?" />
-          <p className="mt-6 text-sm font-medium uppercase tracking-[0.12em] text-cream/70">
-            Follow us on Instagram
+          <SectionHeading
+            align="left"
+            title="מוכנים לגרום לאנשים שלכם לרקוד?"
+            titleClassName="!font-hebrew !normal-case font-bold text-right"
+          />
+          <p className="mt-6 font-hebrew text-sm font-medium tracking-wide text-cream/70">
+            עקבו אחרינו באינסטגרם
           </p>
           <a
             href={SOCIAL_LINKS.instagram}
             target="_blank"
             rel="noopener noreferrer"
+            dir="ltr"
             className="mt-2 inline-block text-base font-medium tracking-wide text-cream/90 underline-offset-4 transition hover:text-cream hover:underline"
           >
             @{CONTACT_INSTAGRAM_HANDLE}
@@ -152,8 +188,6 @@ export function ContactSection() {
 
         <form
           className="border-[3px] border-cream p-6 sm:p-8"
-          lang="he"
-          dir="rtl"
           noValidate
           onSubmit={handleFormSubmit}
         >
@@ -244,6 +278,56 @@ export function ContactSection() {
                 placeholder="תאריכים, מיקום, גודל קהל, מה מחפשים…"
               />
             </FormField>
+
+            {leadMode === "form" ? (
+              <fieldset className="grid gap-5 border-0 p-0">
+                <legend className="mb-3 font-hebrew text-xs font-semibold tracking-wide text-cream/60">
+                  פרטים על האירוע (לא חובה)
+                </legend>
+                <FormField label="סוג האירוע" htmlFor="contact-event-type">
+                  <select
+                    id="contact-event-type"
+                    name="eventType"
+                    value={form.eventType}
+                    onChange={(e) => updateField("eventType", e.target.value)}
+                    className={`${inputClass} bg-black`}
+                  >
+                    <option value="">בחרו סוג אירוע</option>
+                    {EVENT_TYPES.map((t) => (
+                      <option key={t} value={t}>
+                        {t}
+                      </option>
+                    ))}
+                  </select>
+                </FormField>
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField label="מספר משתתפים" htmlFor="contact-headcount">
+                    <input
+                      id="contact-headcount"
+                      name="headcount"
+                      type="number"
+                      inputMode="numeric"
+                      min={1}
+                      max={100000}
+                      value={form.headcount}
+                      onChange={(e) => updateField("headcount", e.target.value)}
+                      className={inputClass}
+                      placeholder="לדוגמה: 60"
+                    />
+                  </FormField>
+                  <FormField label="תאריך משוער" htmlFor="contact-date">
+                    <input
+                      id="contact-date"
+                      name="eventDate"
+                      type="date"
+                      value={form.eventDate}
+                      onChange={(e) => updateField("eventDate", e.target.value)}
+                      className={`${inputClass} [color-scheme:dark]`}
+                    />
+                  </FormField>
+                </div>
+              </fieldset>
+            ) : null}
           </div>
 
           <div className="mt-8">
@@ -267,17 +351,32 @@ export function ContactSection() {
             )}
           </div>
 
+          {leadMode === "form" ? (
+            <p className="mt-3 font-hebrew text-xs leading-relaxed text-cream/75">
+              הפרטים יישלחו אל Rock Your People כדי לחזור אליכם בנוגע לאירוע.
+              פרטים נוספים ב
+              <Link href="/privacy" className="underline underline-offset-2">
+                מדיניות הפרטיות
+              </Link>
+              .
+            </p>
+          ) : (
+            <p className="mt-3 font-hebrew text-xs text-cream/75">
+              ההודעה תיפתח בוואטסאפ, ושם תחליטו אם לשלוח אותה.
+            </p>
+          )}
+
           {whatsappHint ? (
-            <p className="mt-4 font-hebrew text-sm text-cream/70" role="status">
+            <p className="mt-4 font-hebrew text-sm text-cream/80" role="status">
               {whatsappHint}
             </p>
           ) : leadMode === "form" ? (
-            <p className="mt-4 font-hebrew text-sm text-cream/50">
+            <p className="mt-4 font-hebrew text-sm text-cream/70">
               מלאו שם וטלפון ולחצו על שליחה. נשמור את הפרטים כדי לחזור אליכם,
               ובמקביל תיפתח שיחת וואטסאפ עם ההודעה שלכם, מוכנה לשליחה.
             </p>
           ) : (
-            <p className="mt-4 font-hebrew text-sm text-cream/50">
+            <p className="mt-4 font-hebrew text-sm text-cream/70">
               אפשר למלא את הפרטים ולשלוח, או לפתוח וואטסאפ ישירות. ההודעה תיפתח
               מוכנה לשליחה (גם אם השדות ריקים).
             </p>
@@ -358,7 +457,7 @@ function WhatsAppIcon() {
 }
 
 const submitClass =
-  "inline-flex min-h-[44px] w-full cursor-pointer items-center justify-center gap-2 rounded-[5px] border border-[#25D366] bg-[#25D366] px-6 py-2 font-hebrew text-sm font-medium text-[#0a0a0a] no-underline transition hover:bg-transparent hover:text-[#25D366] sm:w-auto sm:min-w-[200px]";
+  "inline-flex min-h-[44px] w-full cursor-pointer items-center justify-center gap-2 rounded-[5px] border border-[#25D366] bg-[#25D366] px-6 py-2 font-hebrew text-sm font-medium text-[#0a0a0a] no-underline transition hover:bg-[#3ee27a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cream sm:w-auto sm:min-w-[200px]";
 
 const inputClass =
   "w-full border-2 border-cream/30 bg-transparent px-4 py-3 font-hebrew text-sm text-cream placeholder:text-cream/40 outline-none transition focus:border-cream";
@@ -391,7 +490,7 @@ function FormField({ label, htmlFor, required, error, children }: FormFieldProps
         <p
           id={`${htmlFor}-error`}
           role="alert"
-          className="mt-2 font-hebrew text-sm text-[#ff8a8a]"
+          className="mt-2 font-hebrew text-sm text-[#ffb4b4]"
         >
           {error}
         </p>

@@ -46,7 +46,7 @@ test.describe("interactions after refactor", () => {
   test("mobile menu opens and closes", async ({ page }, info) => {
     test.skip(info.project.name !== "mobile", "mobile only");
     await page.goto("/", { waitUntil: "load" });
-    await page.getByRole("button", { name: "מאשר/ת", exact: true }).click();
+    await page.getByRole("button", { name: "אישור", exact: true }).click();
     await page.locator('summary[aria-label="פתיחת תפריט"]').click();
     await expect(page.getByRole("navigation", { name: "ניווט מובייל" })).toBeVisible();
     await page.keyboard.press("Escape");
@@ -58,7 +58,7 @@ test.describe("interactions after refactor", () => {
 
   test("carousel navigates", async ({ page }) => {
     await page.goto("/", { waitUntil: "load" });
-    await page.getByRole("button", { name: "מאשר/ת", exact: true }).click();
+    await page.getByRole("button", { name: "אישור", exact: true }).click();
     const region = page.getByRole("region", { name: "Rock Your People experiences" });
     await region.scrollIntoViewIfNeeded();
     const cards = region.locator("button");
