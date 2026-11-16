@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Footer } from "@/components/Footer";
+import { LegalPageHeader } from "@/components/LegalPageHeader";
 import { CONTACT_INSTAGRAM_HANDLE } from "@/lib/contact";
 import { SOCIAL_LINKS } from "@/lib/constants";
 
@@ -10,26 +10,21 @@ export const metadata: Metadata = {
 };
 
 const headingClass = "mt-10 font-hebrew text-xl font-semibold text-cream";
-const paragraphClass = "mt-3 font-hebrew leading-relaxed text-cream/85";
-const listClass = "mt-3 list-disc space-y-2 pr-6 font-hebrew leading-relaxed text-cream/85 marker:text-cream/60";
+const paragraphClass = "mt-3 font-hebrew leading-relaxed text-cream";
+const listClass = "mt-3 list-disc space-y-2 pr-6 font-hebrew leading-relaxed text-cream marker:text-cream/60";
 const linkClass = "underline underline-offset-2 hover:text-cream";
 
 export default function PrivacyPage() {
   return (
     <>
-      <main
-        lang="he"
-        dir="rtl"
-        className="mx-auto max-w-3xl px-4 pb-16 pt-36 sm:px-6 sm:py-24"
-      >
-        <Link href="/" className={`font-hebrew text-sm ${linkClass}`}>
-          חזרה לאתר
-        </Link>
-
-        <h1 className="mt-8 font-hebrew text-3xl font-semibold text-cream sm:text-4xl">
+      <LegalPageHeader />
+      <main lang="he" dir="rtl" className="px-4 py-8 sm:px-6 sm:py-12">
+        {/* Dark panel, as on /accessibility: cream on #1e1c1c clears 4.5:1, cream on the brand pink does not */}
+        <div className="mx-auto max-w-3xl rounded-[5px] bg-[#1e1c1c] px-5 pb-10 pt-4 sm:px-10">
+        <h1 className="mt-6 font-hebrew text-3xl font-semibold text-cream sm:text-4xl">
           מדיניות פרטיות
         </h1>
-        <p className="mt-3 font-hebrew text-sm text-cream/70">
+        <p className="mt-3 font-hebrew text-sm text-cream/90">
           עודכן לאחרונה: 16 בנובמבר 2026
         </p>
 
@@ -198,6 +193,7 @@ export default function PrivacyPage() {
           אינה מוחקת מידע שנמצא אצל Meta או אצל וואטסאפ; לשם כך יש לפנות אליהן
           ישירות.
         </p>
+        </div>
       </main>
       <div className="bg-magenta">
         <Footer />

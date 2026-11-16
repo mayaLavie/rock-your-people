@@ -133,4 +133,12 @@ test.describe("privacy policy", () => {
     await expect(main).not.toContainText("אינם נשמרים באתר.");
     await expect(main).not.toContainText("[למילוי");
   });
+
+  test("uses the shared legal header (logo + nav) like /accessibility", async ({ page }) => {
+    await page.goto("/privacy");
+    const header = page.locator("header").first();
+    await expect(header).toBeVisible();
+    await expect(header.getByRole("link", { name: /חזרה לעמוד הבית/ })).toHaveAttribute("href", "/");
+    await expect(header.getByRole("link", { name: "צור קשר" })).toHaveAttribute("href", "/#contact");
+  });
 });
