@@ -36,22 +36,32 @@ export async function generateMetadata({
   if (!content) return {};
   const title = landingTitle(content);
   const url = `/lp/${content.slug}`;
+  // og/twitter titles do not go through the title template, so add the brand here.
+  const shareTitle = `${title} | Rock Your People`;
+  const image = {
+    url: content.ogImage,
+    width: 1200,
+    height: 630,
+    alt: `${content.name} | Rock Your People`,
+  };
   return {
     title,
     description: content.metaDescription,
     alternates: { canonical: url },
     openGraph: {
-      title,
+      title: shareTitle,
       description: content.metaDescription,
       url,
       siteName: "Rock Your People",
       locale: "he_IL",
       type: "website",
+      images: [image],
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: shareTitle,
       description: content.metaDescription,
+      images: [image.url],
     },
   };
 }
@@ -88,7 +98,7 @@ export default async function LandingPage({
       <LandingFits content={content} intro={USE_CASE_INTRO} />
       <ReviewsSection />
       <LandingFaq items={content.faq} />
-      {/* Contact + footer are authored for an LTR page (English headings); keep them that way. */}
+      {/* The footer is authored for an LTR page (English labels). ContactSection sets its own dir. */}
       <div dir="ltr">
         <ContactSection />
         <div className="bg-magenta pb-[calc(5rem+env(safe-area-inset-bottom))] sm:pb-0">

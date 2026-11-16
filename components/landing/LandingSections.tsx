@@ -56,6 +56,7 @@ export function LandingHero({
         <div className="flex flex-col gap-2 md:col-start-1 md:row-start-2 md:flex-row md:flex-wrap md:items-start md:gap-4">
           <a
             id={HERO_CTA_ID}
+            data-placement="lp-hero"
             href="#contact"
             className="inline-flex min-h-[48px] w-full items-center justify-center rounded-[5px] border border-[#FFE34D] bg-[#FFE34D] px-6 font-hebrew text-base font-bold text-[#1e1c1c] transition hover:bg-transparent hover:text-[#FFE34D] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cream md:w-auto md:min-w-[260px]"
           >
@@ -63,6 +64,7 @@ export function LandingHero({
           </a>
           <a
             href={whatsappUrl}
+            data-placement="lp-hero-whatsapp"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-[5px] border-2 border-cream px-6 font-hebrew text-[15px] font-semibold text-cream transition hover:bg-cream/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cream md:w-auto"
@@ -71,6 +73,20 @@ export function LandingHero({
             או ישירות בוואטסאפ
           </a>
         </div>
+
+        <p
+          data-testid="lp-trust-line"
+          className="font-hebrew text-[14px] font-medium leading-snug text-cream/95 sm:text-[15px] md:col-start-1 md:row-start-3"
+        >
+          להקה מקצועית עם שנים של ניסיון על במות ובהפקות חיות.{" "}
+          <a
+            href="#reviews"
+            data-placement="lp-hero-reviews"
+            className="font-bold underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cream"
+          >
+            קראו מה כתבו מי שכבר חוו אותנו
+          </a>
+        </p>
       </div>
     </section>
   );
