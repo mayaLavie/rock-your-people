@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CtaLink } from "@/components/CtaLink";
 import { REVIEWS_END_CTA_HE } from "@/lib/constants";
 
@@ -18,10 +18,34 @@ const REVIEW_IMAGES = [
 
 export function ReviewsSection() {
   const [paused, setPaused] = useState(false);
+  // Cards scroll in from outside the clipped box, where native lazy loading never fires and
+  // they would show up as blank white cards. Load every image once the section is near.
+  const [near, setNear] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || near) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setNear(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setNear(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "1200px 0px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [near]);
   const togglePaused = () => setPaused((value) => !value);
 
   return (
     <section
+      ref={sectionRef}
       id="reviews"
       className="relative overflow-hidden bg-magenta px-4 pt-12 pb-14 sm:px-6 lg:px-4"
       aria-labelledby="reviews-heading"
@@ -54,7 +78,7 @@ export function ReviewsSection() {
             togglePaused();
           }
         }}
-        className="reviews-marquee relative mx-auto mt-6 h-[70dvh] max-h-[640px] w-full max-w-[420px] cursor-pointer overflow-hidden outline-none"
+        className="reviews-marquee relative mx-auto mt-6 h-[72dvh] min-h-[460px] max-h-[640px] w-full max-w-[420px] cursor-pointer overflow-hidden outline-none"
       >
         <div
           className="reviews-marquee-track flex flex-col"
@@ -69,7 +93,7 @@ export function ReviewsSection() {
               {REVIEW_IMAGES.map((image, index) => (
                 <li key={`${copy}-${image.src}`}>
                   <div
-                    className="block w-full overflow-hidden rounded-[5px] border-2 border-cream bg-white shadow-[0_12px_30px_rgba(0,0,0,0.25)]"
+                    className="block w-full overflow-hidden rounded-[5px] border-2 border-cream bg-white shadow-[0_4px_12px_rgba(0,0,0,0.18)]"
                   >
                     <Image
                       src={image.src}
@@ -77,6 +101,7 @@ export function ReviewsSection() {
                       width={image.width}
                       height={image.height}
                       sizes="420px"
+                      loading={near ? "eager" : "lazy"}
                       className="h-auto w-full"
                     />
                   </div>

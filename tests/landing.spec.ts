@@ -199,3 +199,17 @@ test.describe("first visit on mobile: primary CTAs sit above the cookie bar", ()
     });
   }
 });
+
+test("reviews: every card image loads once the section is near (no blank white cards)", async ({ page }) => {
+  await page.goto("/lp/on-stage", { waitUntil: "load" });
+  await page.locator("#reviews").scrollIntoViewIfNeeded();
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        [...document.querySelectorAll("#reviews img")].every(
+          (i) => (i as HTMLImageElement).complete && (i as HTMLImageElement).naturalWidth > 0,
+        ),
+      ),
+    )
+    .toBe(true);
+});
