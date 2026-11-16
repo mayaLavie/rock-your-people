@@ -174,16 +174,18 @@ function getTeaserPlacement(wrap: HTMLElement): CSSProperties | null {
   if (!container) return null;
   const box = container.getBoundingClientRect();
 
-  if (logo) {
-    // Mobile: the donkey sits to the right of the compact logo, top-aligned with it,
-    // so it never lands on the headline or the hero CTA below.
-    const rect = logo.getBoundingClientRect();
-    return {
-      position: "absolute",
-      top: rect.top - box.top,
-      right: 16,
-      left: "auto",
-    };
+  if (!logo) {
+    // Mobile / tablet: the logo lives in the header, so the donkey parks in the empty
+    // right-hand corner just under the hero CTAs (never on the headline or the buttons).
+    const below = document.querySelector<HTMLElement>('[data-placement="hero-secondary"]');
+    if (below && below.getBoundingClientRect().width > 0 && !visibleMarker("[data-donkey-anchor]")) {
+      return {
+        position: "absolute",
+        top: below.getBoundingClientRect().bottom - box.top + 6,
+        right: 16,
+        left: "auto",
+      };
+    }
   }
 
   const anchor = visibleMarker("[data-donkey-anchor]");

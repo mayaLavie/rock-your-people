@@ -48,13 +48,11 @@ export function Hero() {
       aria-labelledby="hero-heading"
     >
       <div className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col">
-        {/* Mobile / tablet: the logo lives in the header, so the slogan appears just below, over the products photo.
-            The invisible data-hero-logo marker is where the teaser donkey lands (to the right). */}
-        <div className="flex min-h-[calc(var(--site-header-height)+40px)] items-start pt-[calc(var(--site-header-height)+0.5rem)] lg:hidden">
-          <div className="w-[180px] shrink-0 sm:w-[200px]">
-            <div data-hero-logo aria-hidden className="h-px w-[128px] sm:w-[150px]" />
-          </div>
-        </div>
+        {/* Mobile / tablet: the logo lives in the header, so this is only header clearance. */}
+        <div
+          aria-hidden
+          className="min-h-[calc(var(--site-header-height)+44px)] lg:hidden"
+        />
 
         <div className="mt-1 flex flex-col lg:mt-auto">
           <div className="relative pb-3 text-center">
