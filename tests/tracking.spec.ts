@@ -627,7 +627,9 @@ test.describe("conversions API route", () => {
     // the test build has a pixel id, no access token, and a relaxed (dev fallback) consent secret
     expect(body.capi).toBe("dry-run");
     expect(body.reason).toContain("META_CAPI_ACCESS_TOKEN");
-    expect(Object.keys(body).sort()).toEqual(["capi", "reason"]);
+    // testMode appears because this build carries NEXT_PUBLIC_E2E (it must never be set in production)
+    expect(Object.keys(body).sort()).toEqual(["capi", "reason", "testMode"]);
+    expect(body.testMode).toBe(true);
     const text = JSON.stringify(body);
     expect(text).not.toContain("1234567890123456");
     expect(text).not.toContain("dev-only-insecure");

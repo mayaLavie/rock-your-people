@@ -23,7 +23,7 @@ export async function POST(request: Request) {
   if (rateLimited("consent", clientIp(request.headers), 20)) {
     return reply({ ok: false, error: "rate_limited" }, 429, request);
   }
-  const value = createConsentValue();
+  const value = createConsentValue(undefined, request);
   if (!value) {
     console.error("[consent] CONSENT_COOKIE_SECRET is not set; consent cookie not issued");
     return reply({ ok: false, error: "consent_unavailable" }, 503, request);

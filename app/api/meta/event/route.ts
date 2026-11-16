@@ -2,6 +2,8 @@ import {
   cleanSourceUrl,
   clientIp,
   consentId,
+  e2eFlagSet,
+  onVercel,
   hasValidConsent,
   warnIfConsentSecretMissing,
   originAllowed,
@@ -40,6 +42,8 @@ function json(body: unknown, status: number) {
  * the pixel; Meta de-duplicates. Raw phone / name are hashed here and never logged.
  */
 export async function POST(request: Request) {
+  // NEXT_PUBLIC_E2E on Vercel is a misconfiguration: server events stay off (see /api/meta/health).
+  if (e2eFlagSet() && onVercel()) return json({ ok: false, error: "test_flag_on_vercel" }, 503);
   if (!originAllowed(request)) return json({ ok: false, error: "origin_not_allowed" }, 403);
   const ip = clientIp(request.headers);
   warnIfConsentSecretMissing();

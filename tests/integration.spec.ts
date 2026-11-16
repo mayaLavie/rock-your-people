@@ -1,3 +1,4 @@
+import { createHmac } from "node:crypto";
 import { test, expect } from "./fixtures";
 
 /** data-product must follow the product name the visitor SEES (legacy DOM ids are misleading). */
@@ -212,4 +213,125 @@ test.describe("round 3 integration", () => {
       expect(capi).toEqual([]);
     });
   }
+});
+
+/* ---------- attribution capture is not deferred ---------- */
+
+test.describe("attribution capture runs before the deferred banner mounts", () => {
+  test("utm_* + fbclid and the CTA placement are stored with the banner held back; nothing is sent, no _fbc", async ({
+    page,
+    context,
+  }) => {
+    // Keep the deferred islands (banner) from mounting: idle callbacks never fire, no input is sent.
+    await page.addInitScript(() => {
+      (window as unknown as { requestIdleCallback: unknown }).requestIdleCallback = () => 0;
+    });
+    const fb: string[] = [];
+    const capi: string[] = [];
+    context.on("request", (r) => {
+      if (/facebook\.(com|net)/.test(r.url())) fb.push(r.url());
+      if (r.url().includes("/api/meta/event")) capi.push(r.url());
+    });
+    await page.goto("/?utm_source=t&fbclid=XYZ", { waitUntil: "load" });
+    await page.waitForTimeout(1200);
+    await expect(page.getByTestId("cookie-banner")).toHaveCount(0); // banner really not mounted
+    const stored = await page.evaluate(() => JSON.parse(sessionStorage.getItem("ryp-attribution") ?? "null"));
+    expect(stored.utm).toEqual({ utm_source: "t" });
+    expect(stored.fbclid).toBe("XYZ");
+
+    // The CTA-placement listener is live too (no hero is clicked by a keyboard/pointer "input" that
+    // would mount the banner earlier than we assert: dispatch the click programmatically).
+    const placement = await page.evaluate(() => {
+      const link = document.querySelector<HTMLElement>('a[href$="#contact"]');
+      link?.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+      return sessionStorage.getItem("ryp-cta-placement") ?? sessionStorage.length;
+    });
+    expect(placement).toBeTruthy();
+
+    // consent-gated parts stay gated: no facebook request, no capi call, no _fbc cookie.
+    expect(fb).toEqual([]);
+    expect(capi).toEqual([]);
+    expect((await context.cookies()).map((c) => c.name)).not.toContain("_fbc");
+  });
+
+  test("a client-side navigation that drops the query keeps the captured attribution", async ({ page }) => {
+    await page.goto("/?utm_source=t&fbclid=XYZ", { waitUntil: "load" });
+    await page.waitForFunction(() => sessionStorage.getItem("ryp-attribution")); // hydration follows load
+    await page.evaluate(() => {
+      history.pushState({}, "", "/privacy");
+    });
+    const stored = await page.evaluate(() => JSON.parse(sessionStorage.getItem("ryp-attribution") ?? "null"));
+    expect(stored.fbclid).toBe("XYZ");
+    expect(stored.utm.utm_source).toBe("t");
+  });
+
+  test("_fbc is written only after accepting", async ({ page, context }) => {
+    await page.goto("/?fbclid=XYZ", { waitUntil: "load" });
+    await expect(page.getByTestId("cookie-banner")).toBeVisible({ timeout: 5000 });
+    expect((await context.cookies()).map((c) => c.name)).not.toContain("_fbc");
+    await page.getByRole("button", { name: "אישור", exact: true }).click();
+    await expect.poll(async () => (await context.cookies()).map((c) => c.name)).toContain("_fbc");
+  });
+});
+
+/* ---------- test-mode hardening ---------- */
+
+test.describe("NEXT_PUBLIC_E2E relaxed mode is loopback-only", () => {
+  const FALLBACK_SECRET = "dev-only-insecure-consent-secret";
+  const eventBody = {
+    event_name: "ViewContent",
+    event_id: "abcdefgh12345678",
+    event_source_url: "https://rockyourpeople.com/",
+    custom_data: {},
+  };
+
+  function fallbackCookie() {
+    const payload = `granted.${Math.floor(Date.now() / 1000)}.abcdefgh1234`;
+    const sig = createHmac("sha256", FALLBACK_SECRET).update(payload, "utf8").digest("base64url");
+    return `ryp_consent=${payload}.${sig}`;
+  }
+
+  test("a cookie signed with the dev fallback secret is rejected when the Host is not loopback", async ({
+    request,
+  }) => {
+    const base = { origin: "https://rockyourpeople.com", cookie: fallbackCookie() };
+    const foreign = await request.post("/api/meta/event", {
+      headers: { ...base, host: "shop.example.com" },
+      data: eventBody,
+    });
+    expect(foreign.status()).toBe(403);
+    expect((await foreign.json()).error).toBe("consent_required");
+    // sanity: the same cookie on the loopback host (the test build's own host) is honoured
+    const local = await request.post("/api/meta/event", {
+      headers: { origin: `http://localhost:${process.env.E2E_PORT ?? 3100}`, cookie: fallbackCookie() },
+      data: eventBody,
+    });
+    expect(local.status()).not.toBe(403);
+  });
+
+  test("no consent cookie is issued with a non-loopback Host and no real secret", async ({ request }) => {
+    const res = await request.post("/api/consent", {
+      headers: { origin: "https://rockyourpeople.com", host: "shop.example.com" },
+    });
+    expect(res.status()).toBe(503);
+    expect(res.headers()["set-cookie"] ?? "").not.toContain("ryp_consent=granted");
+  });
+
+  test("localhost origin is not allowed when the Host is not loopback", async ({ request }) => {
+    const res = await request.post("/api/consent", {
+      headers: { origin: "http://localhost:3000", host: "shop.example.com" },
+    });
+    expect(res.status()).toBe(403);
+  });
+
+  test("health reports testMode when NEXT_PUBLIC_E2E is set, and capi disabled for a foreign Host", async ({
+    request,
+  }) => {
+    const local = await (await request.get("/api/meta/health")).json();
+    expect(local.testMode).toBe(true);
+    const foreign = await (await request.get("/api/meta/health", { headers: { host: "shop.example.com" } })).json();
+    expect(foreign.testMode).toBe(true);
+    expect(foreign.capi).toBe("disabled");
+    expect(foreign.reason).toContain("CONSENT_COOKIE_SECRET");
+  });
 });

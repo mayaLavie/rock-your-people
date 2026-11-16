@@ -8,17 +8,49 @@ import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 export const CONSENT_COOKIE = "ryp_consent";
 const CONSENT_MAX_AGE_S = 60 * 60 * 24 * 183; // about 6 months
 
-/** True in `next dev` and in the test build (NEXT_PUBLIC_E2E=1). Never in a real production build. */
-function isRelaxedEnv(): boolean {
-  return process.env.NODE_ENV !== "production" || process.env.NEXT_PUBLIC_E2E === "1";
+/** Loopback host names (with or without a port) that only a local machine can be addressed by. */
+function isLoopbackHost(raw: string | null | undefined): boolean {
+  if (!raw) return false;
+  const first = raw.split(",")[0].trim().toLowerCase();
+  if (first === "::1") return true;
+  const host = first.startsWith("[") ? first.slice(1, first.indexOf("]")) : first.replace(/:\d+$/, "");
+  return host === "localhost" || host === "127.0.0.1" || host === "::1";
+}
+
+/** The request is addressed to a loopback host (Host header; a forwarded host must be loopback too). */
+function isLoopbackRequest(request: Request | undefined): boolean {
+  if (!request) return false;
+  const forwarded = request.headers.get("x-forwarded-host");
+  if (forwarded && !isLoopbackHost(forwarded)) return false;
+  return isLoopbackHost(request.headers.get("host"));
+}
+
+/** NEXT_PUBLIC_E2E is set to anything at all (it must never be set on a real deployment). */
+export function e2eFlagSet(): boolean {
+  return Boolean(process.env.NEXT_PUBLIC_E2E?.trim());
+}
+
+/** Running on Vercel (any environment). */
+export function onVercel(): boolean {
+  return Boolean(process.env.VERCEL);
+}
+
+/**
+ * True in `next dev`, and in the test build only when ALL hold: NEXT_PUBLIC_E2E=1, not on Vercel, and
+ * the request itself is addressed to a loopback host. A real deployment can never be relaxed, even if
+ * NEXT_PUBLIC_E2E leaks into its environment. Calls without a request are never relaxed in a build.
+ */
+function isRelaxedEnv(request?: Request): boolean {
+  if (process.env.NODE_ENV !== "production") return true;
+  return process.env.NEXT_PUBLIC_E2E === "1" && !onVercel() && isLoopbackRequest(request);
 }
 
 let warnedAboutSecret = false;
 
-function consentSecret(): string | null {
+function consentSecret(request?: Request): string | null {
   const secret = process.env.CONSENT_COOKIE_SECRET?.trim();
   if (secret) return secret;
-  if (!isRelaxedEnv()) return null; // production without a secret: fail closed
+  if (!isRelaxedEnv(request)) return null; // production without a secret: fail closed
   if (!warnedAboutSecret) {
     warnedAboutSecret = true;
     console.warn(
@@ -36,16 +68,19 @@ function sign(payload: string, secret: string): string {
  * Cookie value `granted.<issuedAtSeconds>.<nonce>.<hmac>`, or null when no secret is available.
  * The random nonce makes every issued cookie distinct (it identifies a visitor behind a shared IP).
  */
-export function createConsentValue(nowSeconds = Math.floor(Date.now() / 1000)): string | null {
-  const secret = consentSecret();
+export function createConsentValue(
+  nowSeconds = Math.floor(Date.now() / 1000),
+  request?: Request,
+): string | null {
+  const secret = consentSecret(request);
   if (!secret) return null;
   const payload = `granted.${nowSeconds}.${randomBytes(8).toString("base64url")}`;
   return `${payload}.${sign(payload, secret)}`;
 }
 
-export function verifyConsentValue(value: string | undefined): boolean {
+export function verifyConsentValue(value: string | undefined, request?: Request): boolean {
   if (!value) return false;
-  const secret = consentSecret();
+  const secret = consentSecret(request);
   if (!secret) return false;
   const match = /^granted\.(\d{9,11})\.([A-Za-z0-9_-]{8,16})\.([A-Za-z0-9_-]{20,64})$/.exec(value);
   if (!match) return false;
@@ -67,7 +102,7 @@ export function readCookieHeader(headers: Headers, name: string): string | undef
 }
 
 export function hasValidConsent(request: Request): boolean {
-  return verifyConsentValue(readCookieHeader(request.headers, CONSENT_COOKIE));
+  return verifyConsentValue(readCookieHeader(request.headers, CONSENT_COOKIE), request);
 }
 
 /**
@@ -76,14 +111,14 @@ export function hasValidConsent(request: Request): boolean {
  */
 export function consentId(request: Request): string | undefined {
   const value = readCookieHeader(request.headers, CONSENT_COOKIE);
-  if (!verifyConsentValue(value)) return undefined;
+  if (!verifyConsentValue(value, request)) return undefined;
   return value!.split(".").slice(2).join(".");
 }
 
 /** What the secret setup looks like, without revealing any value. */
-export function consentSecretStatus(): "configured" | "dev-fallback" | "missing" {
+export function consentSecretStatus(request?: Request): "configured" | "dev-fallback" | "missing" {
   if (process.env.CONSENT_COOKIE_SECRET?.trim()) return "configured";
-  return isRelaxedEnv() ? "dev-fallback" : "missing";
+  return isRelaxedEnv(request) ? "dev-fallback" : "missing";
 }
 
 let warnedMissingSecret = false;
@@ -132,14 +167,14 @@ function allowedHosts(): Set<string> {
   return hosts;
 }
 
-function hostAllowed(urlLike: string): boolean {
+function hostAllowed(urlLike: string, request: Request): boolean {
   let u: URL;
   try {
     u = new URL(urlLike);
   } catch {
     return false;
   }
-  if (isRelaxedEnv() && (u.hostname === "localhost" || u.hostname === "127.0.0.1")) return true;
+  if (isRelaxedEnv(request) && (u.hostname === "localhost" || u.hostname === "127.0.0.1")) return true;
   return allowedHosts().has(u.host.toLowerCase());
 }
 
@@ -149,9 +184,9 @@ function hostAllowed(urlLike: string): boolean {
  */
 export function originAllowed(request: Request): boolean {
   const origin = request.headers.get("origin");
-  if (origin && origin !== "null") return hostAllowed(origin);
+  if (origin && origin !== "null") return hostAllowed(origin, request);
   const referer = request.headers.get("referer");
-  if (referer) return hostAllowed(referer);
+  if (referer) return hostAllowed(referer, request);
   return false;
 }
 
@@ -197,7 +232,7 @@ export function rateLimited(
   /** Optional second key part (for example the consent-cookie id) within the same IP. */
   sub?: string,
 ): boolean {
-  if (process.env.NEXT_PUBLIC_E2E === "1" && (!ip || /^(::1|127\.0\.0\.1|::ffff:127\.0\.0\.1)$/.test(ip))) {
+  if (process.env.NEXT_PUBLIC_E2E === "1" && !onVercel() && (!ip || /^(::1|127\.0\.0\.1|::ffff:127\.0\.0\.1)$/.test(ip))) {
     return false; // test build: every local request shares the loopback address
   }
   const store = (globalStore.__rypRateLimit ??= new Map());
