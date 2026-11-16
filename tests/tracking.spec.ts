@@ -394,6 +394,10 @@ test.describe("attribution precedence", () => {
     await expect.poll(() => fbcCookie(context)).toMatch(/^fb\.1\.\d{13}\.BBB$/);
     const second = (await fbcCookie(context))!;
     expect(Number(second.split(".")[2])).toBeGreaterThan(Number(first!.split(".")[2]));
+    // let this page's PageView (browser hit and server relay) finish before navigating away, so the
+    // network report never sees a request cut off by the next navigation
+    await expect.poll(() => meta.eventsNamed("PageView").length).toBe(2);
+    await page.waitForTimeout(600);
 
     // utm-only landing: utm_* replaced (latest touch), fbclid and _fbc untouched
     await page.goto("/lp/on-stage?utm_source=newsletter&utm_campaign=c3", { waitUntil: "load" });
@@ -402,10 +406,13 @@ test.describe("attribution precedence", () => {
     expect(kept.fbclid).toBe("BBB");
     expect(kept.utm).toEqual({ utm_source: "newsletter", utm_campaign: "c3" });
     expect(await fbcCookie(context)).toBe(second);
+    await expect.poll(() => meta.eventsNamed("PageView").length).toBe(3);
+    await page.waitForTimeout(600);
 
     // a landing with no parameters keeps everything
     await page.goto("/", { waitUntil: "load" });
-    await page.waitForTimeout(300);
+    await expect.poll(() => meta.eventsNamed("PageView").length).toBe(4);
+    await page.waitForTimeout(600);
     const again = await stored(page);
     expect(again.fbclid).toBe("BBB");
     expect(again.utm).toEqual({ utm_source: "newsletter", utm_campaign: "c3" });
