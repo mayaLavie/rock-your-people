@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { MetaPixel } from "@/components/MetaPixel";
 import {
   getCookieConsent,
   setCookieConsent,
   subscribeCookieConsent,
 } from "@/lib/cookie-consent";
+import { captureAttribution } from "@/lib/tracking/attribution";
 
 function declineCookies() {
   const pixelWasLoaded = Boolean(window.fbq);
@@ -29,6 +30,11 @@ export function CookieConsentBanner() {
     getCookieConsent,
     () => undefined,
   );
+
+  // First-party only: remembers utm_* / fbclid in sessionStorage, sends nothing.
+  useEffect(() => {
+    captureAttribution();
+  }, []);
 
   if (consent === undefined) return null;
   if (consent === "accepted") return <MetaPixel />;
