@@ -10,7 +10,7 @@
 - קבצי band-in-a-day, workshop, band-transparent ו-rock-your-people-title-transparent לא נמחקו, כי דפי הנחיתה שנבנים במקביל עשויים להשתמש בהם. הם רק נדחסו.
 - שפת המסמך: הוגדר lang="he" באלמנט html בקובץ app/layout.tsx.
 - מטא-דאטה: נוספו metadataBase (ממשתנה הסביבה NEXT_PUBLIC_SITE_URL), תבנית כותרת, תיאור, openGraph, twitter וצבע ערכת נושא (viewport). כתובת canonical ו-og:url מוגדרות רק בדף הבית (app/page.tsx), כדי שדפים אחרים לא יצביעו בטעות על הבית. הכותרת של דף הפרטיות קוצרה כדי שהתבנית לא תכפיל את שם האתר.
-- תמונת שיתוף: הקובץ public/og/og-default.jpg בגודל 1200 על 630 (כ-48KB) עם הסלוגן "מחברים אנשים דרך מוסיקה".
+- תמונת שיתוף: הקובץ public/og/og-default.jpg בגודל 1200 על 630 (כ-48KB) עם הסלוגן "מחברים אנשים דרך מוזיקה".
 - נוספו app/sitemap.ts, app/robots.ts (חסימת api), הקובץ lib/seo.ts והרכיב components/JsonLd.tsx (PerformingGroup עם Instagram ואיש קשר בוואטסאפ, רק עובדות מהקוד).
 - ביצועים: הוסרה העדפת priority מתמונת הגלריה הראשונה (היא מתחת לקפל), וסרטוני הגלריה עברו ל-preload="none" כדי שלא יורדו לפני הפעלה וכדי שה-poster יוצג.
 - lint: תוקנו שגיאות ב-ExperienceCarousel (ref בזמן רינדור ו-setState סינכרוני ב-effect), ב-MobileMenu (שימוש ב-useSyncExternalStore במקום setState ב-effect), הוסר DetailContent שלא בשימוש, והוספה הערת השבתה ל-tests/fixtures.ts עבור הפונקציה use של Playwright.

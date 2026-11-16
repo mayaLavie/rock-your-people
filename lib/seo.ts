@@ -7,7 +7,7 @@ export const OG_IMAGE = {
   url: "/og/og-default.jpg",
   width: 1200,
   height: 630,
-  alt: "Rock Your People - מחברים אנשים דרך מוסיקה",
+  alt: "Rock Your People - מחברים אנשים דרך מוזיקה",
 };
 export const OPEN_GRAPH_BASE: OpenGraph = {
   type: "website",
