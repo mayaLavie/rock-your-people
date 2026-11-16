@@ -145,3 +145,71 @@ test.describe("privacy policy", () => {
     await expect(header.getByRole("link", { name: "צור קשר" })).toHaveAttribute("href", "/#contact");
   });
 });
+
+test.describe("round 3 integration", () => {
+  const overlaps = (a: { x: number; y: number; width: number; height: number }, b: typeof a) =>
+    a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
+
+  test("song teaser sits clear of the h1, the hero CTAs and the header (no empty band, no overlap)", async ({ page }, info) => {
+    await page.goto("/", { waitUntil: "load" });
+    await page.locator("button.ryp-teaser").waitFor({ state: "visible", timeout: 20_000 });
+    await page.waitForTimeout(1600); // drop animation
+    const wrap = (await page.locator(".ryp-teaser-wrap").boundingBox())!;
+    const vp = page.viewportSize()!;
+    expect(wrap.x).toBeGreaterThanOrEqual(0);
+    expect(wrap.x + wrap.width).toBeLessThanOrEqual(vp.width);
+    const h1 = (await page.locator("h1").boundingBox())!;
+    expect(overlaps(wrap, h1)).toBe(false);
+    for (const placement of ["hero-primary", "hero-secondary"]) {
+      const el = page.locator(`[data-placement="${placement}"]`).first();
+      if (await el.count()) expect(overlaps(wrap, (await el.boundingBox())!)).toBe(false);
+    }
+    if (info.project.name === "mobile") {
+      // the mobile hero has no invisible logo marker band any more
+      await expect(page.locator("section[aria-labelledby=hero-heading] [data-hero-logo]")).toHaveCount(0);
+      expect(h1.y).toBeLessThan(140); // headline starts right under the header
+    }
+  });
+
+  test("Organization JSON-LD logo is a real PNG that resolves", async ({ page, request }) => {
+    await page.goto("/");
+    const raw = await page.locator('script[type="application/ld+json"]').first().textContent();
+    const logo = JSON.parse(raw!).logo as string;
+    expect(logo).toMatch(/\.png$/);
+    const res = await request.get(new URL(new URL(logo).pathname, page.url()).toString());
+    expect(res.status()).toBe(200);
+    expect(res.headers()["content-type"]).toContain("image/png");
+  });
+
+  test("OG image alt matches the OG headline", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator('meta[property="og:image:alt"]')).toHaveAttribute("content", /הופכים אירוע חברה לחוויה שהצוות זוכר/);
+  });
+
+  for (const path of ["/", "/lp/on-stage", "/lp/band-in-a-day", "/lp/trio-360", "/lp/rock-your-dj"]) {
+    test(`deferred cookie banner shows within 3s on ${path}, compact, with equal buttons and no tracking before a choice`, async ({
+      page,
+      context,
+    }, info) => {
+      const fb: string[] = [];
+      const capi: string[] = [];
+      context.on("request", (r) => {
+        if (/facebook\.(com|net)/.test(r.url())) fb.push(r.url());
+        if (r.url().includes("/api/meta/event")) capi.push(r.url());
+      });
+      await page.goto(path, { waitUntil: "commit" });
+      const banner = page.getByTestId("cookie-banner");
+      await expect(banner).toBeVisible({ timeout: 3000 });
+      const box = (await banner.boundingBox())!;
+      if (info.project.name === "mobile") expect(box.height).toBeLessThanOrEqual(96);
+      const [a, d] = await banner.locator("button").all();
+      const ab = (await a.boundingBox())!;
+      const db = (await d.boundingBox())!;
+      expect(Math.abs(ab.width - db.width)).toBeLessThanOrEqual(1);
+      expect(Math.abs(ab.height - db.height)).toBeLessThanOrEqual(1);
+      await page.waitForTimeout(1500);
+      expect(fb).toEqual([]);
+      expect(capi).toEqual([]);
+    });
+  }
+});
