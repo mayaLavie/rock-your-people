@@ -1,11 +1,12 @@
 "use client";
 
+import { productSlugForDetailId } from "@/lib/tracking/products";
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { EXPERIENCES_CARD_HEADLINE_HE } from "@/lib/constants";
 
 const STAGE_IMAGE_SRC = "/images/gemini band pic.png";
-const TRIO_IMAGE_SRC = "/images/rock-your-dj-party.png";
+const TRIO_IMAGE_SRC = "/images/rock-your-dj-party-opt.jpg";
 const WORKSHOP_IMAGE_SRC = "/images/band-in-a-day-collage-title.png";
 const OFFICE_IMAGE_SRC = "/images/rock-your-people-in-office.jpeg";
 
@@ -214,8 +215,6 @@ export function ExperienceCarousel() {
   const isDesktopLayout = useDesktopCarouselLayout();
   const carouselLayout = isDesktopLayout ? "desktop" : "mobile";
 
-  displayedIndexRef.current = displayedIndex;
-
   const displayedCard = EXPERIENCE_CARDS[displayedIndex]!;
 
   const cardCount = EXPERIENCE_CARDS.length;
@@ -247,6 +246,10 @@ export function ExperienceCarousel() {
   );
 
   useEffect(() => {
+    displayedIndexRef.current = displayedIndex;
+  }, [displayedIndex]);
+
+  useEffect(() => {
     if (activeIndex === displayedIndexRef.current) return;
 
     const reducedMotion = window.matchMedia(
@@ -254,12 +257,16 @@ export function ExperienceCarousel() {
     ).matches;
 
     if (reducedMotion) {
-      setDisplayedIndex(activeIndex);
-      setIsTextTransitioning(false);
-      return;
+      const instantTimeout = window.setTimeout(() => {
+        setDisplayedIndex(activeIndex);
+        setIsTextTransitioning(false);
+      }, 0);
+      return () => window.clearTimeout(instantTimeout);
     }
 
-    setIsTextTransitioning(true);
+    const startTimeout = window.setTimeout(() => {
+      setIsTextTransitioning(true);
+    }, 0);
 
     const swapTimeout = window.setTimeout(() => {
       setDisplayedIndex(activeIndex);
@@ -270,6 +277,7 @@ export function ExperienceCarousel() {
     }, TEXT_TRANSITION_MS);
 
     return () => {
+      window.clearTimeout(startTimeout);
       window.clearTimeout(swapTimeout);
       window.clearTimeout(endTimeout);
     };
@@ -349,6 +357,8 @@ export function ExperienceCarousel() {
               <button
                 key={card.id}
                 type="button"
+                data-product={productSlugForDetailId(card.id)}
+                data-product-kind="card"
                 aria-label={
                   isActive ? card.scrollAriaLabel : `הציגו את ${card.title}`
                 }

@@ -20,7 +20,35 @@ export const TITLE_IMAGE = {
 } as const;
 
 export const HERO_TAGLINE_HE =
-  "מופעים חיים ואינטראקטיביים, חוויות טריו חי ב-360°, וסדנאות מנהיגות מוסיקליות לחברות, צוותים ואירועים פרטיים.";
+  "מופעים חיים ואינטראקטיביים, חוויות טריו חי ב-360°, וסדנאות מנהיגות מוזיקליות לחברות, צוותים ואירועים פרטיים.";
+
+/** Hero: who it is for (brand line + audience) */
+export const HERO_AUDIENCE_HE =
+  "מחברים אנשים דרך מוזיקה, בשביל חברות, צוותים ואירועים";
+
+/** Hero: visible headline (the page h1) */
+export const HERO_HEADLINE_HE = "הופכים אירוע חברה לחוויה שהצוות זוכר";
+
+/** Hero: sub-line under the headline */
+export const HERO_SUBLINE_HE =
+  "מופעים חיים וסדנאות מוזיקה אינטראקטיביות לחברות, צוותים ואירועים";
+
+/** Hero: microcopy under the primary CTA */
+export const HERO_CTA_MICROCOPY_HE = "ספרו לנו על האירוע ונחזור אליכם בוואטסאפ";
+
+/** Hero: primary call-to-action (scrolls to the contact form) */
+export const HERO_CTA_HE = "בואו נתאים מופע לאירוע שלכם";
+
+/** Hero: secondary text link (scrolls to the experiences carousel) */
+export const HERO_SECONDARY_LINK_HE = "ראו את החוויות שלנו";
+
+/** Shared CTA labels for the sections that close a persuasive block */
+export const SECTION_CTA_HE = "דברו איתנו על האירוע שלכם";
+
+/** Contextual CTA labels, one per closing spot */
+export const CAROUSEL_END_CTA_HE = "בחרתם חוויה? ספרו לנו על האירוע";
+export const REVIEWS_END_CTA_HE = "רוצים שגם האירוע שלכם יסתיים ככה? דברו איתנו";
+export const FAQ_END_CTA_HE = "נשארה שאלה? כתבו לנו בוואטסאפ";
 
 export const EXPERIENCES_SECTION_TAGLINE_HE =
   "לחצו על החוויה שמעניינת אתכם כדי לקבל עוד פרטים";
@@ -29,7 +57,7 @@ export const EXPERIENCES_SECTION_TITLE_HE =
   "המומחיות שלנו היא להפוך את הקהל שלכם לרוקסטארז לערב אחד";
 
 export const EXPERIENCES_SECTION_DESCRIPTION_HE =
-  "נוצר במיוחד עבור חברות, ארגונים וקהילות שמחפשים פעילות מקורית,\nבלתי נשכחת, שוברת מחסומים ומגבשת.";
+  "הכול נוצר במיוחד עבור חברות, ארגונים וקהילות שמחפשים פעילות מקורית,\nבלתי נשכחת, שוברת מחסומים ומגבשת.";
 
 export const EXPERIENCES_SECTION_SCHEDULE_INTRO_HE =
   'החוויות והסדנאות שלנו תפורות ומותאמות אישית לכל לו"ז או צורך לאורך השנה:';
@@ -37,7 +65,7 @@ export const EXPERIENCES_SECTION_SCHEDULE_INTRO_HE =
 export const EXPERIENCES_SECTION_USE_CASES = [
   "ימי חברה וערבי חברה",
   "ימי גיבוש צוותיים",
-  "Happy Hour במשרד",
+  "ערבי אחרי העבודה במשרד",
   "חגים והרמות כוסית",
   "מסיבות סוף שנה",
   "אירועי הנהלה וסדנאות מנהלים",
@@ -45,13 +73,13 @@ export const EXPERIENCES_SECTION_USE_CASES = [
 ] as const;
 
 export const EXPERIENCES_SECTION_SUBTITLE_HE =
-  "אנחנו מחברים אנשים דרך מוסיקה";
+  "אנחנו מחברים אנשים דרך מוזיקה";
 
 export const EXPERIENCES_SECTION_OFFERINGS_HE =
-  "הופעות חיות  |  הופעות אינטרקטיביות | סדנאות";
+  "הופעות חיות | הופעות אינטראקטיביות | סדנאות";
 
 export const EXPERIENCES_INTRO_PARAGRAPHS = [
-  "מחברים אנשים דרך מוסיקה",
+  "מחברים אנשים דרך מוזיקה",
 ] as const;
 
 export const EXPERIENCES_INTRO_STAGE_IMAGE = {
@@ -63,7 +91,7 @@ export const EXPERIENCES_INTRO_STAGE_IMAGE = {
 
 export const STORY_SECTION_PARAGRAPHS = [
   "Rock Your People נולד מתוך חיבור בין מוזיקה, קהילה וניסיון מקצועי של שנים על במות, באולפנים ובהפקות חיות.",
-  "כולם יודעים מה כוחה של המוסיקה. היא שוברת מחסומים, בונה ביטחון, מחברת בין אנשים ויוצרת תחושת שייכות שנשארת הרבה אחרי שהאירוע נגמר.",
+  "כולם יודעים מה כוחה של המוזיקה. היא שוברת מחסומים, בונה ביטחון, מחברת בין אנשים ויוצרת תחושת שייכות שנשארת הרבה אחרי שהאירוע נגמר.",
   "מאחורי החוויה עומד צוות שיודע לבנות מופע באמת. הפקה מוזיקלית, עיבודים, סאונד, עבודה ווקאלית, ניהול במה והבנה עמוקה של קהל. ישי מוביל את ההפקה המוזיקלית והעיבודים, מאיה מביאה ניסיון של שנים כסאונדמנית בהופעות ואולפנים, ודור מביא את היכולת לקרוא קהל, לחבר אנשים ולהפוך השתתפות לחוויה טבעית ומשחררת.",
 ] as const;
 
@@ -71,7 +99,7 @@ export const FAQ_ITEMS = [
   {
     question: "מה זה בעצם Rock Your People? אתם להקה או סדנה?",
     answer:
-      "אנחנו להקה מקצועית שיוצרת חוויות משתפות. אצלנו הקהל הוא חלק בלתי נפרד מהמופע, ועולה איתנו לשיר, לנגן ולהיות רוקסטארס לערב אחד.\n\nהסל שלנו כולל מופעי 360 אינטימיים (Trio 360) שבהם הקהל עוטף אותנו ומוזמן להשתלב בשירה, מופעים חשמליים גדולים יותר (אתם על הבמה) שבהם האנשים שלכם הם הכוכבים על הבמה, עם הכנה וליווי מקדים, כולל חזרה מקצועית, או ללא. תלוי בפורמט ובצורך שלכם. בנוסף, אנחנו עורכים סדנאות מוסיקה מעשיות לצוותים ומנהלים (Band in a Day).\n\nמחפשים פשוט הופעה מעולה? אנחנו מגיעים גם להופעות חיות קלאסיות, אנרגטיות וסוחפות שלנו, ללא שילוב קהל. אתם בוחרים את הפורמט שמתאים לכם.",
+      "אנחנו להקה מקצועית שיוצרת חוויות משתפות. אצלנו הקהל הוא חלק מהמופע: עולה איתנו לשיר, לנגן ולהיות רוקסטארס לערב אחד.\n\nמה יש בסל שלנו? מופעי 360 אינטימיים (Trio 360), שבהם הקהל עוטף אותנו ומוזמן לשיר איתנו. מופעים חשמליים גדולים יותר (אתם על הבמה), שבהם האנשים שלכם הם הכוכבים על הבמה, עם הכנה וליווי מקדים כולל חזרה מקצועית, או בלי, לפי הפורמט והצורך. וגם סדנאות מוזיקה מעשיות לצוותים ולמנהלים (Band in a Day).\n\nמחפשים פשוט הופעה מעולה? אנחנו מגיעים גם עם הופעות חיות קלאסיות, אנרגטיות וסוחפות, בלי שילוב קהל. אתם בוחרים את הפורמט שמתאים לכם.",
   },
   {
     question: "צריך ניסיון מוזיקלי כדי להשתתף?",
@@ -81,17 +109,17 @@ export const FAQ_ITEMS = [
   {
     question: "כמה משתתפים יכולים לעלות לבמה במופע המשותף?",
     answer:
-      "כמה שתרצו, מבודדים ועד עשרות. לאורך המופע אנחנו משלבים את האנשים שלכם ומעלים אותם לבמה כיחידים, זוגות או אפילו שלישיות. שרים, מנגנים או פשוט רוקדים ומרימים את האנרגיה.",
+      "כמה שתרצו, מכמה בודדים ועד עשרות. לאורך המופע אנחנו משלבים את האנשים שלכם ומעלים אותם לבמה כיחידים, זוגות או אפילו שלישיות. שרים, מנגנים או פשוט רוקדים ומרימים את האנרגיה.",
   },
   {
     question: "האם הפעילות מתאימה ליום גיבוש?",
     answer:
-      "לגמרי, זה מתאים בול. הפעילות מושלמת כפיק או כסגירה חגיגית ליום גיבוש חברה. בנוסף, אנחנו מעבירים סדנאות ייעודיות לצוותים ומנהלים (Band in a Day), שבהן נחשפים למוסיקה בצורה אקטיבית, ובעזרת תקשורת גבוהה ושיתוף פעולה, יוצאים בסוף הסדנה עם יצירה מוסיקלית מקורית שכולם לקחו בה חלק.",
+      "לגמרי, זה מתאים בול. הפעילות מושלמת כפיק או כסגירה חגיגית ליום גיבוש חברה. בנוסף, אנחנו מעבירים סדנאות ייעודיות לצוותים ומנהלים (Band in a Day), שבהן הצוות יוצר מוזיקה בעצמו, בשיתוף פעולה, ויוצא בסוף הסדנה עם יצירה מוזיקלית מקורית שכולם לקחו בה חלק.",
   },
   {
     question: "לאילו סוגי אירועים אתם מתאימים והאם אתם מגיעים לכל הארץ?",
     answer:
-      "אנחנו מגיעים לכל מקום בארץ! הפעילויות שלנו מותאמות אישית ומשתלבות מעולה בערבי חברה, Happy Hour, חגים, אירועים פרטיים ואירועים קהילתיים.",
+      "אנחנו מגיעים לכל מקום בארץ! הפעילויות שלנו מותאמות אישית ומשתלבות מעולה בערבי חברה, אירועי אחרי העבודה, חגים, אירועים פרטיים ואירועים קהילתיים.",
   },
   {
     question: "מה צריך לספק לכם במקום?",
@@ -101,38 +129,38 @@ export const FAQ_ITEMS = [
   {
     question: "נשמע מעולה, איך מתקדמים וסוגרים איתכם אירוע?",
     answer:
-      "הכי פשוט שיש. משאירים פרטים כאן באתר או שולחים לנו הודעה קצרה. נבין יחד מה אופי האירוע, מי הקהל שלכם ומה המטרה, ונתאים לכם את הפורמט המוזיקלי המדויק שיחבר, ישמח ויעשה המון אנרגיה טובה לאנשים שלכם.",
+      "הכי פשוט שיש. משאירים פרטים בטופס באתר או שולחים לנו הודעה קצרה. נבין יחד מה אופי האירוע, מי הקהל שלכם ומה המטרה, ונתאים לכם את הפורמט המוזיקלי המדויק שיחבר, ישמח ויעשה המון אנרגיה טובה לאנשים שלכם.",
   },
 ] as const;
 
 export const ABOUT_NAV_LINK = {
-  label: "About Us",
+  label: "עלינו",
   href: "#experience",
 } as const;
 
 /** Our experiences screen — starts where the hero video ends */
 export const EXPERIENCES_NAV_LINK = {
-  label: "Experiences",
+  label: "חוויות",
   href: "#products",
 } as const;
 
 export const FAQ_NAV_LINK = {
-  label: "FAQ",
+  label: "שאלות נפוצות",
   href: "#faq",
 } as const;
 
 export const REVIEWS_NAV_LINK = {
-  label: "Reviews",
+  label: "המלצות",
   href: "#reviews",
 } as const;
 
 export const GALLERY_NAV_LINK = {
-  label: "Gallery",
+  label: "גלריה",
   href: "#gallery",
 } as const;
 
 export const CONTACT_NAV_LINK = {
-  label: "Contact",
+  label: "צור קשר",
   href: "#contact",
 } as const;
 
@@ -155,11 +183,11 @@ export const DESKTOP_NAV_LINKS = [
 /** Mobile hamburger menu */
 export const MOBILE_MENU_LINKS = [
   ...PRODUCT_NAV_LINKS,
-  { label: "המלצות", href: REVIEWS_NAV_LINK.href },
-  { label: "מי אנחנו", href: ABOUT_NAV_LINK.href },
-  { label: "שאלות נפוצות", href: FAQ_NAV_LINK.href },
-  { label: "גלריה", href: GALLERY_NAV_LINK.href },
-  { label: "צרו קשר", href: CONTACT_NAV_LINK.href },
+  { label: REVIEWS_NAV_LINK.label, href: REVIEWS_NAV_LINK.href },
+  { label: ABOUT_NAV_LINK.label, href: ABOUT_NAV_LINK.href },
+  { label: FAQ_NAV_LINK.label, href: FAQ_NAV_LINK.href },
+  { label: GALLERY_NAV_LINK.label, href: GALLERY_NAV_LINK.href },
+  { label: CONTACT_NAV_LINK.label, href: CONTACT_NAV_LINK.href },
 ] as const;
 
 export const SOCIAL_LINKS = {
@@ -275,7 +303,7 @@ export const GALLERY_STORY_ITEMS: readonly GalleryStoryItem[] = [
   {
     type: "image",
     src: "/images/GALLERY_IMAGES/evyatar2.jpeg",
-    alt: "Gallery photo 5",
+    alt: "תמונה מהגלריה 5",
     fit: "contain",
   },
   {
@@ -287,7 +315,7 @@ export const GALLERY_STORY_ITEMS: readonly GalleryStoryItem[] = [
   {
     type: "image",
     src: "/images/GALLERY_IMAGES/appluse.jpeg",
-    alt: "Gallery photo 3",
+    alt: "תמונה מהגלריה 3",
     fit: "contain",
   },
   {
@@ -317,7 +345,7 @@ export const GALLERY_STORY_ITEMS: readonly GalleryStoryItem[] = [
   {
     type: "image",
     src: "/images/GALLERY_IMAGES/mayaOnKit.jpeg",
-    alt: "Gallery photo 6",
+    alt: "תמונה מהגלריה 6",
   },
   {
     type: "video",
@@ -328,7 +356,7 @@ export const GALLERY_STORY_ITEMS: readonly GalleryStoryItem[] = [
   {
     type: "image",
     src: "/images/GALLERY_IMAGES/longShotCroud.jpeg",
-    alt: "Gallery photo 4",
+    alt: "תמונה מהגלריה 4",
     fit: "contain",
   },
 ];

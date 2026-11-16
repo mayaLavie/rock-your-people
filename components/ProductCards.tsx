@@ -7,7 +7,10 @@ import {
   EXPERIENCES_SECTION_TAGLINE_HE,
   EXPERIENCES_SECTION_TITLE_HE,
   EXPERIENCES_SECTION_USE_CASES,
+  CAROUSEL_END_CTA_HE,
 } from "@/lib/constants";
+import { CtaLink } from "@/components/CtaLink";
+import { StageImage } from "@/components/StageImage";
 import { ExperienceCarousel } from "@/components/ExperienceCarousel";
 
 export function ProductCards({ beforeEngagement }: { beforeEngagement?: ReactNode }) {
@@ -32,13 +35,11 @@ export function ProductCards({ beforeEngagement }: { beforeEngagement?: ReactNod
           */}
           <div className="mt-2.5 lg:hidden">
             <div className="relative -mx-4 overflow-hidden md:-mx-6">
-              <Image
+              <StageImage
                 src={EXPERIENCES_INTRO_STAGE_IMAGE.src}
                 alt={EXPERIENCES_INTRO_STAGE_IMAGE.alt}
                 width={EXPERIENCES_INTRO_STAGE_IMAGE.width}
                 height={EXPERIENCES_INTRO_STAGE_IMAGE.height}
-                className="h-auto w-full"
-                sizes="100vw"
               />
               <div
                 lang="he"
@@ -154,6 +155,15 @@ export function ProductCards({ beforeEngagement }: { beforeEngagement?: ReactNod
             >
               {EXPERIENCES_SECTION_TAGLINE_HE}
             </p>
+          </div>
+          <div className="mt-2 flex justify-center">
+            <CtaLink
+              href="#contact"
+              placement="carousel-end"
+              className="w-full max-w-[22rem]"
+            >
+              {CAROUSEL_END_CTA_HE}
+            </CtaLink>
           </div>
         </div>
 

@@ -1,43 +1,57 @@
 "use client";
 
-import Script from "next/script";
-import { useEffect } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { ensureConsentCookie } from "@/lib/tracking/consent-client";
+import { listenForWhatsAppClicks } from "@/lib/tracking/clicks";
+import { META_PIXEL_ID } from "@/lib/tracking/config";
+import { loadPixel } from "@/lib/tracking/pixel";
+import { getLastPageViewPath, setLastPageViewPath } from "@/lib/tracking/revoke-state";
+import { track } from "@/lib/tracking/track";
+import {
+  observeProducts,
+  resetViewContent,
+} from "@/lib/tracking/viewcontent";
 
-const META_PIXEL_ID = "2338134653708173";
-
-declare global {
-  interface Window {
-    fbq?: (...args: unknown[]) => void;
-  }
-}
-
-const WHATSAPP_LINK_SELECTOR =
-  'a[href*="wa.me/"], a[href*="api.whatsapp.com/"]';
-
-/** Rendered only after the visitor accepts cookies. Never sends form contents. */
+/**
+ * Rendered only after the visitor accepts cookies. Loads the pixel, fires the
+ * PageView, ViewContent for product sections and Contact for WhatsApp links.
+ * Never sends form contents. Renders nothing when no pixel id is configured.
+ */
 export function MetaPixel() {
-  useEffect(() => {
-    function handleClick(event: MouseEvent) {
-      const link = (event.target as Element).closest?.(WHATSAPP_LINK_SELECTOR);
-      if (!link) return;
-      const eventName = link.closest("#contact") ? "Lead" : "Contact";
-      window.fbq?.("track", eventName);
-    }
+  const pathname = usePathname();
+  // A returning visitor's signed server cookie is re-issued first, so the first PageView is accepted.
+  const [ready, setReady] = useState(false);
 
-    document.addEventListener("click", handleClick);
-    return () => document.removeEventListener("click", handleClick);
+  useEffect(() => {
+    let cancelled = false;
+    ensureConsentCookie().finally(() => {
+      if (!cancelled) setReady(true);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  return (
-    <Script id="meta-pixel" strategy="afterInteractive">
-      {`!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
-n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
-document,'script','https://connect.facebook.net/en_US/fbevents.js');
-fbq('set','autoConfig',false,'${META_PIXEL_ID}');
-fbq('init','${META_PIXEL_ID}');
-fbq('track','PageView');`}
-    </Script>
-  );
+  useEffect(() => {
+    if (!ready || !META_PIXEL_ID || !loadPixel()) return;
+    return listenForWhatsAppClicks();
+  }, [ready]);
+
+  useEffect(() => {
+    if (!ready || !META_PIXEL_ID || !loadPixel()) return;
+    // One PageView per page view: the first one after consent, then one per
+    // client-side navigation (e.g. /lp/... -> /).
+    // Module state (revoke-state) survives React StrictMode's double effects.
+    const last = getLastPageViewPath();
+    if (last !== pathname) {
+      const isNavigation = last !== null;
+      setLastPageViewPath(pathname);
+      if (isNavigation) resetViewContent();
+      track("PageView");
+    }
+    return observeProducts();
+  }, [pathname, ready]);
+
+  return null;
 }

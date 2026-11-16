@@ -1,7 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { CtaLink } from "@/components/CtaLink";
+import { REVIEWS_END_CTA_HE } from "@/lib/constants";
 
 const REVIEW_IMAGES = [
   { src: "/images/reviews/review-1.jpg", width: 1200, height: 467 },
@@ -16,10 +18,35 @@ const REVIEW_IMAGES = [
 
 export function ReviewsSection() {
   const [paused, setPaused] = useState(false);
+  // Cards scroll in from outside the clipped box, where native lazy loading never fires and
+  // they would show up as blank white cards. So no image is requested until the section is
+  // near the viewport (keeps the first paint light), and then all of them load eagerly.
+  const [near, setNear] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || near) return;
+    if (typeof IntersectionObserver === "undefined") {
+      const id = window.setTimeout(() => setNear(true), 0);
+      return () => window.clearTimeout(id);
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setNear(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "500px 0px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [near]);
   const togglePaused = () => setPaused((value) => !value);
 
   return (
     <section
+      ref={sectionRef}
       id="reviews"
       className="relative overflow-hidden bg-magenta px-4 pt-12 pb-14 sm:px-6 lg:px-4"
       aria-labelledby="reviews-heading"
@@ -30,14 +57,14 @@ export function ReviewsSection() {
         dir="rtl"
         className="text-center font-hebrew text-[32px] font-bold leading-none text-cream sm:text-[34px]"
       >
-        ברוררררר שנהנתם
+        מה אומרים אחרי האירוע
       </h2>
       <p
         lang="he"
         dir="rtl"
-        className="mt-3 text-center font-hebrew text-[14px] font-semibold text-cream/90"
+        className="mt-3 text-center font-hebrew text-[15px] font-semibold text-cream"
       >
-        {paused ? "לחצו שוב כדי להמשיך" : "לחצו על המלצה כדי לעצור ולקרוא"}
+        מה כתבו מי שכבר היו בקהל
       </p>
 
       <div
@@ -52,7 +79,7 @@ export function ReviewsSection() {
             togglePaused();
           }
         }}
-        className="reviews-marquee relative mx-auto mt-6 h-[70dvh] max-h-[640px] w-full max-w-[420px] cursor-pointer overflow-hidden outline-none"
+        className="reviews-marquee relative mx-auto mt-4 h-[72dvh] min-h-[460px] max-h-[640px] w-full max-w-[420px] cursor-pointer overflow-hidden outline-none"
       >
         <div
           className="reviews-marquee-track flex flex-col"
@@ -67,22 +94,52 @@ export function ReviewsSection() {
               {REVIEW_IMAGES.map((image, index) => (
                 <li key={`${copy}-${image.src}`}>
                   <div
-                    className="block w-full overflow-hidden rounded-[5px] border-2 border-cream bg-white shadow-[0_12px_30px_rgba(0,0,0,0.25)]"
+                    className="block w-full overflow-hidden rounded-[5px] border-2 border-cream bg-white shadow-[0_4px_12px_rgba(0,0,0,0.18)]"
                   >
-                    <Image
-                      src={image.src}
-                      alt={copy === 0 ? `המלצה ${index + 1}` : ""}
-                      width={image.width}
-                      height={image.height}
-                      sizes="420px"
-                      className="h-auto w-full"
-                    />
+                    {near ? (
+                      <Image
+                        src={image.src}
+                        alt={copy === 0 ? `המלצה ${index + 1}` : ""}
+                        width={image.width}
+                        height={image.height}
+                        sizes="420px"
+                        loading="eager"
+                        className="h-auto w-full"
+                      />
+                    ) : (
+                      <div
+                        aria-hidden
+                        className="w-full bg-white"
+                        style={{ aspectRatio: `${image.width} / ${image.height}` }}
+                      />
+                    )}
                   </div>
                 </li>
               ))}
             </ul>
           ))}
         </div>
+      </div>
+
+      <div
+        lang="he"
+        dir="rtl"
+        aria-hidden
+        className="mt-3 flex justify-center"
+      >
+        <span className="rounded-full bg-[#1e1c1c] px-3 py-1 text-center font-hebrew text-[13px] font-semibold text-cream">
+          {paused ? "לחצו שוב כדי להמשיך" : "לחצו על המלצה כדי לעצור ולקרוא"}
+        </span>
+      </div>
+
+      <div className="mt-6 flex justify-center">
+        <CtaLink
+          href="#contact"
+          placement="reviews-end"
+          className="w-full max-w-[22rem]"
+        >
+          {REVIEWS_END_CTA_HE}
+        </CtaLink>
       </div>
     </section>
   );

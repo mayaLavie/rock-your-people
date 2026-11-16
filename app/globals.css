@@ -79,6 +79,8 @@
 .top-section-video {
   object-fit: cover;
   object-position: top center;
+  background-position: center top;
+  background-size: cover;
 }
 
 .experiences-scroll ul {
@@ -115,6 +117,12 @@
 
 .reviews-marquee-track {
   animation: reviews-marquee 60s linear infinite;
+}
+
+/* Cards enter and leave through a soft fade instead of a hard mid-card cut. */
+.reviews-marquee {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 56px, #000 calc(100% - 40px), transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 56px, #000 calc(100% - 40px), transparent 100%);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -254,4 +262,12 @@ body {
     overflow-y: visible;
     padding: 0;
   }
+}
+
+/* The cookie banner (components/CookieConsentBanner) sets data-consent-banner="open" on <html> while
+   it is visible. The landing-page sticky CTA bar sits at the same screen edge, so it stays hidden
+   until the visitor has made a choice. */
+html[data-consent-banner="open"] [data-testid="landing-sticky-bar"] {
+  visibility: hidden;
+  pointer-events: none;
 }

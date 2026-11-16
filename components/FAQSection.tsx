@@ -1,8 +1,9 @@
 "use client";
 
 import { useId, useState } from "react";
+import { CtaLink } from "@/components/CtaLink";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { FAQ_ITEMS } from "@/lib/constants";
+import { FAQ_END_CTA_HE, FAQ_ITEMS, SOCIAL_LINKS } from "@/lib/constants";
 
 function FaqToggleIcon({ open }: { open: boolean }) {
   return (
@@ -118,6 +119,17 @@ export function FAQSection() {
             />
           );
         })}
+      </div>
+
+      <div className="mt-8 flex justify-center">
+        <CtaLink
+          href={SOCIAL_LINKS.whatsapp}
+          external
+          placement="faq-end"
+          className="w-full max-w-[22rem]"
+        >
+          {FAQ_END_CTA_HE}
+        </CtaLink>
       </div>
     </section>
   );

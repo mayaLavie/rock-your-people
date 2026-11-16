@@ -1,3 +1,4 @@
+import { productSlugForDetailId } from "@/lib/tracking/products";
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -152,69 +153,6 @@ export function ProductDetailSection({ detail }: ProductDetailSectionProps) {
   return <LeadershipWorkshopDetail detail={detail} />;
 }
 
-function DetailContent({
-  headingId,
-  headline,
-  headlineSlot,
-  subheadlineSlot,
-  subheadline,
-  bodySlot,
-  body,
-  bulletsSlot,
-  bullets,
-  ctaSlot,
-  cta,
-  headlineClass,
-  subheadlineClass,
-  bodyClass,
-  bulletClass,
-  ctaClass,
-}: {
-  headingId: string;
-  headline: string;
-  headlineSlot?: ReactNode;
-  subheadlineSlot?: ReactNode;
-  subheadline: string;
-  bodySlot?: ReactNode;
-  body: string;
-  bulletsSlot?: ReactNode;
-  bullets: readonly string[];
-  ctaSlot?: ReactNode;
-  cta: string;
-  headlineClass: string;
-  subheadlineClass: string;
-  bodyClass: string;
-  bulletClass: string;
-  ctaClass: string;
-}) {
-  return (
-    <div className="flex flex-col justify-center">
-      {headlineSlot ?? (
-        <h2 id={headingId} className={headlineClass}>
-          {headline}
-        </h2>
-      )}
-      {subheadlineSlot ?? <p className={subheadlineClass}>{subheadline}</p>}
-      {bodySlot ?? <p className={bodyClass}>{body}</p>}
-      {bulletsSlot ?? (
-        <ul className={`mt-8 space-y-3 ${bulletClass}`}>
-          {bullets.map((item) => (
-            <li key={item} className="flex gap-3 text-base leading-relaxed sm:text-lg">
-              <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-current opacity-80" />
-              {item}
-            </li>
-          ))}
-        </ul>
-      )}
-      {ctaSlot ?? (
-        <Link href="#contact" className={ctaClass}>
-          {cta}
-        </Link>
-      )}
-    </div>
-  );
-}
-
 function HebrewDetailCopy({
   detail,
   subheadlineClass,
@@ -290,6 +228,7 @@ function Trio360Detail({ detail }: ProductDetailSectionProps) {
   return (
     <section
       id={detail.id}
+      data-product={productSlugForDetailId(detail.id)}
       className={`relative overflow-hidden bg-[#1e1c1c] ${DETAIL_SECTION_PAD}`}
       aria-labelledby={`${detail.id}-heading`}
     >
@@ -297,7 +236,7 @@ function Trio360Detail({ detail }: ProductDetailSectionProps) {
         src={DJ_SECTION_BG_SRC}
         alt=""
         fill
-        sizes="100vw"
+        sizes="(min-width: 1024px) 720px, 100vw"
         className="object-cover object-top"
       />
       <div
@@ -341,6 +280,7 @@ function BeerDetail({ detail }: ProductDetailSectionProps) {
   return (
     <section
       id={detail.id}
+      data-product={productSlugForDetailId(detail.id)}
       className="relative overflow-hidden bg-cream-muted"
       aria-labelledby={`${detail.id}-heading`}
     >
@@ -350,7 +290,7 @@ function BeerDetail({ detail }: ProductDetailSectionProps) {
             src={BEER_SECTION_BG_SRC}
             alt=""
             fill
-            sizes="100vw"
+            sizes="(min-width: 1024px) 720px, 100vw"
             className="object-cover object-[50%_65%]"
           />
           <div
@@ -401,6 +341,7 @@ function YourPeopleOnStageDetail({ detail }: ProductDetailSectionProps) {
   return (
     <section
       id={detail.id}
+      data-product={productSlugForDetailId(detail.id)}
       className={`relative min-h-dvh overflow-hidden bg-[#1e1c1c] md:min-h-0 ${STAGE_SECTION_PAD}`}
       aria-labelledby={`${detail.id}-heading`}
     >
@@ -408,7 +349,7 @@ function YourPeopleOnStageDetail({ detail }: ProductDetailSectionProps) {
         src={STAGE_SECTION_BG_SRC}
         alt=""
         fill
-        sizes="100vw"
+        sizes="(min-width: 1024px) 720px, 100vw"
         className="object-cover object-left sm:object-center"
       />
       <div
@@ -458,6 +399,7 @@ function LeadershipWorkshopDetail({ detail }: ProductDetailSectionProps) {
   return (
     <section
       id={detail.id}
+      data-product={productSlugForDetailId(detail.id)}
       className={`relative z-10 -mt-1 min-h-[calc(100dvh-var(--site-header-height))] overflow-hidden bg-[#6DB380] md:min-h-0 ${WORKSHOP_SECTION_PAD}`}
       aria-labelledby={`${detail.id}-heading`}
     >

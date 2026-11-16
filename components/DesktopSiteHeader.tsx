@@ -15,7 +15,7 @@ export function DesktopSiteHeader() {
         >
           <Image
             src={TITLE_IMAGE.src}
-            alt=""
+            alt="Rock Your People"
             width={TITLE_IMAGE.width}
             height={TITLE_IMAGE.height}
             priority
