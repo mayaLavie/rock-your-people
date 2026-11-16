@@ -35,6 +35,8 @@ export type LandingContent = {
   name: string;
   /** Short name used inside Hebrew sentences / CTA */
   ctaTarget: string;
+  /** One product-specific trust sentence under the hero CTAs (wording taken from existing copy) */
+  trustLine: string;
   /** Who it is for, one line above the h1 */
   audience: string;
   /** One value line: who + outcome */
@@ -99,11 +101,12 @@ export const LANDING_CONTENT: Record<LandingSlug, LandingContent> = {
     slug: "on-stage",
     name: stage.headline,
     ctaTarget: "המופע",
+    trustLine: "מכמה בודדים ועד עשרות משתתפים יכולים לעלות לבמה.",
     audience: "מופע חשמלי חי לאירועי חברה, ערבי קהילה ואירועים פרטיים",
     valueLine: "האנשים שלכם עולים לבמה, והם הכוכבים של הערב.",
     metaDescription:
-      "מופע חי שבו האנשים שלכם שרים ומנגנים על הבמה עם להקה מקצועית, לאירועי חברה, ערבי קהילה ואירועים פרטיים. ספרו לנו על האירוע ונתאים לכם חוויה.",
-    title: "אתם על הבמה: מופע חי שבו האנשים שלכם הם הכוכבים",
+      "האנשים שלכם שרים ומנגנים על הבמה עם להקה מקצועית, וגם הופכים לכוכבים של הערב. מתאים לערבי קהילה ולאירועים פרטיים. ספרו לנו על האירוע ונתאים לכם חוויה.",
+    title: "אתם על הבמה: מופע חי לאירועי חברה",
     ogImage: "/og/lp-on-stage.jpg",
     hero: {
       src: "/images/evyatar stage.jpeg",
@@ -134,11 +137,12 @@ export const LANDING_CONTENT: Record<LandingSlug, LandingContent> = {
     slug: "band-in-a-day",
     name: workshop.headline,
     ctaTarget: "Band in a Day",
+    trustLine: "בלי ניסיון קודם, בלי להכיר תווים, ועם להקה מקצועית שדואגת להכל.",
     audience: workshop.subheadline,
     valueLine: "הצוות שלכם הופך ללהקה. ביום אחד.",
     metaDescription:
-      "סדנת גיבוש מוזיקלית לצוותים: בוחרים להיט, כותבים אותו מחדש, עולים לבמה ולוקחים הביתה קליפ, בלי ניסיון קודם. ספרו לנו על האירוע ונתאים לכם חוויה.",
-    title: "Band in a Day: סדנת גיבוש מוזיקלית שהופכת צוות ללהקה",
+      "בוחרים להיט, כותבים אותו מחדש, עולים לבמה ולוקחים הביתה קליפ, בלי ניסיון קודם. ספרו לנו על האירוע ונתאים לכם חוויה.",
+    title: "Band in a Day: סדנת גיבוש לצוותים",
     ogImage: "/og/lp-band-in-a-day.jpg",
     hero: {
       src: "/images/rock-your-people-in-office-hero.jpg", // landscape crop of the office photo (round 3 speed)
@@ -174,11 +178,12 @@ export const LANDING_CONTENT: Record<LandingSlug, LandingContent> = {
     slug: "trio-360",
     name: trioProduct.title,
     ctaTarget: "Trio 360",
+    trustLine: "מבחינתכם הכל סגור: אנחנו מגיעים עם כל ההגברה.",
     audience: "למשרדים, קבלות פנים ואירועים פרטיים",
     valueLine: "מופע טריו חי במעגל, שמביא את המוזיקה קרוב לקהל.",
     metaDescription:
-      "Trio 360: מופע טריו חי במעגל שבו הקהל עוטף אותנו ומוזמן לשיר איתנו, למשרדים, קבלות פנים ואירועים פרטיים. ספרו לנו על האירוע ונתאים לכם חוויה.",
-    title: "Trio 360: מופע טריו חי לקבלות פנים ולאירועי חברה",
+      "מופע טריו חי במעגל שבו הקהל עוטף אותנו ומוזמן לשיר איתנו, למשרדים, קבלות פנים ואירועים פרטיים. ספרו לנו על האירוע ונתאים לכם חוויה.",
+    title: "Trio 360: מופע טריו חי לקבלות פנים",
     ogImage: "/og/lp-trio-360.jpg",
     hero: {
       src: "/images/lp-trio-360-hero.jpg", // landscape crop of GALLERY_IMAGES[2] (round 3 speed)
@@ -206,7 +211,7 @@ export const LANDING_CONTENT: Record<LandingSlug, LandingContent> = {
         "אירועים פרטיים",
         "אירועי בוטיק",
         "אירועי קוקטייל",
-        "Happy Hour במשרד",
+        "ערבי אחרי העבודה",
       ],
     },
     faq: faq(0, 5, 4, 6, 1),
@@ -216,11 +221,12 @@ export const LANDING_CONTENT: Record<LandingSlug, LandingContent> = {
     slug: "rock-your-dj",
     name: dj.headline,
     ctaTarget: "Rock Your DJ",
+    trustLine: "אנחנו מגיעים לכל מקום בארץ, עם כל מעטפת ההפקה.",
     audience: "למסיבות ואירועי חברה שרוצים משהו מעבר לסטנדרט",
     valueLine: dj.subheadline,
     metaDescription:
-      "Rock Your DJ: מסיבת די ג'יי עם גיטרה, בוזוקי וכלי הקשה חיים על הרחבה, לאירועי חברה, חתונות ומסיבות. ספרו לנו על האירוע ונתאים לכם חוויה.",
-    title: "Rock Your DJ: מסיבה עם די ג'יי ונגנים חיים על הרחבה",
+      "מסיבת די ג'יי עם גיטרה, בוזוקי וכלי הקשה חיים על הרחבה, לאירועי חברה, חתונות ומסיבות. ספרו לנו על האירוע ונתאים לכם חוויה.",
+    title: "Rock Your DJ: מסיבה עם נגנים חיים",
     ogImage: "/og/lp-rock-your-dj.jpg",
     hero: {
       src: "/images/rock-your-dj-party-hero.jpg",

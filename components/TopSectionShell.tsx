@@ -25,7 +25,7 @@ export function TopSectionShell({ children }: TopSectionShellProps) {
           poster={TOP_SECTION_VIDEO_POSTER}
         />
         <div className="absolute inset-0 bg-magenta/70" />
-        <div className="absolute inset-0 bg-[#1e1c1c]/30" />
+        <div className="absolute inset-0 bg-[#1e1c1c]/40 lg:bg-[#1e1c1c]/30" />
       </div>
 
       <div className="relative z-10">{children}</div>

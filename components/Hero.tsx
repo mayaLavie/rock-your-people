@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { CtaLink } from "@/components/CtaLink";
 import { ScrollDownHint } from "@/components/ScrollDownHint";
 import {
@@ -8,7 +7,6 @@ import {
   HERO_SECONDARY_LINK_HE,
   HERO_SUBLINE_HE,
   EXPERIENCES_INTRO_PARAGRAPHS,
-  TITLE_IMAGE,
 } from "@/lib/constants";
 
 const BRAND_SLOGAN_HE = EXPERIENCES_INTRO_PARAGRAPHS[0];
@@ -35,7 +33,7 @@ function HeroActions({ className = "" }: { className?: string }) {
         lang="he"
         dir="rtl"
         data-placement="hero-secondary"
-        className="mt-1 inline-flex min-h-[44px] items-center justify-center px-4 font-hebrew text-[16px] font-semibold text-cream underline underline-offset-4 [text-shadow:0_1px_8px_rgba(0,0,0,0.35)] hover:text-white"
+        className="mt-1 inline-flex min-h-[44px] items-center justify-center px-4 font-hebrew text-[16px] font-semibold text-cream underline underline-offset-4 [text-shadow:0_1px_3px_rgba(0,0,0,0.45),0_2px_12px_rgba(0,0,0,0.5)] hover:text-white"
       >
         {HERO_SECONDARY_LINK_HE}
       </a>
@@ -50,31 +48,15 @@ export function Hero() {
       aria-labelledby="hero-heading"
     >
       <div className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col">
-        {/* Mobile / tablet: compact brand row. The teaser donkey lands to its right. */}
-        <div className="flex min-h-[calc(var(--site-header-height)+170px)] items-start pt-[calc(var(--site-header-height)+0.75rem)] lg:hidden">
+        {/* Mobile / tablet: the logo lives in the header, so the slogan appears just below, over the products photo.
+            The invisible data-hero-logo marker is where the teaser donkey lands (to the right). */}
+        <div className="flex min-h-[calc(var(--site-header-height)+40px)] items-start pt-[calc(var(--site-header-height)+0.5rem)] lg:hidden">
           <div className="w-[180px] shrink-0 sm:w-[200px]">
-            <div data-hero-logo className="w-[128px] sm:w-[150px]">
-              <Image
-                src={TITLE_IMAGE.src}
-                alt={TITLE_IMAGE.alt}
-                width={TITLE_IMAGE.width}
-                height={TITLE_IMAGE.height}
-                sizes="(min-width: 640px) 150px, 128px"
-                priority
-                className="h-auto w-full"
-              />
-            </div>
-            <p
-              lang="he"
-              dir="rtl"
-              className="mt-1.5 text-left font-hebrew text-[14px] font-bold leading-tight text-cream [text-shadow:0_1px_8px_rgba(0,0,0,0.35)]"
-            >
-              {BRAND_SLOGAN_HE}
-            </p>
+            <div data-hero-logo aria-hidden className="h-px w-[128px] sm:w-[150px]" />
           </div>
         </div>
 
-        <div className="mt-3 flex flex-col lg:mt-auto">
+        <div className="mt-1 flex flex-col lg:mt-auto">
           <div className="relative pb-3 text-center">
             {/* Mid-size desktops have no side logo: keep the slogan once here. */}
             <p
@@ -102,7 +84,7 @@ export function Hero() {
               <p
                 lang="he"
                 dir="rtl"
-                className="mt-2 font-hebrew text-pretty text-[17px] font-medium leading-snug text-cream/95 lg:pt-1 lg:text-[21px]"
+                className="mt-2 font-hebrew text-pretty text-[17px] font-medium leading-snug text-cream [text-shadow:0_1px_3px_rgba(0,0,0,0.45),0_2px_12px_rgba(0,0,0,0.5)] lg:pt-1 lg:text-[21px]"
               >
                 {HERO_SUBLINE_HE}
               </p>

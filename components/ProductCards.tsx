@@ -39,7 +39,7 @@ export function ProductCards({ beforeEngagement }: { beforeEngagement?: ReactNod
                 alt={EXPERIENCES_INTRO_STAGE_IMAGE.alt}
                 width={EXPERIENCES_INTRO_STAGE_IMAGE.width}
                 height={EXPERIENCES_INTRO_STAGE_IMAGE.height}
-                className="h-auto w-full"
+                className="aspect-[16/9] max-h-[45vh] w-full object-cover object-[50%_35%]"
                 sizes="(min-width: 720px) 720px, 100vw"
               />
               <div

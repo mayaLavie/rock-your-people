@@ -35,7 +35,7 @@ export default function Home() {
     <DesktopEditorialShell>
       <Header />
       <TopSectionShell>
-        <div className="relative flex min-h-dvh flex-col">
+        <div className="relative flex min-h-[560px] flex-col lg:min-h-dvh">
           <Hero />
         </div>
       </TopSectionShell>

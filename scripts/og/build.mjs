@@ -22,13 +22,15 @@ const CARDS = [
     file: "og-default.jpg",
     photo: join(IMG, "GALLERY_IMAGES/longShotCroud.jpeg"),
     position: "50% 55%",
-    title: "מחברים אנשים דרך מוזיקה",
+    title: "הופכים אירוע חברה לחוויה שהצוות זוכר",
     latin: false,
-    h1: 84,
+    h1: 76,
     sub: "מופעים וסדנאות מוזיקה לחברות ולאירועים",
+    cta: "ספרו לנו על האירוע",
   },
   {
     file: "lp-on-stage.jpg",
+    cta: "בואו נתאים מופע לאירוע שלכם",
     photo: join(IMG, "evyatar stage.jpeg"),
     position: "40% 50%",
     title: "אתם על הבמה",
@@ -37,6 +39,7 @@ const CARDS = [
   },
   {
     file: "lp-band-in-a-day.jpg",
+    cta: "בואו נתאים סדנה לצוות שלכם",
     photo: join(IMG, "rock-your-people-in-office.jpeg"),
     position: "50% 62%",
     title: "Band in a Day",
@@ -45,6 +48,7 @@ const CARDS = [
   },
   {
     file: "lp-trio-360.jpg",
+    cta: "בואו נתאים טריו לאירוע שלכם",
     photo: join(IMG, "GALLERY_IMAGES/appluse.jpeg"),
     position: "100% 60%",
     size: "165%",
@@ -54,6 +58,7 @@ const CARDS = [
   },
   {
     file: "lp-rock-your-dj.jpg",
+    cta: "בואו נתאים מסיבה לאירוע שלכם",
     photo: join(IMG, "GALLERY_IMAGES/mayaOnKit.jpeg"),
     position: "50% 12%",
     filter: "brightness(1.9) saturate(1.15)",
@@ -77,7 +82,7 @@ body{width:1200px;height:630px;overflow:hidden;position:relative;background:#1e1
 .col{position:absolute;top:0;bottom:0;right:0;width:760px;padding:48px 64px 48px 40px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;text-align:right}
 .logo{height:96px;width:auto;display:block;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5))}
 h1{font-weight:700;font-size:${c.h1 ?? (c.latin ? 96 : 104)}px;line-height:1.05;text-wrap:balance;${c.latin ? "font-family:Bowlby,Rubik;font-weight:400;text-transform:uppercase;letter-spacing:1px;" : ""}text-shadow:0 3px 14px rgba(0,0,0,.5)}
-.sub{margin-top:18px;font-size:42px;line-height:1.25;font-weight:700;color:#fbeee3;text-shadow:0 2px 10px rgba(0,0,0,.55)}
+.sub{margin-top:18px;text-wrap:balance;font-size:42px;line-height:1.25;font-weight:700;color:#fbeee3;text-shadow:0 2px 10px rgba(0,0,0,.55)}
 .cta{align-self:flex-start;background:#ffe34d;color:#1e1c1c;font-weight:700;font-size:34px;padding:12px 30px;border-radius:8px}
 </style></head><body>
 <div class="photo"></div><div class="shade"></div><div class="frame"></div>
@@ -94,7 +99,7 @@ const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, dev
 for (const card of CARDS) {
   const tmp = join(OUT, `.${card.file}.html`);
   const { writeFileSync, rmSync } = await import("node:fs");
-  writeFileSync(tmp, html(card, "ספרו לנו על האירוע ונתאים לכם חוויה"));
+  writeFileSync(tmp, html(card, card.cta));
   await page.goto(url(tmp));
   await page.evaluate(() => document.fonts.ready);
   await page.waitForTimeout(300);
