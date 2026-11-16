@@ -29,7 +29,7 @@ export function Footer() {
           </div>
 
           <nav aria-label="ניווט תחתון">
-            <ul className="flex flex-wrap gap-x-5 gap-y-1">
+            <ul className="flex flex-wrap gap-x-5 gap-y-2">
               <li>
                 <Link href="/#contact" className={LINK_CLASS}>
                   צור קשר
@@ -59,7 +59,7 @@ export function Footer() {
           </nav>
         </div>
 
-        <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-1 border-t border-cream/25 pt-5 text-cream/90">
+        <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-cream/25 pt-5 text-cream/90">
           <Link href="/privacy" className={LEGAL_LINK_CLASS}>
             מדיניות פרטיות
           </Link>

@@ -3,10 +3,10 @@ import { test, expect } from "./fixtures";
 const SLUGS = ["on-stage", "band-in-a-day", "trio-360", "rock-your-dj"] as const;
 
 const TITLES: Record<(typeof SLUGS)[number], string> = {
-  "on-stage": "אתם על הבמה: מופע חי שבו האנשים שלכם הם הכוכבים",
-  "band-in-a-day": "Band in a Day: סדנת גיבוש מוזיקלית שהופכת צוות ללהקה",
-  "trio-360": "Trio 360: מופע טריו חי לקבלות פנים ולאירועי חברה",
-  "rock-your-dj": "Rock Your DJ: מסיבה עם די ג'יי ונגנים חיים על הרחבה",
+  "on-stage": "אתם על הבמה: מופע חי לאירועי חברה",
+  "band-in-a-day": "Band in a Day: סדנת גיבוש לצוותים",
+  "trio-360": "Trio 360: מופע טריו חי לקבלות פנים",
+  "rock-your-dj": "Rock Your DJ: מסיבה עם נגנים חיים",
 };
 const CTA_SENTENCE = "ספרו לנו על האירוע ונתאים לכם חוויה";
 const MAX_OG_BYTES = 300 * 1024;
@@ -57,6 +57,11 @@ for (const slug of SLUGS) {
       await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute("content", full);
       const description = await page.locator('meta[name="description"]').getAttribute("content");
       expect(description).toMatch(new RegExp(`${CTA_SENTENCE}\\.?$`));
+      // final <title> (with the brand suffix) must fit a search/share card
+      expect(full.length).toBeLessThanOrEqual(60);
+      expect((await page.title()).length).toBeLessThanOrEqual(60);
+      // the description must not restate the title
+      expect(description!.includes(TITLES[slug].split(": ")[1])).toBe(false);
       await expect(page.locator('meta[property="og:description"]')).toHaveAttribute(
         "content",
         description!,
@@ -234,3 +239,24 @@ for (const slug of SLUGS) {
     for (const size of sizes) expect(size).toBeLessThan(150 * 1024);
   });
 }
+
+test("LP trust lines are product-specific (all four differ) and link to reviews", async ({ page }) => {
+  const lines: string[] = [];
+  for (const slug of SLUGS) {
+    await page.goto(`/lp/${slug}`, { waitUntil: "load" });
+    const text = await page.getByTestId("lp-trust-line").innerText();
+    expect(text).not.toContain("שנים של ניסיון");
+    lines.push(text.replace(/קראו מה כתבו.*$/s, "").trim());
+  }
+  expect(new Set(lines).size).toBe(SLUGS.length);
+});
+
+test("no English 'Happy Hour' inside Hebrew copy on home or LPs", async ({ page }) => {
+  for (const url of ["/", ...SLUGS.map((s) => `/lp/${s}`)]) {
+    await page.goto(url, { waitUntil: "load" });
+    const text = await page.evaluate(() => document.body.textContent ?? "");
+    expect(text.toLowerCase()).not.toContain("happy hour");
+  }
+  await page.goto("/lp/trio-360", { waitUntil: "load" });
+  await expect(page.getByText("ערבי אחרי העבודה", { exact: true })).toBeVisible();
+});

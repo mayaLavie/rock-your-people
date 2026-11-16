@@ -57,14 +57,14 @@ export function ReviewsSection() {
         dir="rtl"
         className="text-center font-hebrew text-[32px] font-bold leading-none text-cream sm:text-[34px]"
       >
-        ברוררררר שנהנתם
+        מה אומרים אחרי האירוע
       </h2>
       <p
         lang="he"
         dir="rtl"
-        className="mt-3 text-center font-hebrew text-[14px] font-semibold text-cream/90"
+        className="mt-3 text-center font-hebrew text-[15px] font-semibold text-cream"
       >
-        מה אומרים מי שכבר היו בקהל
+        מה כתבו מי שכבר היו בקהל
       </p>
 
       <div
@@ -79,7 +79,7 @@ export function ReviewsSection() {
             togglePaused();
           }
         }}
-        className="reviews-marquee relative mx-auto mt-6 h-[72dvh] min-h-[460px] max-h-[640px] w-full max-w-[420px] cursor-pointer overflow-hidden outline-none"
+        className="reviews-marquee relative mx-auto mt-4 h-[72dvh] min-h-[460px] max-h-[640px] w-full max-w-[420px] cursor-pointer overflow-hidden outline-none"
       >
         <div
           className="reviews-marquee-track flex flex-col"
@@ -121,14 +121,16 @@ export function ReviewsSection() {
         </div>
       </div>
 
-      <p
+      <div
         lang="he"
         dir="rtl"
         aria-hidden
-        className="mt-3 text-center font-hebrew text-[12px] font-medium text-cream/90"
+        className="mt-3 flex justify-center"
       >
-        {paused ? "לחצו שוב כדי להמשיך" : "לחצו על המלצה כדי לעצור ולקרוא"}
-      </p>
+        <span className="rounded-full bg-[#1e1c1c] px-3 py-1 text-center font-hebrew text-[13px] font-semibold text-cream">
+          {paused ? "לחצו שוב כדי להמשיך" : "לחצו על המלצה כדי לעצור ולקרוא"}
+        </span>
+      </div>
 
       <div className="mt-6 flex justify-center">
         <CtaLink

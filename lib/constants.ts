@@ -65,7 +65,7 @@ export const EXPERIENCES_SECTION_SCHEDULE_INTRO_HE =
 export const EXPERIENCES_SECTION_USE_CASES = [
   "ימי חברה וערבי חברה",
   "ימי גיבוש צוותיים",
-  "Happy Hour במשרד",
+  "ערבי אחרי העבודה במשרד",
   "חגים והרמות כוסית",
   "מסיבות סוף שנה",
   "אירועי הנהלה וסדנאות מנהלים",
@@ -119,7 +119,7 @@ export const FAQ_ITEMS = [
   {
     question: "לאילו סוגי אירועים אתם מתאימים והאם אתם מגיעים לכל הארץ?",
     answer:
-      "אנחנו מגיעים לכל מקום בארץ! הפעילויות שלנו מותאמות אישית ומשתלבות מעולה בערבי חברה, Happy Hour, חגים, אירועים פרטיים ואירועים קהילתיים.",
+      "אנחנו מגיעים לכל מקום בארץ! הפעילויות שלנו מותאמות אישית ומשתלבות מעולה בערבי חברה, אירועי אחרי העבודה, חגים, אירועים פרטיים ואירועים קהילתיים.",
   },
   {
     question: "מה צריך לספק לכם במקום?",
@@ -134,33 +134,33 @@ export const FAQ_ITEMS = [
 ] as const;
 
 export const ABOUT_NAV_LINK = {
-  label: "About Us",
+  label: "עלינו",
   href: "#experience",
 } as const;
 
 /** Our experiences screen — starts where the hero video ends */
 export const EXPERIENCES_NAV_LINK = {
-  label: "Experiences",
+  label: "חוויות",
   href: "#products",
 } as const;
 
 export const FAQ_NAV_LINK = {
-  label: "FAQ",
+  label: "שאלות נפוצות",
   href: "#faq",
 } as const;
 
 export const REVIEWS_NAV_LINK = {
-  label: "Reviews",
+  label: "המלצות",
   href: "#reviews",
 } as const;
 
 export const GALLERY_NAV_LINK = {
-  label: "Gallery",
+  label: "גלריה",
   href: "#gallery",
 } as const;
 
 export const CONTACT_NAV_LINK = {
-  label: "Contact",
+  label: "צור קשר",
   href: "#contact",
 } as const;
 
@@ -183,11 +183,11 @@ export const DESKTOP_NAV_LINKS = [
 /** Mobile hamburger menu */
 export const MOBILE_MENU_LINKS = [
   ...PRODUCT_NAV_LINKS,
-  { label: "המלצות", href: REVIEWS_NAV_LINK.href },
-  { label: "מי אנחנו", href: ABOUT_NAV_LINK.href },
-  { label: "שאלות נפוצות", href: FAQ_NAV_LINK.href },
-  { label: "גלריה", href: GALLERY_NAV_LINK.href },
-  { label: "צרו קשר", href: CONTACT_NAV_LINK.href },
+  { label: REVIEWS_NAV_LINK.label, href: REVIEWS_NAV_LINK.href },
+  { label: ABOUT_NAV_LINK.label, href: ABOUT_NAV_LINK.href },
+  { label: FAQ_NAV_LINK.label, href: FAQ_NAV_LINK.href },
+  { label: GALLERY_NAV_LINK.label, href: GALLERY_NAV_LINK.href },
+  { label: CONTACT_NAV_LINK.label, href: CONTACT_NAV_LINK.href },
 ] as const;
 
 export const SOCIAL_LINKS = {

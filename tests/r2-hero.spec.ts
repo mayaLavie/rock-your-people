@@ -173,3 +173,95 @@ test.describe("round 2: footer and accessibility page", () => {
     expect(ratio).toBeGreaterThanOrEqual(4.5);
   });
 });
+
+test.describe("round 3: home hero, nav, reviews, products", () => {
+  test("mobile: no second wordmark in the hero and the hero is compact", async ({ page }, info) => {
+    test.skip(info.project.name !== "mobile", "mobile only");
+    await page.goto("/", { waitUntil: "load" });
+    const tall = await page.evaluate(() =>
+      Array.from(document.querySelectorAll<HTMLImageElement>('section[aria-labelledby="hero-heading"] img'))
+        .map((i) => i.getBoundingClientRect())
+        .filter((r) => r.width > 0 && r.height > 120).length,
+    );
+    expect(tall).toBe(0);
+    const hero = (await page.locator('section[aria-labelledby="hero-heading"]').boundingBox())!;
+    expect(hero.height).toBeLessThanOrEqual(780);
+    // the next section peeks in above the 92px cookie bar at 390x844
+    const next = await page.evaluate(() => document.getElementById("products")!.getBoundingClientRect().top + window.scrollY);
+    expect(next).toBeLessThanOrEqual(844 - 92 - 100);
+  });
+
+  test("hero sub-line and microcopy are solid cream", async ({ page }) => {
+    await page.goto("/", { waitUntil: "load" });
+    for (const text of ["מופעים חיים וסדנאות מוזיקה אינטראקטיביות לחברות, צוותים ואירועים", "ספרו לנו על האירוע ונחזור אליכם בוואטסאפ"]) {
+      const color = await page.getByText(text).first().evaluate((el) => getComputedStyle(el).color);
+      expect(color).not.toMatch(/\/ 0\.|,\s*0\.\d+\)$/);
+    }
+  });
+
+  test("navigation labels are Hebrew", async ({ page }, info) => {
+    await page.goto("/", { waitUntil: "load" });
+    if (info.project.name === "mobile") {
+      await page.getByRole("button", { name: "פתיחת תפריט" }).or(page.locator("summary[aria-label='פתיחת תפריט']")).click();
+      const menu = page.getByRole("navigation", { name: "ניווט מובייל" });
+      for (const l of ["המלצות", "עלינו", "שאלות נפוצות", "גלריה", "צור קשר"]) {
+        await expect(menu.getByRole("link", { name: l })).toBeVisible();
+      }
+      return;
+    }
+    const nav = page.getByRole("navigation", { name: "ניווט ראשי" }).first();
+    for (const l of ["חוויות", "עלינו", "המלצות", "שאלות נפוצות", "גלריה", "צור קשר"]) {
+      await expect(nav.getByRole("link", { name: l, exact: true })).toBeVisible();
+    }
+    for (const en of ["Experiences", "About Us", "Reviews", "FAQ", "Gallery", "Contact"]) {
+      await expect(nav).not.toContainText(en);
+    }
+    const box = (await nav.boundingBox())!;
+    expect(box.x).toBeGreaterThanOrEqual(0);
+    expect(box.x + box.width).toBeLessThanOrEqual(page.viewportSize()!.width);
+  });
+
+  test("reviews heading is the new line and the pause hint has contrast", async ({ page }) => {
+    await page.goto("/", { waitUntil: "load" });
+    await expect(page.locator("#reviews-heading")).toHaveText("מה אומרים אחרי האירוע");
+    expect(await page.evaluate(() => document.body.textContent)).not.toContain("ברורר");
+    const hint = page.getByText("לחצו על המלצה כדי לעצור ולקרוא");
+    const ratio = await hint.evaluate((el) => {
+      const rgb = (css: string) => {
+        const c = document.createElement("canvas");
+        c.width = c.height = 1;
+        const x = c.getContext("2d")!;
+        x.fillStyle = css;
+        x.fillRect(0, 0, 1, 1);
+        return Array.from(x.getImageData(0, 0, 1, 1).data.slice(0, 3));
+      };
+      const lum = (v: number[]) => {
+        const [r, g, b] = v.map((n) => {
+          const s = n / 255;
+          return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+        });
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+      };
+      const a = lum(rgb(getComputedStyle(el).color));
+      const b = lum(rgb(getComputedStyle(el).backgroundColor));
+      return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+    });
+    expect(ratio).toBeGreaterThanOrEqual(4.5);
+  });
+
+  test("footer link rows are at least 44px tall with a gap between rows", async ({ page }) => {
+    await page.goto("/", { waitUntil: "load" });
+    const boxes = await page
+      .locator("footer a, footer button")
+      .evaluateAll((els) => els.map((el) => { const r = el.getBoundingClientRect(); return { top: r.top, h: r.height }; }));
+    for (const b of boxes) expect(b.h).toBeGreaterThanOrEqual(44);
+    await expect(page.locator("footer").getByRole("button", { name: "הגדרות עוגיות", exact: true })).toBeVisible();
+  });
+
+  test("mobile: first product card is reachable sooner (stage photo is capped)", async ({ page }, info) => {
+    test.skip(info.project.name !== "mobile", "mobile only");
+    await page.goto("/", { waitUntil: "load" });
+    const h = await page.locator('#products img').first().evaluate((el) => el.getBoundingClientRect().height);
+    expect(h).toBeLessThanOrEqual(844 * 0.45 + 1);
+  });
+});

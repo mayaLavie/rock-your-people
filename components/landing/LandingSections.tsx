@@ -79,11 +79,11 @@ export function LandingHero({
           data-testid="lp-trust-line"
           className="font-hebrew text-[14px] font-medium leading-snug text-cream/95 sm:text-[15px] md:col-start-1 md:row-start-3"
         >
-          להקה מקצועית עם שנים של ניסיון על במות ובהפקות חיות.{" "}
+          {content.trustLine}{" "}
           <a
             href="#reviews"
             data-placement="lp-hero-reviews"
-            className="font-bold underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cream"
+            className="inline-block font-bold underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cream"
           >
             קראו מה כתבו מי שכבר חוו אותנו
           </a>

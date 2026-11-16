@@ -96,7 +96,7 @@ export function MobileMenu() {
               <li key={link.href}>
                 <a
                   href={link.href}
-                  className="block py-3 text-sm font-medium uppercase tracking-wider text-cream"
+                  className="block py-3 text-sm font-medium tracking-wide text-cream"
                   onClick={(event) => {
                     event.preventDefault();
                     navigateTo(link.href);
