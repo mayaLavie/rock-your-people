@@ -993,6 +993,27 @@ export function SongSignupPopup({
               >
                 שלח
               </button>
+              <p
+                data-testid="song-signup-notice"
+                style={{
+                  margin: 0,
+                  fontSize: 13,
+                  lineHeight: 1.5,
+                  color: "rgba(255,255,255,.82)",
+                }}
+              >
+                הפרטים יישלחו אל Rock Your People כדי לשריין לכם מקום על הבמה ולחזור אליכם
+                בנוגע לשיר ולהופעה. הם נשמרים בגיליון גוגל. פרטים נוספים ב
+                <a
+                  href="/privacy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: "#fff", textDecoration: "underline", textUnderlineOffset: 2 }}
+                >
+                  מדיניות הפרטיות
+                </a>
+                .
+              </p>
             </div>
           </>
         ) : (

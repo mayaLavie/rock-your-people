@@ -4,6 +4,7 @@ import {
   createConsentValue,
   originAllowed,
   rateLimited,
+  warnIfConsentSecretMissing,
 } from "@/lib/tracking/guards";
 
 export const runtime = "nodejs";
@@ -17,6 +18,7 @@ function reply(body: unknown, status: number, request: Request, cookie?: string 
 
 /** The visitor accepted the cookie banner: set the signed first-party consent cookie. */
 export async function POST(request: Request) {
+  warnIfConsentSecretMissing();
   if (!originAllowed(request)) return reply({ ok: false, error: "origin_not_allowed" }, 403, request);
   if (rateLimited("consent", clientIp(request.headers), 20)) {
     return reply({ ok: false, error: "rate_limited" }, 429, request);
