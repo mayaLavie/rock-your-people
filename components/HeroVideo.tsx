@@ -5,6 +5,8 @@ import { useEffect, useRef } from "react";
 type HeroVideoProps = {
   src: string;
   poster: string;
+  /** Tiny inline blur painted behind the video until its first frame (not an LCP candidate). */
+  placeholder: string;
   className?: string;
 };
 
@@ -27,7 +29,7 @@ function shouldSkipVideo(): boolean {
  * and the MP4 is only attached after the window `load` event plus an idle callback.
  * Autoplay stays muted, looping and inline.
  */
-export function HeroVideo({ src, poster, className }: HeroVideoProps) {
+export function HeroVideo({ src, poster, placeholder, className }: HeroVideoProps) {
   const ref = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -36,7 +38,12 @@ export function HeroVideo({ src, poster, className }: HeroVideoProps) {
     let cancelled = false;
 
     const attach = () => {
-      if (cancelled || video.getAttribute("src") || shouldSkipVideo()) return;
+      if (cancelled || video.getAttribute("src")) return;
+      if (shouldSkipVideo()) {
+        // No video for this visitor: swap the blur for the real poster frame.
+        video.style.backgroundImage = `url(${poster})`;
+        return;
+      }
       const phone = window.matchMedia("(max-width: 767px)").matches;
       video.src = (phone && MOBILE_VARIANTS[src]) || src;
       void video.play().catch(() => {});
@@ -56,13 +63,13 @@ export function HeroVideo({ src, poster, className }: HeroVideoProps) {
       cancelled = true;
       window.removeEventListener("load", afterLoad);
     };
-  }, [src]);
+  }, [src, poster]);
 
   return (
     <video
       ref={ref}
       className={className}
-      poster={poster}
+      style={{ backgroundImage: `url(${placeholder})` }}
       autoPlay
       muted
       loop

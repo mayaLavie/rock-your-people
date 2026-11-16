@@ -58,12 +58,31 @@ test.describe("round 2: hero", () => {
     await expect(page.locator('[data-placement="faq-end"]')).toHaveAttribute("href", /wa\.me\//);
   });
 
-  test("hero video has a poster and attaches its source only after load", async ({ page }) => {
+  test("hero video holds a tiny inline placeholder (no poster image) and attaches its source only after load", async ({ page }) => {
     await page.goto("/", { waitUntil: "load" });
     const video = page.locator("video.top-section-video");
-    await expect(video).toHaveAttribute("poster", /video-land-page-poster\.webp$/);
+    // A real poster image would be the Largest Contentful Paint element; the inline blur is ignored by LCP.
+    await expect(video).not.toHaveAttribute("poster", /.+/);
+    await expect(video).toHaveCSS("background-image", /^url\("data:image\/webp;base64,/);
     await expect(video).toHaveAttribute("src", /video(%20|-)land(%20|-)page(-mobile)?\.mp4$/, { timeout: 10_000 });
     expect(await video.evaluate((v: HTMLVideoElement) => v.muted && v.loop)).toBe(true);
+  });
+});
+
+test.describe("round 3: LCP guard", () => {
+  test("phone stage photo under the hero is requested only after the first input", async ({ page, isMobile }) => {
+    test.skip(!isMobile, "phone layout only");
+    const stage = /evyatar(%20|%2520| )stage/;
+    const requested: string[] = [];
+    page.on("request", (r) => {
+      if (stage.test(r.url())) requested.push(r.url());
+    });
+    await page.goto("/", { waitUntil: "load" });
+    await page.waitForTimeout(1500);
+    expect(requested).toHaveLength(0);
+    await page.mouse.wheel(0, 200);
+    await expect(page.locator('#products img[alt="אביתר על הבמה"]').first()).toBeVisible();
+    await expect.poll(() => requested.length).toBeGreaterThan(0);
   });
 });
 

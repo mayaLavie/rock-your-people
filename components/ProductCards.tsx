@@ -10,6 +10,7 @@ import {
   CAROUSEL_END_CTA_HE,
 } from "@/lib/constants";
 import { CtaLink } from "@/components/CtaLink";
+import { StageImage } from "@/components/StageImage";
 import { ExperienceCarousel } from "@/components/ExperienceCarousel";
 
 export function ProductCards({ beforeEngagement }: { beforeEngagement?: ReactNode }) {
@@ -34,13 +35,11 @@ export function ProductCards({ beforeEngagement }: { beforeEngagement?: ReactNod
           */}
           <div className="mt-2.5 lg:hidden">
             <div className="relative -mx-4 overflow-hidden md:-mx-6">
-              <Image
+              <StageImage
                 src={EXPERIENCES_INTRO_STAGE_IMAGE.src}
                 alt={EXPERIENCES_INTRO_STAGE_IMAGE.alt}
                 width={EXPERIENCES_INTRO_STAGE_IMAGE.width}
                 height={EXPERIENCES_INTRO_STAGE_IMAGE.height}
-                className="aspect-[16/9] max-h-[45vh] w-full object-cover object-[50%_35%]"
-                sizes="(min-width: 720px) 720px, 100vw"
               />
               <div
                 lang="he"

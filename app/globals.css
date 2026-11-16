@@ -79,6 +79,8 @@
 .top-section-video {
   object-fit: cover;
   object-position: top center;
+  background-position: center top;
+  background-size: cover;
 }
 
 .experiences-scroll ul {
