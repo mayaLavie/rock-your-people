@@ -45,7 +45,6 @@ export const test = base.extend<{ meta: MetaNetwork; netlog: void }>({
           entries.push({ t: Date.now() - t0, kind: "response", url, status: res.status(), body });
         });
       }
-      // eslint-disable-next-line react-hooks/rules-of-hooks -- Playwright fixture callback, not a React hook
       await use();
       if (dir) {
         mkdirSync(dir, { recursive: true });
