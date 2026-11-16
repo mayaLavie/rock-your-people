@@ -302,8 +302,14 @@ test.describe("song signup", () => {
     meta.clear();
     const teaser = page.locator("button.ryp-teaser");
     await teaser.waitFor({ state: "visible" });
-    await teaser.click({ force: true });
-    await page.locator(".ryp-song").first().click();
+    // The popup script can attach its handler a moment after the teaser shows (flaky under load):
+    // retry the click until the song list is actually visible.
+    const firstSong = page.locator(".ryp-song").first();
+    await expect(async () => {
+      if (!(await firstSong.isVisible())) await teaser.click({ force: true });
+      await expect(firstSong).toBeVisible({ timeout: 1500 });
+    }).toPass({ timeout: 20_000 });
+    await firstSong.click();
     await page.locator("#ryp-n0").fill("דנה כהן");
     await page.locator("#ryp-p0").fill("0501234567");
     await page.locator("button.ryp-cta").click();
