@@ -1,5 +1,12 @@
 import {
+  cleanSourceUrl,
   clientIp,
+  hasValidConsent,
+  originAllowed,
+  rateLimited,
+  readCappedText,
+} from "@/lib/tracking/guards";
+import {
   graphVersion,
   hashFirstName,
   hashPhone,
@@ -11,6 +18,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const MAX_BODY_CHARS = 10_000;
+const EVENTS_PER_MINUTE = 30;
 const COOKIE_VALUE = /^fb\.\d\.\d{10,13}\.[\w.-]{1,512}$/;
 
 function json(body: unknown, status: number) {
@@ -21,15 +29,24 @@ function json(body: unknown, status: number) {
 }
 
 /**
- * Meta Conversions API relay. Browser sends the same event (same event_id) as
+ * Meta Conversions API relay. Guards, in order: Origin/Referer allowlist, per-IP rate limit
+ * (30/min), signed consent cookie (set by /api/consent), body size cap, event-name whitelist. Browser sends the same event (same event_id) as
  * the pixel; Meta de-duplicates. Raw phone / name are hashed here and never logged.
  */
 export async function POST(request: Request) {
+  if (!originAllowed(request)) return json({ ok: false, error: "origin_not_allowed" }, 403);
+  const ip = clientIp(request.headers);
+  if (rateLimited("meta-event", ip, EVENTS_PER_MINUTE)) {
+    return json({ ok: false, error: "rate_limited" }, 429);
+  }
+  // Consent is verified from the signed first-party cookie, never from a flag in the body.
+  if (!hasValidConsent(request)) return json({ ok: false, error: "consent_required" }, 403);
+
   const pixelId = (process.env.NEXT_PUBLIC_META_PIXEL_ID ?? "").trim();
   if (!pixelId) return json({ ok: false, error: "pixel_not_configured" }, 202);
 
-  const text = await request.text();
-  if (text.length > MAX_BODY_CHARS) return json({ ok: false, error: "too_large" }, 413);
+  const text = await readCappedText(request, MAX_BODY_CHARS);
+  if (text === null) return json({ ok: false, error: "too_large" }, 413);
 
   let body: Record<string, unknown>;
   try {
@@ -41,7 +58,6 @@ export async function POST(request: Request) {
     return json({ ok: false, error: "invalid_body" }, 400);
   }
 
-  if (body.consent !== true) return json({ ok: false, error: "consent_required" }, 403);
   if (!isAllowedEvent(body.event_name)) {
     return json({ ok: false, error: "event_not_allowed" }, 400);
   }
@@ -49,10 +65,9 @@ export async function POST(request: Request) {
   if (typeof eventId !== "string" || !/^[\w-]{8,64}$/.test(eventId)) {
     return json({ ok: false, error: "invalid_event_id" }, 400);
   }
-  const sourceUrl = body.event_source_url;
-  if (typeof sourceUrl !== "string" || !/^https?:\/\//i.test(sourceUrl) || sourceUrl.length > 2000) {
-    return json({ ok: false, error: "invalid_event_source_url" }, 400);
-  }
+  const sourceUrl =
+    typeof body.event_source_url === "string" ? cleanSourceUrl(body.event_source_url) : null;
+  if (!sourceUrl) return json({ ok: false, error: "invalid_event_source_url" }, 400);
 
   const rawUser =
     body.user_data && typeof body.user_data === "object"
@@ -64,7 +79,7 @@ export async function POST(request: Request) {
   const fbc = typeof rawUser.fbc === "string" && COOKIE_VALUE.test(rawUser.fbc) ? rawUser.fbc : undefined;
 
   const userData: Record<string, unknown> = {
-    client_ip_address: clientIp(request.headers),
+    client_ip_address: ip,
     client_user_agent: request.headers.get("user-agent") ?? undefined,
     fbp,
     fbc,

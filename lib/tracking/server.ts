@@ -50,12 +50,6 @@ export function sanitizeCustomData(
   return out;
 }
 
-export function clientIp(headers: Headers): string | undefined {
-  const xff = headers.get("x-forwarded-for");
-  const ip = xff?.split(",")[0]?.trim() || headers.get("x-real-ip") || "";
-  return ip || undefined;
-}
-
 export function graphVersion(): string {
   const v = (process.env.META_GRAPH_VERSION || "v21.0").trim();
   return v.startsWith("v") ? v : `v${v}`;

@@ -255,3 +255,11 @@ body {
     padding: 0;
   }
 }
+
+/* The cookie banner (components/CookieConsentBanner) sets data-consent-banner="open" on <html> while
+   it is visible. The landing-page sticky CTA bar sits at the same screen edge, so it stays hidden
+   until the visitor has made a choice. */
+html[data-consent-banner="open"] [data-testid="landing-sticky-bar"] {
+  visibility: hidden;
+  pointer-events: none;
+}

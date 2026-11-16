@@ -47,3 +47,20 @@ export const ALLOWED_EVENTS = [
   "CompleteRegistration",
 ] as const;
 export type MetaEventName = (typeof ALLOWED_EVENTS)[number];
+
+/** Optional estimated value of a lead (ILS). Unset = no value/currency is sent. */
+const rawLeadValue = Number((process.env.NEXT_PUBLIC_LEAD_VALUE ?? "").trim());
+export const LEAD_VALUE: number | undefined =
+  Number.isFinite(rawLeadValue) && rawLeadValue > 0 ? rawLeadValue : undefined;
+export const LEAD_CURRENCY = "ILS";
+
+/** Optional form field: type of event. Sent to the lead webhook only, never to Meta. */
+export const EVENT_TYPES = [
+  "כנס/אירוע חברה",
+  "יום גיבוש",
+  "מסיבה/הפי אוור",
+  "אחר",
+] as const;
+
+/** sessionStorage key: last clicked #contact CTA placement (first-party, local). */
+export const CTA_PLACEMENT_KEY = "ryp-cta-placement";

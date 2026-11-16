@@ -49,3 +49,31 @@ export function loadPixel(): boolean {
   window.fbq?.("init", META_PIXEL_ID);
   return true;
 }
+
+/**
+ * Consent withdrawn: stop the pixel without reloading the page. Tells the pixel to revoke, removes
+ * the fbevents.js script and its globals, clears _fbp/_fbc, and lets a later accept start clean.
+ */
+export function revokePixel(): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.fbq?.("consent", "revoke");
+  } catch {
+    // ignore
+  }
+  document
+    .querySelectorAll(`script[src^="https://connect.facebook.net/"]`)
+    .forEach((el) => el.remove());
+  const w = window as unknown as Record<string, unknown>;
+  delete w.fbq;
+  delete w._fbq;
+  initialized = false;
+
+  const host = window.location.hostname;
+  const bare = host.replace(/^www\./, "");
+  for (const name of ["_fbp", "_fbc"]) {
+    for (const domain of [undefined, host, `.${host}`, `.${bare}`]) {
+      document.cookie = `${name}=; Max-Age=0; path=/${domain ? `; domain=${domain}` : ""}`;
+    }
+  }
+}

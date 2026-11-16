@@ -35,7 +35,7 @@ const VIEWPORTS = {
   mobile: { viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true },
   desktop: { viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 },
 };
-const ACCEPT = "מאשר/ת";
+const ACCEPT = "אישור";
 const FB = /^https?:\/\/([^/]+\.)?(facebook\.com|facebook\.net)\//i;
 
 const executablePath = [
