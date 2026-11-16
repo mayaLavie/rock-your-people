@@ -7,7 +7,7 @@ import {
   EXPERIENCES_SECTION_TAGLINE_HE,
   EXPERIENCES_SECTION_TITLE_HE,
   EXPERIENCES_SECTION_USE_CASES,
-  SECTION_CTA_HE,
+  CAROUSEL_END_CTA_HE,
 } from "@/lib/constants";
 import { CtaLink } from "@/components/CtaLink";
 import { ExperienceCarousel } from "@/components/ExperienceCarousel";
@@ -40,7 +40,7 @@ export function ProductCards({ beforeEngagement }: { beforeEngagement?: ReactNod
                 width={EXPERIENCES_INTRO_STAGE_IMAGE.width}
                 height={EXPERIENCES_INTRO_STAGE_IMAGE.height}
                 className="h-auto w-full"
-                sizes="100vw"
+                sizes="(min-width: 720px) 720px, 100vw"
               />
               <div
                 lang="he"
@@ -158,8 +158,12 @@ export function ProductCards({ beforeEngagement }: { beforeEngagement?: ReactNod
             </p>
           </div>
           <div className="mt-2 flex justify-center">
-            <CtaLink href="#contact" className="w-full max-w-[22rem]">
-              {SECTION_CTA_HE}
+            <CtaLink
+              href="#contact"
+              placement="carousel-end"
+              className="w-full max-w-[22rem]"
+            >
+              {CAROUSEL_END_CTA_HE}
             </CtaLink>
           </div>
         </div>

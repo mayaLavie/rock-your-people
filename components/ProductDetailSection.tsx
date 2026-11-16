@@ -236,7 +236,7 @@ function Trio360Detail({ detail }: ProductDetailSectionProps) {
         src={DJ_SECTION_BG_SRC}
         alt=""
         fill
-        sizes="100vw"
+        sizes="(min-width: 1024px) 720px, 100vw"
         className="object-cover object-top"
       />
       <div
@@ -290,7 +290,7 @@ function BeerDetail({ detail }: ProductDetailSectionProps) {
             src={BEER_SECTION_BG_SRC}
             alt=""
             fill
-            sizes="100vw"
+            sizes="(min-width: 1024px) 720px, 100vw"
             className="object-cover object-[50%_65%]"
           />
           <div
@@ -349,7 +349,7 @@ function YourPeopleOnStageDetail({ detail }: ProductDetailSectionProps) {
         src={STAGE_SECTION_BG_SRC}
         alt=""
         fill
-        sizes="100vw"
+        sizes="(min-width: 1024px) 720px, 100vw"
         className="object-cover object-left sm:object-center"
       />
       <div

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { CtaLink } from "@/components/CtaLink";
-import { SECTION_CTA_HE } from "@/lib/constants";
+import { REVIEWS_END_CTA_HE } from "@/lib/constants";
 
 const REVIEW_IMAGES = [
   { src: "/images/reviews/review-1.jpg", width: 1200, height: 467 },
@@ -39,7 +39,7 @@ export function ReviewsSection() {
         dir="rtl"
         className="mt-3 text-center font-hebrew text-[14px] font-semibold text-cream/90"
       >
-        {paused ? "לחצו שוב כדי להמשיך" : "לחצו על המלצה כדי לעצור ולקרוא"}
+        מה אומרים מי שכבר היו בקהל
       </p>
 
       <div
@@ -87,9 +87,22 @@ export function ReviewsSection() {
         </div>
       </div>
 
-      <div className="mt-8 flex justify-center">
-        <CtaLink href="#contact" className="w-full max-w-[22rem]">
-          {SECTION_CTA_HE}
+      <p
+        lang="he"
+        dir="rtl"
+        aria-hidden
+        className="mt-3 text-center font-hebrew text-[12px] font-medium text-cream/90"
+      >
+        {paused ? "לחצו שוב כדי להמשיך" : "לחצו על המלצה כדי לעצור ולקרוא"}
+      </p>
+
+      <div className="mt-6 flex justify-center">
+        <CtaLink
+          href="#contact"
+          placement="reviews-end"
+          className="w-full max-w-[22rem]"
+        >
+          {REVIEWS_END_CTA_HE}
         </CtaLink>
       </div>
     </section>
