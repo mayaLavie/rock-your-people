@@ -27,7 +27,8 @@ export function LandingHero({
             src={encodeURI(content.hero.src)}
             alt={content.hero.alt}
             fill
-            priority
+            fetchPriority="high"
+            loading="eager"
             sizes="(min-width: 768px) 520px, 100vw"
             className="object-cover"
             style={{ objectPosition: content.hero.position }}

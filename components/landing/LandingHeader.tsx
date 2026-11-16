@@ -26,7 +26,9 @@ export function LandingHeader({ whatsappUrl }: { whatsappUrl: string }) {
             alt=""
             width={TITLE_IMAGE.width}
             height={TITLE_IMAGE.height}
-            priority
+            sizes="48px"
+            loading="eager"
+            fetchPriority="low"
             className="h-11 w-auto sm:h-12"
           />
         </a>

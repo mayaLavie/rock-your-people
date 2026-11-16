@@ -28,6 +28,7 @@ const inter = localFont({
 });
 
 const bebasNeue = localFont({
+  preload: false, // only used by the home experience carousel, below the fold
   src: "./fonts/bebas-neue-latin-400-normal.woff2",
   weight: "400",
   style: "normal",
@@ -53,6 +54,7 @@ const rubikHebrew = localFont({
 });
 
 const varelaLatin = localFont({
+  preload: false, // only used by the home experience carousel, below the fold
   src: "./fonts/varela-round-latin-400-normal.woff2",
   weight: "400",
   style: "normal",
@@ -61,6 +63,7 @@ const varelaLatin = localFont({
 });
 
 const varelaHebrew = localFont({
+  preload: false, // only used by the home experience carousel, below the fold
   src: "./fonts/varela-round-hebrew-400-normal.woff2",
   weight: "400",
   style: "normal",

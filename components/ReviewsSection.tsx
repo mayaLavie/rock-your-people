@@ -19,15 +19,16 @@ const REVIEW_IMAGES = [
 export function ReviewsSection() {
   const [paused, setPaused] = useState(false);
   // Cards scroll in from outside the clipped box, where native lazy loading never fires and
-  // they would show up as blank white cards. Load every image once the section is near.
+  // they would show up as blank white cards. So no image is requested until the section is
+  // near the viewport (keeps the first paint light), and then all of them load eagerly.
   const [near, setNear] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   useEffect(() => {
     const el = sectionRef.current;
     if (!el || near) return;
     if (typeof IntersectionObserver === "undefined") {
-      setNear(true);
-      return;
+      const id = window.setTimeout(() => setNear(true), 0);
+      return () => window.clearTimeout(id);
     }
     const observer = new IntersectionObserver(
       (entries) => {
@@ -36,7 +37,7 @@ export function ReviewsSection() {
           observer.disconnect();
         }
       },
-      { rootMargin: "1200px 0px" },
+      { rootMargin: "500px 0px" },
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -95,15 +96,23 @@ export function ReviewsSection() {
                   <div
                     className="block w-full overflow-hidden rounded-[5px] border-2 border-cream bg-white shadow-[0_4px_12px_rgba(0,0,0,0.18)]"
                   >
-                    <Image
-                      src={image.src}
-                      alt={copy === 0 ? `המלצה ${index + 1}` : ""}
-                      width={image.width}
-                      height={image.height}
-                      sizes="420px"
-                      loading={near ? "eager" : "lazy"}
-                      className="h-auto w-full"
-                    />
+                    {near ? (
+                      <Image
+                        src={image.src}
+                        alt={copy === 0 ? `המלצה ${index + 1}` : ""}
+                        width={image.width}
+                        height={image.height}
+                        sizes="420px"
+                        loading="eager"
+                        className="h-auto w-full"
+                      />
+                    ) : (
+                      <div
+                        aria-hidden
+                        className="w-full bg-white"
+                        style={{ aspectRatio: `${image.width} / ${image.height}` }}
+                      />
+                    )}
                   </div>
                 </li>
               ))}

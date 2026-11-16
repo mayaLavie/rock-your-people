@@ -213,3 +213,24 @@ test("reviews: every card image loads once the section is near (no blank white c
     )
     .toBe(true);
 });
+
+for (const slug of SLUGS) {
+  test(`/lp/${slug} hero image is the only high-priority image, correctly sized`, async ({ page }) => {
+    const sizes: number[] = [];
+    page.on("response", (res) => {
+      if (res.url().includes("/_next/image") && /hero|stage|office|appluse|party|dj|trio|band/i.test(decodeURIComponent(res.url())))
+        void res.body().then((b) => sizes.push(b.length)).catch(() => {});
+    });
+    await page.goto(`/lp/${slug}`, { waitUntil: "load" });
+    const hero = page.locator("#lp-hero-heading").locator("xpath=ancestor::section[1]").locator("img").first();
+    await expect(hero).toHaveAttribute("fetchpriority", "high");
+    await expect(hero).toHaveAttribute("loading", "eager");
+    await expect(hero).toHaveAttribute("sizes", /100vw/);
+    // nothing else in the page asks for high priority
+    const high = await page.locator('img[fetchpriority="high"]').count();
+    expect(high).toBe(1);
+    // the mobile-width variant stays small
+    await page.waitForTimeout(300);
+    for (const size of sizes) expect(size).toBeLessThan(150 * 1024);
+  });
+}
