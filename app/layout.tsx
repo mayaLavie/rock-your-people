@@ -1,42 +1,76 @@
 import type { Metadata } from "next";
-import {
-  Bebas_Neue,
-  Bowlby_One_SC,
-  Inter,
-  Rubik,
-  Varela_Round,
-} from "next/font/google";
+import localFont from "next/font/local";
 import { CookieConsentBanner } from "@/components/CookieConsentBanner";
 import "./globals.css";
 
-const bowlby = Bowlby_One_SC({
+/*
+ * Fonts are self-hosted (app/fonts/*.woff2, from the @fontsource packages) so the
+ * build works offline. Families, weights, subsets and CSS variable names match the
+ * previous next/font/google setup. Families with hebrew + latin subsets are loaded
+ * as two faces with a literal unicode-range each (next/font needs literals) and combined into one CSS variable below.
+ */
+const bowlby = localFont({
+  src: "./fonts/bowlby-one-sc-latin-400-normal.woff2",
   weight: "400",
-  subsets: ["latin"],
+  style: "normal",
+  display: "swap",
   variable: "--font-bowlby",
 });
 
-const inter = Inter({
-  subsets: ["latin"],
+const inter = localFont({
+  src: "./fonts/inter-latin-wght-normal.woff2",
+  weight: "100 900",
+  style: "normal",
+  display: "swap",
   variable: "--font-inter",
 });
 
-const bebasNeue = Bebas_Neue({
+const bebasNeue = localFont({
+  src: "./fonts/bebas-neue-latin-400-normal.woff2",
   weight: "400",
-  subsets: ["latin"],
+  style: "normal",
+  display: "swap",
   variable: "--font-bebas",
 });
 
-const rubik = Rubik({
-  subsets: ["hebrew", "latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-rubik",
+const rubikLatin = localFont({
+  src: "./fonts/rubik-latin-wght-normal.woff2",
+  weight: "300 900",
+  style: "normal",
+  display: "swap",
+  declarations: [{ prop: "unicode-range", value: "U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD" }],
 });
 
-const varelaRound = Varela_Round({
-  weight: "400",
-  subsets: ["hebrew", "latin"],
-  variable: "--font-varela",
+const rubikHebrew = localFont({
+  src: "./fonts/rubik-hebrew-wght-normal.woff2",
+  weight: "300 900",
+  style: "normal",
+  display: "swap",
+  adjustFontFallback: false,
+  declarations: [{ prop: "unicode-range", value: "U+0307-0308,U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F" }],
 });
+
+const varelaLatin = localFont({
+  src: "./fonts/varela-round-latin-400-normal.woff2",
+  weight: "400",
+  style: "normal",
+  display: "swap",
+  declarations: [{ prop: "unicode-range", value: "U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD" }],
+});
+
+const varelaHebrew = localFont({
+  src: "./fonts/varela-round-hebrew-400-normal.woff2",
+  weight: "400",
+  style: "normal",
+  display: "swap",
+  adjustFontFallback: false,
+  declarations: [{ prop: "unicode-range", value: "U+0307-0308,U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F" }],
+});
+
+const bodyFontVars = {
+  "--font-rubik": `${rubikLatin.style.fontFamily}, ${rubikHebrew.style.fontFamily}`,
+  "--font-varela": `${varelaLatin.style.fontFamily}, ${varelaHebrew.style.fontFamily}`,
+} as React.CSSProperties;
 
 export const metadata: Metadata = {
   title: "Rock Your People",
@@ -54,7 +88,8 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body
-        className={`${bowlby.variable} ${inter.variable} ${bebasNeue.variable} ${rubik.variable} ${varelaRound.variable} min-h-full bg-background font-sans text-foreground antialiased`}
+        style={bodyFontVars}
+        className={`${bowlby.variable} ${inter.variable} ${bebasNeue.variable} min-h-full bg-background font-sans text-foreground antialiased`}
       >
         {children}
         <CookieConsentBanner />
