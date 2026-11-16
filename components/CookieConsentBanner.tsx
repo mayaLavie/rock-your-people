@@ -8,9 +8,7 @@ import {
   setCookieConsent,
   subscribeCookieConsent,
 } from "@/lib/cookie-consent";
-import { captureAttribution } from "@/lib/tracking/attribution";
 import { acceptConsent, stopTracking } from "@/lib/tracking/consent-client";
-import { listenForCtaPlacement } from "@/lib/tracking/placement";
 
 const buttonClass =
   "min-h-[44px] flex-1 rounded-[5px] border-2 border-cream bg-cream px-3 font-hebrew text-sm font-semibold text-black transition hover:bg-cream/85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cream sm:w-32 sm:flex-none";
@@ -22,13 +20,6 @@ export function CookieConsentBanner() {
     () => undefined,
   );
   const previous = useRef<typeof consent>(undefined);
-
-  // First-party only: remembers utm_* / fbclid and the last CTA placement in sessionStorage,
-  // sends nothing.
-  useEffect(() => {
-    captureAttribution();
-    return listenForCtaPlacement();
-  }, []);
 
   // Consent withdrawn (declined, or "cookie settings" reopened the banner): stop in place, no reload.
   useEffect(() => {

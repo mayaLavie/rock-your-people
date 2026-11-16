@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
+import { AttributionCapture } from "@/components/AttributionCapture";
 import { DeferredConsent } from "@/components/Deferred";
 import { JsonLd } from "@/components/JsonLd";
 import { OG_IMAGE, OPEN_GRAPH_BASE, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/seo";
@@ -107,6 +108,7 @@ export default function RootLayout({
         className={`${bowlby.variable} ${inter.variable} ${bebasNeue.variable} min-h-full bg-background font-sans text-foreground antialiased`}
       >
         <JsonLd />
+        <AttributionCapture />
         {children}
         <DeferredConsent />
       </body>
