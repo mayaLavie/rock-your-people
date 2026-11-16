@@ -271,6 +271,11 @@ export function ContactSection() {
             <p className="mt-4 font-hebrew text-sm text-cream/70" role="status">
               {whatsappHint}
             </p>
+          ) : leadMode === "form" ? (
+            <p className="mt-4 font-hebrew text-sm text-cream/50">
+              מלאו שם וטלפון ולחצו על שליחה. נשמור את הפרטים כדי לחזור אליכם,
+              ובמקביל תיפתח שיחת וואטסאפ עם ההודעה שלכם, מוכנה לשליחה.
+            </p>
           ) : (
             <p className="mt-4 font-hebrew text-sm text-cream/50">
               אפשר למלא את הפרטים ולשלוח, או לפתוח וואטסאפ ישירות. ההודעה תיפתח
