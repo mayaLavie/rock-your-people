@@ -1,15 +1,36 @@
 import Image from "next/image";
+import { CtaLink } from "@/components/CtaLink";
 import { ScrollDownHint } from "@/components/ScrollDownHint";
 import {
   EXPERIENCES_SECTION_OFFERINGS_HE,
-  EXPERIENCES_SECTION_SUBTITLE_HE,
+  HERO_AUDIENCE_HE,
+  HERO_CTA_HE,
+  HERO_SECONDARY_LINK_HE,
   TITLE_IMAGE,
 } from "@/lib/constants";
+
+function HeroActions({ className = "" }: { className?: string }) {
+  return (
+    <div className={`flex flex-col items-center gap-1 ${className}`}>
+      <CtaLink href="#contact" className="w-full max-w-[22rem] text-[17px]">
+        {HERO_CTA_HE}
+      </CtaLink>
+      <a
+        href="#engagement"
+        lang="he"
+        dir="rtl"
+        className="inline-flex min-h-[44px] items-center justify-center px-4 font-hebrew text-[16px] font-semibold text-cream underline underline-offset-4 [text-shadow:0_1px_8px_rgba(0,0,0,0.35)] hover:text-white"
+      >
+        {HERO_SECONDARY_LINK_HE}
+      </a>
+    </div>
+  );
+}
 
 export function Hero() {
   return (
     <section
-      className="flex min-h-0 flex-1 flex-col overflow-x-hidden px-4 pb-4 sm:px-6 sm:pb-6 lg:px-4 lg:pb-6"
+      className="flex min-h-0 flex-1 flex-col overflow-x-hidden px-4 pb-4 sm:px-6 sm:pb-6 lg:px-4 lg:pb-[calc(var(--desktop-site-header-height)+6.5rem)]"
       aria-labelledby="hero-heading"
     >
       <div className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col">
@@ -38,10 +59,18 @@ export function Hero() {
             <p
               lang="he"
               dir="rtl"
-              className="w-full text-center font-hebrew text-pretty text-[18px] font-medium leading-snug text-cream/90"
+              className="w-full text-center font-hebrew text-balance text-[21px] font-bold leading-snug text-cream [text-shadow:0_1px_10px_rgba(0,0,0,0.3)]"
+            >
+              {HERO_AUDIENCE_HE}
+            </p>
+            <p
+              lang="he"
+              dir="rtl"
+              className="mt-1 w-full text-center font-hebrew text-pretty text-[16px] font-medium leading-snug text-cream/90"
             >
               {EXPERIENCES_SECTION_OFFERINGS_HE}
             </p>
+            <HeroActions className="mt-3" />
           </div>
         </div>
 
@@ -50,9 +79,9 @@ export function Hero() {
             <p
               lang="he"
               dir="rtl"
-              className="mx-auto max-w-3xl font-hebrew text-pretty text-[30px] font-medium leading-snug text-cream"
+              className="mx-auto max-w-3xl font-hebrew text-pretty text-[26px] font-bold leading-snug text-cream"
             >
-              {EXPERIENCES_SECTION_SUBTITLE_HE}
+              {HERO_AUDIENCE_HE}
             </p>
             <div className="relative mx-auto max-w-3xl">
               <div data-donkey-anchor className="absolute bottom-full right-0 z-20 mb-5">
@@ -65,6 +94,7 @@ export function Hero() {
               >
                 {EXPERIENCES_SECTION_OFFERINGS_HE}
               </p>
+              <HeroActions className="mt-3" />
             </div>
           </div>
           <div className="h-2.5 w-full bg-[#FBEEE3]" aria-hidden />
