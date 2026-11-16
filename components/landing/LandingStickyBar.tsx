@@ -12,7 +12,9 @@ type Props = {
 
 /**
  * Mobile-only bottom CTA. Visible after the hero CTA scrolled past, hidden while the
- * contact form or the footer is in view so it never covers them.
+ * contact form or the footer is in view so it never covers them. It is also hidden
+ * while the consent bar is open (html[data-consent-banner="open"], set by the consent
+ * component), so two fixed bars never stack at the bottom of a phone screen.
  */
 export function LandingStickyBar({ label, whatsappUrl, heroCtaId }: Props) {
   const [heroPassed, setHeroPassed] = useState(false);
@@ -52,19 +54,21 @@ export function LandingStickyBar({ label, whatsappUrl, heroCtaId }: Props) {
       aria-hidden={!visible}
       className={`fixed inset-x-0 bottom-0 z-[150] border-t-[3px] border-cream bg-black px-4 pt-3 transition-transform duration-300 motion-reduce:transition-none sm:hidden ${
         visible ? "translate-y-0" : "pointer-events-none translate-y-full"
-      }`}
+      } [html[data-consent-banner=open]_&]:pointer-events-none [html[data-consent-banner=open]_&]:invisible`}
       style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
       inert={!visible}
     >
       <div className="flex items-center gap-3" lang="he" dir="rtl">
         <a
           href="#contact"
+          data-placement="lp-sticky"
           className="inline-flex min-h-[48px] flex-1 items-center justify-center rounded-[5px] border border-[#FBEEE3] bg-[#FBEEE3] px-4 font-hebrew text-[15px] font-bold text-[#1e1c1c] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cream"
         >
           {label}
         </a>
         <a
           href={whatsappUrl}
+          data-placement="lp-sticky"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="שליחת הודעה בוואטסאפ"

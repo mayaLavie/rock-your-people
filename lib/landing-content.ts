@@ -40,6 +40,10 @@ export type LandingContent = {
   /** One value line: who + outcome */
   valueLine: string;
   metaDescription: string;
+  /** Benefit-led <title>; the root template appends the brand, so keep it brand-free. */
+  title: string;
+  /** Static share image under public/og, built by scripts/og/build.mjs */
+  ogImage: string;
   hero: { src: string; alt: string; position: string };
   experience: LandingBlock;
   /** Optional second format shown on the same page */
@@ -83,6 +87,11 @@ const faq = (...indexes: number[]) => indexes.map((i) => FAQ_ITEMS[i]);
 export const USE_CASE_INTRO =
   'החוויות והסדנאות שלנו תפורות ומותאמות אישית לכל לו"ז או צורך לאורך השנה:';
 
+/** The detail body is three sentences; the hero carries the "stars of the evening" line, so skip that closing one. */
+const stageParagraphs = stage.body
+  .split(/(?<=[.!]) /)
+  .filter((sentence) => !sentence.includes("כוכבים"));
+
 const stageBulletsForFit = stage.bullets[3] ?? "";
 
 export const LANDING_CONTENT: Record<LandingSlug, LandingContent> = {
@@ -91,10 +100,11 @@ export const LANDING_CONTENT: Record<LandingSlug, LandingContent> = {
     name: stage.headline,
     ctaTarget: "המופע",
     audience: "מופע חשמלי חי לאירועי חברה, ערבי קהילה ואירועים פרטיים",
-    valueLine:
-      "האנשים שלכם שרים ומנגנים איתנו על הבמה, עם להקה מקצועית שדואגת לכל המעטפת. הם הכוכבים של הערב.",
+    valueLine: "האנשים שלכם עולים לבמה, והם הכוכבים של הערב.",
     metaDescription:
-      "מופע חי ואינטראקטיבי שבו האנשים שלכם שרים ומנגנים על הבמה עם להקה מקצועית. לאירועי חברה, ערבי קהילה ואירועים פרטיים.",
+      "מופע חי שבו האנשים שלכם שרים ומנגנים על הבמה עם להקה מקצועית, לאירועי חברה, ערבי קהילה ואירועים פרטיים. ספרו לנו על האירוע ונתאים לכם חוויה.",
+    title: "אתם על הבמה: מופע חי שבו האנשים שלכם הם הכוכבים",
+    ogImage: "/og/lp-on-stage.jpg",
     hero: {
       src: "/images/evyatar stage.jpeg",
       alt: "אביתר שר על הבמה בהופעה של Rock Your People",
@@ -102,7 +112,7 @@ export const LANDING_CONTENT: Record<LandingSlug, LandingContent> = {
     },
     experience: {
       heading: "מה קורה במופע",
-      paragraphs: [stage.body],
+      paragraphs: stageParagraphs,
       bulletsHeading: "מה זה נותן",
       bullets: stage.bullets.slice(0, 3),
     },
@@ -125,18 +135,20 @@ export const LANDING_CONTENT: Record<LandingSlug, LandingContent> = {
     name: workshop.headline,
     ctaTarget: "Band in a Day",
     audience: workshop.subheadline,
-    valueLine:
-      "הצוות שלכם הופך ללהקה. ביום אחד. בלי ניסיון קודם, בלי להכיר תווים, ועם להקה מקצועית שדואגת להכל.",
+    valueLine: "הצוות שלכם הופך ללהקה. ביום אחד.",
     metaDescription:
-      "סדנת גיבוש מוזיקלית לצוותים: בוחרים להיט, כותבים אותו מחדש, עולים לבמה ולוקחים הביתה קליפ. בלי ניסיון קודם.",
+      "סדנת גיבוש מוזיקלית לצוותים: בוחרים להיט, כותבים אותו מחדש, עולים לבמה ולוקחים הביתה קליפ, בלי ניסיון קודם. ספרו לנו על האירוע ונתאים לכם חוויה.",
+    title: "Band in a Day: סדנת גיבוש מוזיקלית שהופכת צוות ללהקה",
+    ogImage: "/og/lp-band-in-a-day.jpg",
     hero: {
-      src: "/images/band-in-a-day-collage.png",
-      alt: "כלי נגינה על רקע ירוק, סדנת Band in a Day",
-      position: "50% 30%",
+      src: "/images/rock-your-people-in-office.jpeg",
+      alt: "נגנים מנגנים ושרים מול צוות במשרד, Rock Your People",
+      position: "50% 45%",
     },
     experience: {
       heading: "מה קורה בסדנה",
-      paragraphs: workshop.bodyParagraphs,
+      // Paragraph 2 ("הצוות שלכם הופך ללהקה. ביום אחד.") is the hero value line.
+      paragraphs: workshop.bodyParagraphs.filter((_, i) => i !== 1),
       bulletsHeading: workshop.bulletsHeading,
       bullets: workshop.bullets,
       closing: workshop.closingBody,
@@ -163,12 +175,13 @@ export const LANDING_CONTENT: Record<LandingSlug, LandingContent> = {
     name: trioProduct.title,
     ctaTarget: "Trio 360",
     audience: "למשרדים, קבלות פנים ואירועים פרטיים",
-    valueLine:
-      "מופע טריו חי במעגל, שמביא את המוזיקה קרוב לקהל. אינטימי, אלגנטי ואנרגטי לכל הכיוונים, ואנחנו מגיעים עם כל ההגברה.",
+    valueLine: "מופע טריו חי במעגל, שמביא את המוזיקה קרוב לקהל.",
     metaDescription:
-      "Trio 360: מופע טריו חי במעגל שבו הקהל עוטף אותנו ומוזמן לשיר איתנו. למשרדים, קבלות פנים ואירועים פרטיים.",
+      "Trio 360: מופע טריו חי במעגל שבו הקהל עוטף אותנו ומוזמן לשיר איתנו, למשרדים, קבלות פנים ואירועים פרטיים. ספרו לנו על האירוע ונתאים לכם חוויה.",
+    title: "Trio 360: מופע טריו חי לקבלות פנים ולאירועי חברה",
+    ogImage: "/og/lp-trio-360.jpg",
     hero: {
-      src: GALLERY_IMAGES[3].src,
+      src: GALLERY_IMAGES[2].src,
       alt: "קהל סביב ההרכב של Rock Your People במופע",
       position: "50% 50%",
     },
@@ -179,7 +192,7 @@ export const LANDING_CONTENT: Record<LandingSlug, LandingContent> = {
       ],
       bulletsHeading: "מה מקבלים",
       bullets: [
-        "מוזיקה חיה קרוב לקהל: אינטימי, אלגנטי ואנרגטי בכל כיוון.",
+        "האווירה: אינטימית, אלגנטית ואנרגטית בכל כיוון.",
         "הכל סגור מבחינתכם: אנחנו מגיעים עם כל ההגברה, כלי הנגינה ומערכות סאונד מתקדמות.",
         "מה שצריך מכם: חיבור לחשמל וקהל שבא ליהנות.",
       ],
@@ -204,10 +217,11 @@ export const LANDING_CONTENT: Record<LandingSlug, LandingContent> = {
     name: dj.headline,
     ctaTarget: "Rock Your DJ",
     audience: "למסיבות ואירועי חברה שרוצים משהו מעבר לסטנדרט",
-    valueLine:
-      "הרחבה רוקדת, המוזיקה חיה. לקחנו מסיבת די ג'יי והכנסנו לתוכה גיטרה, בוזוקי וכלי הקשה חיים על הרחבה.",
+    valueLine: dj.subheadline,
     metaDescription:
-      "Rock Your DJ: מסיבת די ג'יי עם גיטרה, בוזוקי וכלי הקשה חיים על הרחבה. לאירועי חברה, חתונות ומסיבות.",
+      "Rock Your DJ: מסיבת די ג'יי עם גיטרה, בוזוקי וכלי הקשה חיים על הרחבה, לאירועי חברה, חתונות ומסיבות. ספרו לנו על האירוע ונתאים לכם חוויה.",
+    title: "Rock Your DJ: מסיבה עם די ג'יי ונגנים חיים על הרחבה",
+    ogImage: "/og/lp-rock-your-dj.jpg",
     hero: {
       src: "/images/rock-your-dj-party.png",
       alt: "מסיבה עם די ג'יי ונגנים חיים על הרחבה",
@@ -239,6 +253,7 @@ export function getLandingContent(slug: string): LandingContent | null {
   return isLandingSlug(slug) ? LANDING_CONTENT[slug] : null;
 }
 
+/** Page title without the brand suffix; the root layout template appends " | Rock Your People". */
 export function landingTitle(content: LandingContent): string {
-  return `${content.name} | Rock Your People`;
+  return content.title;
 }
