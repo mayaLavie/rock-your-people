@@ -1,4 +1,4 @@
-import { FAQ_ITEMS, GALLERY_IMAGES, PRODUCTS } from "@/lib/constants";
+import { FAQ_ITEMS, PRODUCTS } from "@/lib/constants";
 import { PRODUCT_DETAIL_SECTIONS } from "@/lib/product-details";
 import type { ProductSlug } from "@/lib/tracking/products";
 
@@ -141,9 +141,9 @@ export const LANDING_CONTENT: Record<LandingSlug, LandingContent> = {
     title: "Band in a Day: סדנת גיבוש מוזיקלית שהופכת צוות ללהקה",
     ogImage: "/og/lp-band-in-a-day.jpg",
     hero: {
-      src: "/images/rock-your-people-in-office.jpeg",
+      src: "/images/rock-your-people-in-office-hero.jpg", // landscape crop of the office photo (round 3 speed)
       alt: "נגנים מנגנים ושרים מול צוות במשרד, Rock Your People",
-      position: "50% 45%",
+      position: "50% 50%",
     },
     experience: {
       heading: "מה קורה בסדנה",
@@ -181,7 +181,7 @@ export const LANDING_CONTENT: Record<LandingSlug, LandingContent> = {
     title: "Trio 360: מופע טריו חי לקבלות פנים ולאירועי חברה",
     ogImage: "/og/lp-trio-360.jpg",
     hero: {
-      src: GALLERY_IMAGES[2].src,
+      src: "/images/lp-trio-360-hero.jpg", // landscape crop of GALLERY_IMAGES[2] (round 3 speed)
       alt: "קהל סביב ההרכב של Rock Your People במופע",
       position: "50% 50%",
     },
@@ -223,9 +223,9 @@ export const LANDING_CONTENT: Record<LandingSlug, LandingContent> = {
     title: "Rock Your DJ: מסיבה עם די ג'יי ונגנים חיים על הרחבה",
     ogImage: "/og/lp-rock-your-dj.jpg",
     hero: {
-      src: "/images/rock-your-dj-party.png",
+      src: "/images/rock-your-dj-party-hero.jpg",
       alt: "מסיבה עם די ג'יי ונגנים חיים על הרחבה",
-      position: "50% 35%",
+      position: "50% 25%",
     },
     experience: {
       heading: "מה קורה במסיבה",

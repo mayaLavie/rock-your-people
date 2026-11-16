@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ContactSection } from "@/components/ContactSection";
+import { DeferredStickyBar } from "@/components/Deferred";
 import { Footer } from "@/components/Footer";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { LandingFaq } from "@/components/landing/LandingFaq";
@@ -11,7 +12,6 @@ import {
   LandingFits,
   LandingHero,
 } from "@/components/landing/LandingSections";
-import { LandingStickyBar } from "@/components/landing/LandingStickyBar";
 import { buildContactMessage, buildWhatsAppUrl } from "@/lib/contact";
 import {
   LANDING_SLUGS,
@@ -102,7 +102,7 @@ export default async function LandingPage({
       <div className="bg-[#1e1c1c] pb-[calc(5rem+env(safe-area-inset-bottom))] sm:pb-0">
         <Footer />
       </div>
-      <LandingStickyBar
+      <DeferredStickyBar
         label={ctaLabel}
         whatsappUrl={whatsappUrl}
         heroCtaId={HERO_CTA_ID}

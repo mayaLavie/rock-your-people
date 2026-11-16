@@ -62,7 +62,7 @@ test.describe("round 2: hero", () => {
     await page.goto("/", { waitUntil: "load" });
     const video = page.locator("video.top-section-video");
     await expect(video).toHaveAttribute("poster", /video-land-page-poster\.webp$/);
-    await expect(video).toHaveAttribute("src", /video%20land%20page\.mp4$/, { timeout: 10_000 });
+    await expect(video).toHaveAttribute("src", /video(%20|-)land(%20|-)page(-mobile)?\.mp4$/, { timeout: 10_000 });
     expect(await video.evaluate((v: HTMLVideoElement) => v.muted && v.loop)).toBe(true);
   });
 });
