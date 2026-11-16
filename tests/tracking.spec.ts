@@ -102,21 +102,21 @@ test.describe("events", () => {
     await openAccepted(page);
     await meta.expectEventOnce("PageView");
     meta.clear();
-    await page.locator('[data-product="trio-360"]').scrollIntoViewIfNeeded();
-    const hit = await meta.expectEventOnce("ViewContent", { content_name: "trio-360" });
+    await page.locator('section[data-product="rock-your-dj"]').scrollIntoViewIfNeeded();
+    const hit = await meta.expectEventOnce("ViewContent", { content_name: "rock-your-dj" });
     expect(hit.customData).toMatchObject({
       content_type: "product",
       content_category: "experience",
     });
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.waitForTimeout(400);
-    await page.locator('[data-product="trio-360"]').scrollIntoViewIfNeeded();
-    await meta.expectEventOnce("ViewContent", { content_name: "trio-360" });
+    await page.locator('section[data-product="rock-your-dj"]').scrollIntoViewIfNeeded();
+    await meta.expectEventOnce("ViewContent", { content_name: "rock-your-dj" });
   });
 
-  test("all four product slugs exist on the home page", async ({ page }) => {
+  test("the four homepage detail sections carry their visible-name slug", async ({ page }) => {
     await page.goto("/");
-    for (const slug of ["on-stage", "band-in-a-day", "trio-360", "rock-your-dj"]) {
+    for (const slug of ["on-stage", "band-in-a-day", "rock-your-dj", "beer-office"]) {
       await expect(page.locator(`[data-product="${slug}"]`)).toHaveCount(1);
     }
   });

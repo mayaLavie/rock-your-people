@@ -142,7 +142,10 @@ export function LandingExperience({ content }: { content: LandingContent }) {
         <BlockBody block={experience} headingLevel="h3" />
 
         {extra ? (
-          <div className="mt-10 border-t-[3px] border-[#FBEEE3]/30 pt-8">
+          <div
+            data-product={extra.product}
+            className="mt-10 border-t-[3px] border-[#FBEEE3]/30 pt-8"
+          >
             <h3 className={H2}>{extra.heading}</h3>
             <BlockBody block={{ ...extra, heading: "" }} headingLevel="h3" />
           </div>

@@ -3,17 +3,22 @@ export const PRODUCT_SLUGS = [
   "band-in-a-day",
   "trio-360",
   "rock-your-dj",
+  "beer-office",
 ] as const;
 export type ProductSlug = (typeof PRODUCT_SLUGS)[number];
 export type ProductOrGeneral = ProductSlug | "general";
 
-/** Section ids in lib/product-details.ts mapped to the shared product slugs. */
+/**
+ * Homepage section/card ids mapped to the shared product slugs. The rule is: the slug follows the
+ * product name the visitor SEES, not the legacy DOM id. The section id `trio-360` actually renders
+ * the "Rock Your DJ" copy, and `beer-office` renders "בירה ונרימה" (homepage only, no landing page).
+ */
 const DETAIL_ID_TO_SLUG: Record<string, ProductSlug> = {
   "your-people-on-stage": "on-stage",
   "leadership-workshop": "band-in-a-day",
   "musical-leadership-workshop": "band-in-a-day",
-  "trio-360": "trio-360",
-  "beer-office": "rock-your-dj",
+  "trio-360": "rock-your-dj",
+  "beer-office": "beer-office",
 };
 
 export function productSlugForDetailId(id: string): ProductSlug | undefined {
@@ -25,6 +30,7 @@ export const PRODUCT_NAMES_HE: Record<ProductSlug, string> = {
   "band-in-a-day": "Band in a Day",
   "trio-360": "Trio 360",
   "rock-your-dj": "Rock Your DJ",
+  "beer-office": "בירה ונרימה",
 };
 
 export function isProductSlug(value: unknown): value is ProductSlug {

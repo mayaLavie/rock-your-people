@@ -1,5 +1,6 @@
 import { FAQ_ITEMS, GALLERY_IMAGES, PRODUCTS } from "@/lib/constants";
 import { PRODUCT_DETAIL_SECTIONS } from "@/lib/product-details";
+import type { ProductSlug } from "@/lib/tracking/products";
 
 /*
  * Content for the paid-traffic landing pages (/lp/<slug>).
@@ -42,7 +43,11 @@ export type LandingContent = {
   hero: { src: string; alt: string; position: string };
   experience: LandingBlock;
   /** Optional second format shown on the same page */
-  extra?: LandingBlock & { name: string };
+  extra?: LandingBlock & {
+    name: string;
+    /** Tracking slug of the product this block describes, when it differs from the page product. */
+    product?: ProductSlug;
+  };
   fits: { heading: string; text: string; chips: readonly string[] };
   faq: readonly (typeof FAQ_ITEMS)[number][];
 };
@@ -215,6 +220,7 @@ export const LANDING_CONTENT: Record<LandingSlug, LandingContent> = {
     },
     extra: {
       name: beer.headline,
+      product: "beer-office",
       heading: beer.headline,
       paragraphs: [beer.subheadline, ...beer.bodyParagraphs],
       bullets: beer.bullets,

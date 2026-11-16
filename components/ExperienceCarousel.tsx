@@ -1,5 +1,6 @@
 "use client";
 
+import { productSlugForDetailId } from "@/lib/tracking/products";
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { EXPERIENCES_CARD_HEADLINE_HE } from "@/lib/constants";
@@ -356,6 +357,8 @@ export function ExperienceCarousel() {
               <button
                 key={card.id}
                 type="button"
+                data-product={productSlugForDetailId(card.id)}
+                data-product-kind="card"
                 aria-label={
                   isActive ? card.scrollAriaLabel : `הציגו את ${card.title}`
                 }

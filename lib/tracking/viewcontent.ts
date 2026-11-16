@@ -30,7 +30,7 @@ export function observeProducts(): () => void {
   if (root?.dataset.product) fire(root.dataset.product);
 
   const targets = Array.from(
-    document.querySelectorAll<HTMLElement>("[data-product]"),
+    document.querySelectorAll<HTMLElement>('[data-product]:not([data-product-kind="card"])'),
   ).filter((el) => el !== root);
   if (!targets.length || typeof IntersectionObserver === "undefined") {
     return () => {};
