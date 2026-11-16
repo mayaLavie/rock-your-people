@@ -229,6 +229,56 @@
 - משתנה סביבה: אין.
 - קומיט: `git revert` של הקומיט "Perf: keep images out of the home LCP".
 
+## לכידת ייחוס תמיד פעילה (2026-11-16)
+
+### מה השתנה
+- הקריאות `captureAttribution()` ו-`listenForCtaPlacement()` עברו מבאנר העוגיות אל רכיב חדש וקטן, `components/AttributionCapture.tsx`, שמוצג מיד מהתבנית (`app/layout.tsx`) ואינו מושהה.
+- הרכיב כותב רק ל-`sessionStorage` ומוסיף מאזין לחיצות, ולכן הוא לא שולח דבר ולא מגדיר עוגיות, וההגבלה על הסכמה לא משתנה.
+- הקוקי `_fbc` ממשיך להיכתב רק אחרי אישור, בקוד שרץ בהסכמה בלבד.
+- נוספו בדיקות: פרמטרי `utm_source` ו-`fbclid` נשמרים גם כשהבאנר עוד לא עלה, ניווט צד לקוח שמוריד את שאילתת הכתובת לא מוחק אותם, אין בקשת פייסבוק ואין `_fbc` לפני אישור, ו-`_fbc` נכתב אחרי אישור.
+
+### למה
+- הבאנר עולה רק אחרי טעינה וזמן סרק, ולכן מבקר שעזב או ניווט מהר לפני כן איבד את `fbclid` ואת מיקום הכפתור שלחץ עליו.
+
+### איך מחזירים
+- קבצים: `components/AttributionCapture.tsx`, `components/CookieConsentBanner.tsx`, `app/layout.tsx`, `tests/integration.spec.ts`.
+- משתנה סביבה: אין.
+- קומיט: `git revert` של הקומיט "Attribution: capture UTM/fbclid and CTA placement without waiting for the banner".
+
+## הקשחת מצב הבדיקה (2026-11-16)
+
+### מה השתנה
+- מצב מקל (סוד הסכמה זמני ומקור `localhost` מותר) דורש עכשיו שלושה תנאים יחד: `NEXT_PUBLIC_E2E=1`, ריצה שאינה ב-Vercel, וכתובת הבקשה (כותרת `Host`) היא כתובת לולאה מקומית (`localhost`, `127.0.0.1`, `::1`).
+- הפונקציות ב-`lib/tracking/guards.ts` מקבלות את הבקשה, וכך סביבה אמיתית לעולם אינה מקלה, גם אם הדגל דלף אליה בטעות.
+- נקודת הקצה `/api/meta/health` מחזירה שדה `testMode: true` כשהדגל מוגדר בכלל, ומחזירה `capi: "disabled"` עם הסבר כשהוא מוגדר ב-Vercel.
+- נקודת הקצה `/api/meta/event` מחזירה 503 כשהדגל מוגדר ב-Vercel, כדי שהמצב המדווח יתאים למצב בפועל.
+- נוספו בדיקות: עוגיית הסכמה חתומה בסוד הזמני נדחית (403) כשה-`Host` אינו מקומי, אין הנפקת עוגיה בלי סוד אמיתי, מקור `localhost` נדחה, ו-health מציג `testMode`.
+
+### למה
+- דגל בדיקה שדלף לפרודקשן היה פותח סוד הסכמה ידוע לכל מי שקורא את הקוד, ומאפשר לזייף הסכמה.
+
+### איך מחזירים
+- קבצים: `lib/tracking/guards.ts`, `app/api/consent/route.ts`, `app/api/meta/event/route.ts`, `app/api/meta/health/route.ts`, `tests/integration.spec.ts`, `tests/tracking.spec.ts`.
+- משתנה סביבה: `NEXT_PUBLIC_E2E` (אסור להגדיר אותו בפרודקשן; אם הוא מופיע ב-health כ-`testMode`, יש להסיר אותו).
+- קומיט: `git revert` של הקומיט "Harden test mode: relaxed consent only for E2E on a loopback host off Vercel".
+
+## תמונת הבמה נטענת לפי קרבה (2026-11-16)
+
+### מה השתנה
+- ב-`components/StageImage.tsx` הוחלף הטיימר הפשוט במנגנון `IntersectionObserver` עם שולי ביטחון של גובה מסך אחד מעל ומתחת.
+- התמונה נטענת בקלט הראשון (גלילה, מגע או מקש), או כששני תנאים מתקיימים יחד: המקום שלה קרוב למסך, וחלפו ארבע שניות מאז אירוע הטעינה.
+- נשמרו היחס הקבוע, הטשטוש המוטמע ותגית `noscript` עם התמונה.
+- ב-390x844 המקום של התמונה נמצא בתוך המסך הראשון (מ-570 פיקסלים), ולכן ללא רצפת ההשהיה היא הייתה נטענת מיד והופכת ל-LCP, והציון המדומה ירד לכ-78 (נמדד); לכן השהיית ארבע השניות נשארה רצפה.
+- הבדיקה הקיימת עודכנה לשם מדויק, ונוספו בדיקה שתמונה רחוקה מהמסך לא נטענת בלי קלט, ובדיקה שבלי קלט התמונה מגיעה אחרי ההשהיה.
+
+### למה
+- תמונה שרחוקה מהמסך אינה צריכה להיטען לפני שהמבקר מתקרב אליה, והשהיה פשוטה בלבד טענה אותה גם למי שלא גלל.
+
+### איך מחזירים
+- קבצים: `components/StageImage.tsx`, `tests/r2-hero.spec.ts`.
+- משתנה סביבה: אין.
+- קומיט: `git revert` של הקומיט "StageImage: load by proximity (IntersectionObserver) with a settle floor".
+
 ## איך מריצים את דוח הרשת
 - הפעלת הבדיקות עם הקלטה: `NETWORK_DUMP_DIR=<תיקייה> npx playwright test tests/tracking.spec.ts`.
 - יצירת הדוח: `node scripts/network-report.mjs <תיקייה> <קובץ.md>`.
