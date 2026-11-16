@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { EXPERIENCES_CARD_HEADLINE_HE } from "@/lib/constants";
 
 const STAGE_IMAGE_SRC = "/images/gemini band pic.png";
-const TRIO_IMAGE_SRC = "/images/rock-your-dj-party.png";
+const TRIO_IMAGE_SRC = "/images/rock-your-dj-party-opt.jpg";
 const WORKSHOP_IMAGE_SRC = "/images/band-in-a-day-collage-title.png";
 const OFFICE_IMAGE_SRC = "/images/rock-your-people-in-office.jpeg";
 

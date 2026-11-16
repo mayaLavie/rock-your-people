@@ -6,6 +6,10 @@ type CtaLinkProps = {
   className?: string;
   /** "light" = cream button for dark/magenta backgrounds, "dark" = black button for cream backgrounds */
   tone?: "light" | "dark";
+  /** Where on the page the CTA sits (analytics contract: data-placement) */
+  placement?: string;
+  /** Open in a new tab (external links such as WhatsApp) */
+  external?: boolean;
 };
 
 const BASE =
@@ -23,10 +27,14 @@ export function CtaLink({
   children,
   className = "",
   tone = "light",
+  placement,
+  external = false,
 }: CtaLinkProps) {
   return (
     <Link
       href={href}
+      data-placement={placement}
+      {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
       lang="he"
       dir="rtl"
       data-cta="primary"

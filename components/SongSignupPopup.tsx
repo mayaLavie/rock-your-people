@@ -3,11 +3,13 @@
 /*
   Rock Your People — "בחרו שיר, עלו לבמה" popup.
 
-  Shortly after the page loads, a small floating teaser pill appears just above
-  the Rock Your People logo (top-right on mid-size desktops with no side logo). Tapping
+  Once the page has loaded and gone idle (plus a few seconds, or as soon as the visitor
+  scrolls past the hero), a small floating teaser appears: beside the logo on mobile, just above
+  the Rock Your People logo on desktop (top-right on mid-size desktops with no side logo). Tapping
   the pill opens the full song sign-up dialog designed for this flow.
 */
 
+import Image from "next/image";
 import {
   useCallback,
   useEffect,
@@ -103,7 +105,7 @@ const CSS = `
   animation:ryp-drop 1.1s cubic-bezier(.25,.9,.3,1.15) both;
 }
 .ryp-teaser-wrap.ryp-landed{animation:ryp-float 2.4s ease-in-out infinite}
-@media (max-width:379px){.ryp-teaser-wrap{--ryp-donkey-w:150px}}
+@media (max-width:1023px){.ryp-teaser-wrap{--ryp-donkey-w:150px}}
 @media (min-width:1024px){.ryp-teaser-wrap{--ryp-donkey-w:235px}}
 @keyframes ryp-drop{
   0%{opacity:0;transform:translateY(-110vh)}
@@ -139,6 +141,8 @@ function writeLikedSongs(liked: Set<string>) {
 
 const TEASER_DONKEY_SRC = "/images/paran-donkey-v2.png";
 const TEASER_HINT_GAP_PX = 4;
+/** Minimum wait after window load + idle before the teaser shows */
+const TEASER_DELAY_AFTER_IDLE_MS = 4000;
 
 function visibleMarker(selector: string) {
   return Array.from(document.querySelectorAll<HTMLElement>(selector)).find(
@@ -171,12 +175,14 @@ function getTeaserPlacement(wrap: HTMLElement): CSSProperties | null {
   const box = container.getBoundingClientRect();
 
   if (logo) {
+    // Mobile: the donkey sits to the right of the compact logo, top-aligned with it,
+    // so it never lands on the headline or the hero CTA below.
     const rect = logo.getBoundingClientRect();
     return {
       position: "absolute",
-      top: rect.top - box.top - wrap.offsetHeight - TEASER_HINT_GAP_PX,
-      left: rect.left - box.left,
-      right: "auto",
+      top: rect.top - box.top,
+      right: 16,
+      left: "auto",
     };
   }
 
@@ -206,7 +212,7 @@ type SongSignupPopupProps = {
 export function SongSignupPopup({
   slotLimit = 3,
   askNote = true,
-  autoOpenDelayMs = 600,
+  autoOpenDelayMs = TEASER_DELAY_AFTER_IDLE_MS,
   open: controlledOpen,
   onClose,
 }: SongSignupPopupProps) {
@@ -305,11 +311,41 @@ export function SongSignupPopup({
     };
   }, [phase]);
 
-  // reveal the teaser pill shortly after the page loads, so it's visible on the first screen
+  // Reveal the teaser only after window load + an idle moment + autoOpenDelayMs, so it can never
+  // compete with the hero for LCP; scrolling past the hero shows it right away.
   useEffect(() => {
     if (isControlled || !autoOpenDelayMs) return;
-    const timer = window.setTimeout(() => setSelfPhase("teaser"), autoOpenDelayMs);
-    return () => window.clearTimeout(timer);
+    let done = false;
+    let timer: number | undefined;
+    let idle: number | undefined;
+    const show = () => {
+      if (done) return;
+      done = true;
+      setSelfPhase((phase) => (phase === "hidden" ? "teaser" : phase));
+    };
+    const onScroll = () => {
+      if (window.scrollY > window.innerHeight * 0.8) show();
+    };
+    const afterLoad = () => {
+      const start = () => {
+        timer = window.setTimeout(show, autoOpenDelayMs);
+      };
+      if (typeof window.requestIdleCallback === "function") {
+        idle = window.requestIdleCallback(start, { timeout: 2000 });
+      } else {
+        start();
+      }
+    };
+    if (document.readyState === "complete") afterLoad();
+    else window.addEventListener("load", afterLoad, { once: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      done = true;
+      window.removeEventListener("load", afterLoad);
+      window.removeEventListener("scroll", onScroll);
+      window.clearTimeout(timer);
+      if (idle !== undefined && typeof window.cancelIdleCallback === "function") window.cancelIdleCallback(idle);
+    };
   }, [isControlled, autoOpenDelayMs]);
 
   const close = useCallback(() => {
@@ -503,12 +539,12 @@ export function SongSignupPopup({
               filter: "drop-shadow(0 8px 16px rgba(0,0,0,.35))",
             }}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element -- small pre-sized PNG, skips the image optimizer */}
-            <img
+            <Image
               src={TEASER_DONKEY_SRC}
               alt=""
               width={560}
               height={557}
+              sizes="(min-width: 1024px) 235px, 150px"
               style={{ display: "block", width: "100%", height: "auto" }}
             />
           </button>
@@ -516,28 +552,41 @@ export function SongSignupPopup({
             type="button"
             className="ryp-x"
             onClick={dismissTeaser}
-            aria-label="סגירה"
+            aria-label="סגירת ההודעה על ההופעה במושב פארן"
             style={{
               position: "absolute",
-              // just above the donkey's left shoulder (right side of the image)
-              top: "56%",
-              right: -2,
-              width: 22,
-              height: 22,
+              // just above the donkey's left shoulder (right side of the image);
+              // the button is a 44x44 tap area around a smaller visible circle
+              top: "calc(56% - 11px)",
+              right: -13,
+              width: 44,
+              height: 44,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               border: 0,
-              borderRadius: "50%",
-              background: "rgba(30,28,28,.75)",
+              background: "transparent",
               color: "#fff",
-              fontSize: 15,
-              lineHeight: 1,
               cursor: "pointer",
               padding: 0,
             }}
           >
-            ×
+            <span
+              aria-hidden
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: 26,
+                height: 26,
+                borderRadius: "50%",
+                background: "rgba(30,28,28,.8)",
+                fontSize: 17,
+                lineHeight: 1,
+              }}
+            >
+              ×
+            </span>
           </button>
         </div>
       </div>

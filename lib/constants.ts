@@ -26,6 +26,16 @@ export const HERO_TAGLINE_HE =
 export const HERO_AUDIENCE_HE =
   "מחברים אנשים דרך מוזיקה, בשביל חברות, צוותים ואירועים";
 
+/** Hero: visible headline (the page h1) */
+export const HERO_HEADLINE_HE = "הופכים אירוע חברה לחוויה שהצוות זוכר";
+
+/** Hero: sub-line under the headline */
+export const HERO_SUBLINE_HE =
+  "מופעים חיים וסדנאות מוזיקה אינטראקטיביות לחברות, צוותים ואירועים";
+
+/** Hero: microcopy under the primary CTA */
+export const HERO_CTA_MICROCOPY_HE = "ספרו לנו על האירוע ונחזור אליכם בוואטסאפ";
+
 /** Hero: primary call-to-action (scrolls to the contact form) */
 export const HERO_CTA_HE = "בואו נתאים מופע לאירוע שלכם";
 
@@ -34,6 +44,11 @@ export const HERO_SECONDARY_LINK_HE = "ראו את החוויות שלנו";
 
 /** Shared CTA labels for the sections that close a persuasive block */
 export const SECTION_CTA_HE = "דברו איתנו על האירוע שלכם";
+
+/** Contextual CTA labels, one per closing spot */
+export const CAROUSEL_END_CTA_HE = "בחרתם חוויה? ספרו לנו על האירוע";
+export const REVIEWS_END_CTA_HE = "רוצים שגם האירוע שלכם יסתיים ככה? דברו איתנו";
+export const FAQ_END_CTA_HE = "נשארה שאלה? כתבו לנו בוואטסאפ";
 
 export const EXPERIENCES_SECTION_TAGLINE_HE =
   "לחצו על החוויה שמעניינת אתכם כדי לקבל עוד פרטים";
