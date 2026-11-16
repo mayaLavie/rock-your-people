@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
-import { CookieConsentBanner } from "@/components/CookieConsentBanner";
+import { DeferredConsent } from "@/components/Deferred";
 import { JsonLd } from "@/components/JsonLd";
 import { OG_IMAGE, OPEN_GRAPH_BASE, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/seo";
 import "./globals.css";
@@ -20,6 +20,7 @@ const bowlby = localFont({
 });
 
 const inter = localFont({
+  preload: false, // body default only; LP/home above-the-fold text is Rubik (Hebrew) or Bowlby, so Inter is fetched on demand and not competing with the LCP image
   src: "./fonts/inter-latin-wght-normal.woff2",
   weight: "100 900",
   style: "normal",
@@ -88,9 +89,6 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION,
     images: [OG_IMAGE.url],
   },
-  icons: {
-    icon: "/favicon.svg",
-  },
 };
 
 export const viewport: Viewport = {
@@ -110,7 +108,7 @@ export default function RootLayout({
       >
         <JsonLd />
         {children}
-        <CookieConsentBanner />
+        <DeferredConsent />
       </body>
     </html>
   );
