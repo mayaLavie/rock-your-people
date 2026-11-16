@@ -119,8 +119,8 @@
 
 /* Cards enter and leave through a soft fade instead of a hard mid-card cut. */
 .reviews-marquee {
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 20px, #000 calc(100% - 40px), transparent 100%);
-  mask-image: linear-gradient(to bottom, transparent 0, #000 20px, #000 calc(100% - 40px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 10px, #000 calc(100% - 40px), transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 10px, #000 calc(100% - 40px), transparent 100%);
 }
 
 @media (prefers-reduced-motion: reduce) {

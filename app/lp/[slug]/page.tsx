@@ -99,7 +99,7 @@ export default async function LandingPage({
       <ReviewsSection />
       <LandingFaq items={content.faq} />
       <ContactSection />
-      <div className="bg-magenta pb-[calc(5rem+env(safe-area-inset-bottom))] sm:pb-0">
+      <div className="bg-[#1e1c1c] pb-[calc(5rem+env(safe-area-inset-bottom))] sm:pb-0">
         <Footer />
       </div>
       <LandingStickyBar

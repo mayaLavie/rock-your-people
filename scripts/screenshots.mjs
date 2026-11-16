@@ -153,6 +153,8 @@ for (const [vp, opts] of Object.entries(VIEWPORTS)) {
     if (withSections && isHome) {
       const sec = (n) => path.join(outDir, "sections", `${n}-${vp}.png`);
       if (await banner.count()) await shoot(banner, sec("cookie-banner"));
+      // the song teaser appears after load + idle + a few seconds (round 2), so wait for it
+      await page.locator("button.ryp-teaser").waitFor({ timeout: 9000 }).catch(() => {});
       const teaser = page.locator("button.ryp-teaser");
       if (await teaser.count()) {
         await shoot(teaser, sec("song-popup-teaser"));
