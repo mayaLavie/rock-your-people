@@ -63,6 +63,9 @@ export function Footer() {
           <Link href="/privacy" className="hover:text-cream">
             Privacy Policy
           </Link>
+          <Link href="/accessibility" lang="he" className="font-hebrew hover:text-cream">
+            הצהרת נגישות
+          </Link>
           <CookieSettingsButton className="hover:text-cream" />
         </div>
       </div>

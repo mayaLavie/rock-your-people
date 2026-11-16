@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { CtaLink } from "@/components/CtaLink";
+import { SECTION_CTA_HE } from "@/lib/constants";
 
 const REVIEW_IMAGES = [
   { src: "/images/reviews/review-1.jpg", width: 1200, height: 467 },
@@ -83,6 +85,12 @@ export function ReviewsSection() {
             </ul>
           ))}
         </div>
+      </div>
+
+      <div className="mt-8 flex justify-center">
+        <CtaLink href="#contact" className="w-full max-w-[22rem]">
+          {SECTION_CTA_HE}
+        </CtaLink>
       </div>
     </section>
   );

@@ -7,7 +7,9 @@ import {
   EXPERIENCES_SECTION_TAGLINE_HE,
   EXPERIENCES_SECTION_TITLE_HE,
   EXPERIENCES_SECTION_USE_CASES,
+  SECTION_CTA_HE,
 } from "@/lib/constants";
+import { CtaLink } from "@/components/CtaLink";
 import { ExperienceCarousel } from "@/components/ExperienceCarousel";
 
 export function ProductCards({ beforeEngagement }: { beforeEngagement?: ReactNode }) {
@@ -154,6 +156,11 @@ export function ProductCards({ beforeEngagement }: { beforeEngagement?: ReactNod
             >
               {EXPERIENCES_SECTION_TAGLINE_HE}
             </p>
+          </div>
+          <div className="mt-2 flex justify-center">
+            <CtaLink href="#contact" className="w-full max-w-[22rem]">
+              {SECTION_CTA_HE}
+            </CtaLink>
           </div>
         </div>
 
